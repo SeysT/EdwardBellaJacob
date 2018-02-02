@@ -1,8 +1,4 @@
-﻿using System;
-using System.Net.Sockets;
-using System.Text;
-
-namespace IA
+﻿namespace IA
 {
     class Program
     {
