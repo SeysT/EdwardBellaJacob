@@ -10,7 +10,7 @@ namespace IA
     {
         static void Main(string[] args)
         {
-            //33/33
+            //33/33 ssss
         }
     }
 }
