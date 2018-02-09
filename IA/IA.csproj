@@ -43,6 +43,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Client.cs" />
+    <Compile Include="PlayerServerTrame.cs" />
+    <Compile Include="PlayerServerTrameMove.cs" />
+    <Compile Include="PlayerServerTrameName.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Trame\BaseServeurPlayerTrame.cs" />
