@@ -12,13 +12,13 @@ namespace IA
         MOV
     };
 
-    class PlayerServerTrame
+    class PlayerServerFrame // GetTrame() returns Trame
     {
-        internal byte[] b_size; // 1 Byte int
-        internal byte[] b_header; // length 3
-        internal byte[] b_payload;
+        protected byte[] b_header; // length 3
+        protected byte[] b_size; // 1 Byte int
+        protected byte[] b_payload;
 
-        internal void setHeader(HeaderPlayer h)
+        protected void SetHeader(HeaderPlayer h)
         {
             if (h == HeaderPlayer.NME)
             {
@@ -30,19 +30,13 @@ namespace IA
             }
         }
 
-        internal virtual void setPayload(string s) { }
+        protected virtual void SetSize() { }
 
-        internal virtual void setPayload(byte[] s)
-        {
-            b_payload = s;
-        }
+        protected virtual void SetPayload(string s) { } //for NME
 
-        internal virtual void setSize()
-        {
-            b_size = new byte[0];
-        }
-        
-        public byte[] getTrame()
+        protected virtual void SetPayload(int[] i) { } //for MOV
+
+        public byte[] GetTrame()
         {
             byte[] b_trame = new byte[b_header.Length + b_payload.Length + b_size.Length];
             b_header.CopyTo(b_trame, 0);
