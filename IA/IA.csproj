@@ -45,6 +45,14 @@
     <Compile Include="Client.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Trame\BaseServeurPlayerTrame.cs" />
+    <Compile Include="Trame\BYETrame.cs" />
+    <Compile Include="Trame\ENDTrame.cs" />
+    <Compile Include="Trame\HMETrame.cs" />
+    <Compile Include="Trame\HUMTrame.cs" />
+    <Compile Include="Trame\MAPTrame.cs" />
+    <Compile Include="Trame\SETTrame.cs" />
+    <Compile Include="Trame\UPDTrame.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
