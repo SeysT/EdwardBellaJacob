@@ -15,14 +15,14 @@ namespace IA
             SetSize();
         }
 
+        protected override void SetPayload(string playerName)
+        {
+            b_payload = Encoding.ASCII.GetBytes(playerName); //TODO does this work ?
+        }
+
         protected override void SetSize()
         {
             b_size = new byte[] { (byte) (b_payload.Length) };
-        }
-
-        protected override void SetPayload(string playerName)
-        {
-            b_payload = Encoding.ASCII.GetBytes(playerName);
         }
     }
 }

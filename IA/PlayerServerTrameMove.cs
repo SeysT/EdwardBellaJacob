@@ -15,6 +15,13 @@ namespace IA
             SetSize();
         }
 
+        public PlayerServerFrameMove(byte[] bytePayload)
+        {
+            SetHeader(HeaderPlayer.MOV);
+            b_payload = bytePayload;
+            SetSize();
+        }
+
         protected override void SetPayload(int[] intPayload)
         {
             //TODO optimize this method
@@ -24,13 +31,6 @@ namespace IA
                 byte[] currentByte = new byte[] { (byte)intPayload[i] };
                 currentByte.CopyTo(b_payload, i*8);
             }
-        }
-
-        public PlayerServerFrameMove(byte[] movementList)
-        {
-            SetHeader(HeaderPlayer.MOV);
-            b_payload = movementList;
-            SetSize();
         }
 
         protected override void SetSize()
