@@ -6,17 +6,44 @@ using System.Threading.Tasks;
 
 namespace IA
 {
-    class PlayerServerTrameMove : PlayerServerTrame
+    class PlayerServerFrameMove : PlayerServerFrame // GetTrame() returns Trame
     {
-        public PlayerServerTrameMove(byte[] movementList)
+        public PlayerServerFrameMove(int[] intPayload)
         {
-            b_payload = movementList;
+            SetHeader(HeaderPlayer.MOV);
+            SetPayload(intPayload);
+            SetSize();
         }
 
-        internal override void setSize()
+        protected override void SetPayload(int[] intPayload)
         {
-            double movementNumber = (b_payload.Length) / 5;
-            b_size = BitConverter.GetBytes((int)movementNumber);
+            //TODO optimize this method
+            byte[] b_payload = new byte[intPayload.Length*8];
+            for (int i = 0; i < intPayload.Length; i++)
+            {
+                byte[] currentByte = new byte[] { (byte)intPayload[i] };
+                currentByte.CopyTo(b_payload, i*8);
+            }
+        }
+
+        public PlayerServerFrameMove(byte[] movementList)
+        {
+            SetHeader(HeaderPlayer.MOV);
+            b_payload = movementList;
+            SetSize();
+        }
+
+        protected override void SetSize()
+        {
+            if (b_payload.Length % 5 != 0)
+            {
+                throw new Exception("[PlayerServerFrameMove] b_payload.Length isn't dividable by 5");
+            }
+            else
+            {
+                double movementNumber = (b_payload.Length) / 5;
+                b_size = BitConverter.GetBytes((int)movementNumber);
+            }
         }
     }
 }

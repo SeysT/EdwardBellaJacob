@@ -6,21 +6,21 @@ using System.Threading.Tasks;
 
 namespace IA
 {
-    class PlayerServerTrameName : PlayerServerTrame
+    class PlayerServerFrameName : PlayerServerFrame // GetTrame() returns Trame
     {
-        public PlayerServerTrameName(string playerName)
+        public PlayerServerFrameName(string playerName)
         {
-            setHeader(HeaderPlayer.NME);
-            setPayload(playerName);
-            setSize();
+            SetHeader(HeaderPlayer.NME);
+            SetPayload(playerName);
+            SetSize();
         }
 
-        internal override void setSize()
+        protected override void SetSize()
         {
             b_size = new byte[] { (byte) (b_payload.Length) };
         }
 
-        internal override void setPayload(string playerName)
+        protected override void SetPayload(string playerName)
         {
             b_payload = Encoding.ASCII.GetBytes(playerName);
         }
