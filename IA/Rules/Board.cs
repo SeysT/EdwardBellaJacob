@@ -26,13 +26,69 @@ namespace IA.Rules
             // 'n' pour nous 
             
             foreach(KeyValuePair<Tuple<int, int>, Tuple<string, int>> k in _grid){
-                
+                if (k.Value.Item1.Equals('n')) // mettre config.nous
+                {
+                    dict.Add(k.Key,k.Value);
+                }
             }
-
             return dict;
-
         }
+        private Dictionary<Tuple<int, int>, Tuple<string, int>> Ennemy_positions()
+        {
+            Dictionary<Tuple<int, int>, Tuple<string, int>> dict = new Dictionary<Tuple<int, int>, Tuple<string, int>>();
+            // 'v' pour vous 
 
+            foreach (KeyValuePair<Tuple<int, int>, Tuple<string, int>> k in _grid)
+            {
+                if (k.Value.Item1.Equals('v')) // mettre config.vous
+                {
+                    dict.Add(k.Key, k.Value);
+                }
+            }
+            return dict;
+        }
+        private Dictionary<Tuple<int, int>, Tuple<string, int>> Human_positions()
+        {
+            Dictionary<Tuple<int, int>, Tuple<string, int>> dict = new Dictionary<Tuple<int, int>, Tuple<string, int>>();
+            foreach (KeyValuePair<Tuple<int, int>, Tuple<string, int>> k in _grid)
+            {
+                if (k.Value.Item1.Equals('h')) // mettre config.human
+                {
+                    dict.Add(k.Key, k.Value);
+                }
+            }
+            return dict;
+        }
+        private int Human_number()
+        {
+            Dictionary<Tuple<int, int>, Tuple<string, int>> dict = new Dictionary<Tuple<int, int>, Tuple<string, int>>();
+            int number=0;
+            foreach (KeyValuePair<Tuple<int, int>, Tuple<string, int>> k in Human_positions())
+            {
+                number+= k.Value.Item2;
+            }
+            return number;
+        }
+        private int Our_number()
+        {
+            Dictionary<Tuple<int, int>, Tuple<string, int>> dict = new Dictionary<Tuple<int, int>, Tuple<string, int>>();
+            int number = 0;
+            foreach (KeyValuePair<Tuple<int, int>, Tuple<string, int>> k in Our_Positions())
+            {
+                number += k.Value.Item2;
+            }
+            return number;
+        }
+        private int Ennemy_number()
+        {
+            Dictionary<Tuple<int, int>, Tuple<string, int>> dict = new Dictionary<Tuple<int, int>, Tuple<string, int>>();
+            int number = 0;
+            foreach (KeyValuePair<Tuple<int, int>, Tuple<string, int>> k in Ennemy_positions())
+            {
+                number += k.Value.Item2;
+            }
+            return number;
+        }
     }
 }
 
@@ -40,78 +96,6 @@ namespace IA.Rules
 
 /* 
 
-
-    def our_positions(self):
-        """
-        formerly getour_positions(any_board)
-        entree: board, nous
-        retourne: liste de tuples qui nous donne nos positions et notre nombre sur ces positions
-        NB: ne verifie pas la validite des coordonees
-        """
-        #print '\n'+50*'#'+"Board::our_positions()"
-        our_positions =[]
-
-        for k in self.grid.keys(): 
-            if self.grid[k][0] == config.nous: 
-                our_positions.append(VectorPosition(self.grid[k][0],k,self.grid[k][1]))
-        return our_positions
-
-
-    def ennemy_positions(self):
-        """
-        formerly getEnnemyPositions(any_board)
-        entree: board, 
-        retourne: liste de tuples qui nous donne la position des ennemis et leur nombre sur ces positions
-        NB: ne verifie pas la validite des coordonees
-        """
-        #print '\n'+50*'#'+"Board::ennemy_positions()"
-        ennemy_positions = []
-        for k in self.grid.keys(): 
-            if self.grid[k][0] == config.eux: 
-                ennemy_positions.append(VectorPosition(self.grid[k][0],k,self.grid[k][1]))
-        return ennemy_positions
-
-
-    def human_positions(self):
-        """
-        formerly gethuman_positions(any_board)
-        entree: board
-        retourne: liste de tuples qui nous donne la position des humains et leur nombre sur ces positions
-        NB: ne verifie pas la validite des coordonees
-        """
-        #print '\n'+50*'#'+"Board::human_positions()"
-        human_positions = []
-        for k in self.grid.keys(): 
-            if self.grid[k][0] == 'h': 
-                human_positions.append(VectorPosition(self.grid[k][0],k,self.grid[k][1]))
-        return human_positions
-
-    def human_number(self): #to be checked
-        """
-        formerly getHumanNumber(any_board)
-        entree: board
-        retourne le nombre d'humains restants sur le plateau
-        """
-        #print '\n'+50*'#'+"Board::human_number()"
-        #rappel: board[(x,y)]=(type, nombre)
-        return sum([v[1] for k,v in self.grid.items() if v[0]=='h'])
-
-
-
-    def our_number(self): #to be checked
-        """
-        formerly getOurNumber(any_board)
-        """
-        #print '\n'+50*'#'+"Board::our_number()"
-        return sum([v[1] for k,v in self.grid.items() if v[0]==config.nous])
-
-    def ennemy_number(self): #to be checked
-        """
-        formerly getEnnemyNumber(any_board) 
-        retourne le nombre d'ennemis restants sur le plateau
-        """
-        #print '\n'+50*'#'+"Board::ennemy_number()"
-        return sum([v[1] for k,v in self.grid.items() if v[0]==config.eux])
 
 
 
