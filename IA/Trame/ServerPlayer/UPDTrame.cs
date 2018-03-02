@@ -18,13 +18,13 @@ namespace IA.Trame
             socket.Receive(buffer, 0, 1, SocketFlags.Partial);
 
             int caseNumber = (int) buffer[0];
-            int[,] caseUpdates = new int[caseNumber, 2];
+            int[,] caseUpdates = new int[caseNumber, 5];
 
             buffer = new byte[5];
             for (int i = 0; i < caseNumber; i++)
             {
-                while (socket.Available < 2) Thread.Sleep(10);
-                socket.Receive(buffer, 0, 2, SocketFlags.Partial);
+                while (socket.Available < 5) Thread.Sleep(10);
+                socket.Receive(buffer, 0, 5, SocketFlags.Partial);
 
                 caseUpdates[i, 0] = (int) buffer[0];
                 caseUpdates[i, 1] = (int) buffer[1];
