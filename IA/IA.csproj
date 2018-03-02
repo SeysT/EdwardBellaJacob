@@ -45,6 +45,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rules\Board.cs" />
+    <Compile Include="Rules\Config.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

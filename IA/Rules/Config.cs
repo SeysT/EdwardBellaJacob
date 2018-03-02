@@ -4,13 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IA
+namespace IA.Rules
 {
-    class Program
+    class Config
     {
-        static void Main(string[] args)
-        {
-            
-        }
+        //'n' pour nous , 'v' pour vous et 'h' pour hommes 
     }
+
 }
