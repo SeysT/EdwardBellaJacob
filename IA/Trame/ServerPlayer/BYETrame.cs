@@ -2,11 +2,11 @@
 
 namespace IA.Trame
 {
-    class ENDTrame : BaseServeurPlayerTrame
+    class BYETrame : BaseServerPlayerTrame
     {
-        public ENDTrame() : base()
+        public BYETrame() : base()
         {
-            this._trameHeader = "END";
+            this._trameHeader = "BYE";
         }
 
         protected override int[,] _decodeTrame(Socket socket)

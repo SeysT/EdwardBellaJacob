@@ -43,19 +43,19 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Client.cs" />
-    <Compile Include="PlayerServerTrame.cs" />
-    <Compile Include="PlayerServerTrameMove.cs" />
-    <Compile Include="PlayerServerTrameName.cs" />
+    <Compile Include="Trame\PlayerServer\BasePlayerServerTrame.cs" />
+    <Compile Include="Trame\PlayerServer\MOVTrame.cs" />
+    <Compile Include="Trame\PlayerServer\NMETrame.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Trame\BaseServeurPlayerTrame.cs" />
-    <Compile Include="Trame\BYETrame.cs" />
-    <Compile Include="Trame\ENDTrame.cs" />
-    <Compile Include="Trame\HMETrame.cs" />
-    <Compile Include="Trame\HUMTrame.cs" />
-    <Compile Include="Trame\MAPTrame.cs" />
-    <Compile Include="Trame\SETTrame.cs" />
-    <Compile Include="Trame\UPDTrame.cs" />
+    <Compile Include="Trame\ServerPlayer\BaseServerPlayerTrame.cs" />
+    <Compile Include="Trame\ServerPlayer\BYETrame.cs" />
+    <Compile Include="Trame\ServerPlayer\ENDTrame.cs" />
+    <Compile Include="Trame\ServerPlayer\HMETrame.cs" />
+    <Compile Include="Trame\ServerPlayer\HUMTrame.cs" />
+    <Compile Include="Trame\ServerPlayer\MAPTrame.cs" />
+    <Compile Include="Trame\ServerPlayer\SETTrame.cs" />
+    <Compile Include="Trame\ServerPlayer\UPDTrame.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

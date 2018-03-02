@@ -6,16 +6,16 @@ using System.Threading.Tasks;
 
 namespace IA
 {
-    class PlayerServerFrameMove : PlayerServerFrame // GetTrame() returns Trame
+    class MOVTrame : BasePlayerServerTrame // GetTrame() returns Trame
     {
-        public PlayerServerFrameMove(int[] intPayload)
+        public MOVTrame(int[] intPayload)
         {
             SetHeader(HeaderPlayer.MOV);
             SetPayload(intPayload);
             SetSize();
         }
 
-        public PlayerServerFrameMove(byte[] bytePayload)
+        public MOVTrame(byte[] bytePayload)
         {
             SetHeader(HeaderPlayer.MOV);
             b_payload = bytePayload;

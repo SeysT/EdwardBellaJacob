@@ -3,7 +3,7 @@ using System.Threading;
 
 namespace IA.Trame
 {
-    class HMETrame : BaseServeurPlayerTrame
+    class HMETrame : BaseServerPlayerTrame
     {
         public HMETrame() : base()
         {

@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace IA
 {
-    class PlayerServerFrameName : PlayerServerFrame // GetTrame() returns Trame
+    class NMETrame : BasePlayerServerTrame // GetTrame() returns Trame
     {
-        public PlayerServerFrameName(string playerName)
+        public NMETrame(string playerName)
         {
             SetHeader(HeaderPlayer.NME);
             SetPayload(playerName);
