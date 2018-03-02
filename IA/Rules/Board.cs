@@ -10,20 +10,25 @@ namespace IA.Rules
          // Class to handle boards
     {
 
-        private Dictionary<Tuple<int, int>, Tuple<string, int>> grid;
-        private int x_max;
-        private int y_max;
+        private  Dictionary<Tuple<int, int>, Tuple<string, int>> _grid;
+        private int _x_max;
+        private int _y_max;
          
         public Board(Dictionary<Tuple<int,int>, Tuple<string,int>> grid, int x_max , int y_max)
         {
-            this.grid = grid;
-            this.x_max = x_max;
-            this.y_max = y_max;
+            this._grid = grid;
+            this._x_max = x_max;
+            this._y_max = y_max;
         }
-        private static Dictionary<Tuple<int, int>, Tuple<string, int>> Our_Positions()
+        private Dictionary<Tuple<int, int>, Tuple<string, int>> Our_Positions()
         {
             Dictionary<Tuple<int, int>, Tuple<string, int>> dict = new Dictionary<Tuple<int, int>, Tuple<string, int>>();
+            // 'n' pour nous 
             
+            foreach(KeyValuePair<Tuple<int, int>, Tuple<string, int>> k in _grid){
+                
+            }
+
             return dict;
 
         }
