@@ -1,4 +1,6 @@
-﻿using System.Net.Sockets;
+﻿using IA.Trame;
+using System;
+using System.Net.Sockets;
 using System.Text;
 
 namespace IA
@@ -10,7 +12,7 @@ namespace IA
 
         private Socket _socket;
 
-        private byte[] _playerName = Encoding.ASCII.GetBytes("EdwardBellaJacob");
+        private string _playerName = "EdwardBellaJacob";
         
         public Client(string host, int port)
         {
@@ -23,6 +25,8 @@ namespace IA
         public void Start()
         {
             this._socket.Connect(this._host, this._port);
+
+            new NMETrame(this._playerName).Send(this._socket);
         }
     }
 }

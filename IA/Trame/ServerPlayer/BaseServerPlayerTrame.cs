@@ -10,11 +10,11 @@ namespace IA
         public NotExpectedTrameException(string message): base(message) { }
     }
 
-    abstract class BaseServeurPlayerTrame
+    abstract class BaseServerPlayerTrame
     {
         protected string _trameHeader;
 
-        public BaseServeurPlayerTrame()
+        public BaseServerPlayerTrame()
         {
             this._trameHeader = "";
         }

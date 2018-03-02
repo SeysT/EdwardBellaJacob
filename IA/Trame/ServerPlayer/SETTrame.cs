@@ -3,7 +3,7 @@ using System.Threading;
 
 namespace IA.Trame
 {
-    class SETTrame : BaseServeurPlayerTrame
+    class SETTrame : BaseServerPlayerTrame
     {
         public SETTrame() : base()
         {

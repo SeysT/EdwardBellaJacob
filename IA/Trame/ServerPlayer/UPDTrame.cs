@@ -3,11 +3,11 @@ using System.Threading;
 
 namespace IA.Trame
 {
-    class MAPTrame : BaseServeurPlayerTrame
+    class UPDTrame : BaseServerPlayerTrame
     {
-        public MAPTrame() : base()
+        public UPDTrame() : base()
         {
-            this._trameHeader = "MAP";
+            this._trameHeader = "UPD";
         }
 
         protected override int[,] _decodeTrame(Socket socket)
@@ -17,8 +17,8 @@ namespace IA.Trame
             while (socket.Available < 1) Thread.Sleep(10);
             socket.Receive(buffer, 0, 1, SocketFlags.Partial);
 
-            int caseNumber = (int)buffer[0];
-            int[,] caseConfigurations = new int[caseNumber, 2];
+            int caseNumber = (int) buffer[0];
+            int[,] caseUpdates = new int[caseNumber, 2];
 
             buffer = new byte[5];
             for (int i = 0; i < caseNumber; i++)
@@ -26,14 +26,14 @@ namespace IA.Trame
                 while (socket.Available < 2) Thread.Sleep(10);
                 socket.Receive(buffer, 0, 2, SocketFlags.Partial);
 
-                caseConfigurations[i, 0] = (int) buffer[0];
-                caseConfigurations[i, 1] = (int) buffer[1];
-                caseConfigurations[i, 2] = (int) buffer[2];
-                caseConfigurations[i, 3] = (int) buffer[3];
-                caseConfigurations[i, 4] = (int) buffer[4];
+                caseUpdates[i, 0] = (int) buffer[0];
+                caseUpdates[i, 1] = (int) buffer[1];
+                caseUpdates[i, 2] = (int) buffer[2];
+                caseUpdates[i, 3] = (int) buffer[3];
+                caseUpdates[i, 4] = (int) buffer[4];
             }
 
-            return caseConfigurations;
+            return caseUpdates;
         }
     }
 }
