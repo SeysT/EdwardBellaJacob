@@ -81,7 +81,7 @@ namespace IA
                 };
 
                 sw.Stop();
-                Console.WriteLine("Elapsed={0}", sw.Elapsed);
+                Console.WriteLine("Elapsed Time={0}", sw.Elapsed);
                 new MOVTrame(next).Send(this._socket);
             }
         }
