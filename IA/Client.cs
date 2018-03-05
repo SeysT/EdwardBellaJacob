@@ -3,6 +3,7 @@ using System;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Diagnostics;
 
 namespace IA
 {
@@ -58,6 +59,10 @@ namespace IA
             while (true)
             {
                 this._trame.Receive();
+
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
+
                 if (this._trame.TrameHeader != "UPD")
                 {
                     Console.WriteLine(this._trame.TrameHeader);
@@ -75,6 +80,8 @@ namespace IA
                     { startPos[0, 0], startPos[1, 0], 4, nextPos[0, 0], nextPos[1, 0] }
                 };
 
+                sw.Stop();
+                Console.WriteLine("Elapsed Time={0}", sw.Elapsed);
                 new MOVTrame(next).Send(this._socket);
             }
         }
