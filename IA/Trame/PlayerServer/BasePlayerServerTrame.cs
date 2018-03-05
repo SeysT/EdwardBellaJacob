@@ -35,7 +35,7 @@ namespace IA
 
         protected virtual void SetPayload(string s) { } //for NME
 
-        protected virtual void SetPayload(int[] i) { } //for MOV
+        protected virtual void SetPayload(int[,] i) { } //for MOV
 
         private byte[] GetTrame()
         {

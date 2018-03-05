@@ -8,7 +8,7 @@ namespace IA
 {
     class MOVTrame : BasePlayerServerTrame // GetTrame() returns Trame
     {
-        public MOVTrame(int[] intPayload)
+        public MOVTrame(int[,] intPayload)
         {
             SetHeader(HeaderPlayer.MOV);
             SetPayload(intPayload);
@@ -22,14 +22,15 @@ namespace IA
             SetSize();
         }
 
-        protected override void SetPayload(int[] intPayload)
+        protected override void SetPayload(int[,] intPayload)
         {
-            //TODO optimize this method
-            byte[] b_payload = new byte[intPayload.Length*8];
-            for (int i = 0; i < intPayload.Length; i++)
+            b_payload = new byte[intPayload.GetLength(0) * 5];
+            for (int i = 0; i < intPayload.GetLength(0); i++)
             {
-                byte[] currentByte = new byte[] { (byte)intPayload[i] };
-                currentByte.CopyTo(b_payload, i*8);
+                for (int j = 0; j < intPayload.GetLength(1); j++)
+                {
+                    b_payload[i * 5 + j] = (byte)intPayload[i, j];
+                }
             }
         }
 
@@ -41,8 +42,7 @@ namespace IA
             }
             else
             {
-                double movementNumber = (b_payload.Length) / 5;
-                b_size = BitConverter.GetBytes((int)movementNumber);
+                b_size = new byte[] { (byte) (b_payload.Length / 5)};
             }
         }
     }
