@@ -47,18 +47,17 @@
     <Compile Include="Trame\PlayerServer\MOVTrame.cs" />
     <Compile Include="Trame\PlayerServer\NMETrame.cs" />
     <Compile Include="Heuristic.cs" />
-    <Compile Include="MinMax.cs" />
-    <Compile Include="Node.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Trame\ServerPlayer\BaseServerPlayerTrame.cs" />
-    <Compile Include="Trame\ServerPlayer\BYETrame.cs" />
-    <Compile Include="Trame\ServerPlayer\ENDTrame.cs" />
-    <Compile Include="Trame\ServerPlayer\HMETrame.cs" />
-    <Compile Include="Trame\ServerPlayer\HUMTrame.cs" />
-    <Compile Include="Trame\ServerPlayer\MAPTrame.cs" />
-    <Compile Include="Trame\ServerPlayer\SETTrame.cs" />
-    <Compile Include="Trame\ServerPlayer\UPDTrame.cs" />
+    <Compile Include="Trame\ServerPlayer\BYEDecoder.cs" />
+    <Compile Include="Trame\ServerPlayer\ENDDecoder.cs" />
+    <Compile Include="Trame\ServerPlayer\HMEDecoder.cs" />
+    <Compile Include="Trame\ServerPlayer\HUMDecoder.cs" />
+    <Compile Include="Trame\ServerPlayer\IDecodable.cs" />
+    <Compile Include="Trame\ServerPlayer\MAPDecoder.cs" />
+    <Compile Include="Trame\ServerPlayer\SETDecoder.cs" />
+    <Compile Include="Trame\ServerPlayer\UPDDecoder.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
