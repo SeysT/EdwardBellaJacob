@@ -1,16 +1,12 @@
-﻿using System.Net.Sockets;
+﻿using IA.Trame.ServerPlayer;
+using System.Net.Sockets;
 using System.Threading;
 
 namespace IA.Trame
 {
-    class UPDTrame : BaseServerPlayerTrame
+    class UPDDecoder : IDecodable
     {
-        public UPDTrame() : base()
-        {
-            this._trameHeader = "UPD";
-        }
-
-        protected override int[,] _decodeTrame(Socket socket)
+        public int[,] Decode(Socket socket)
         {
             byte[] buffer = new byte[1];
 

@@ -1,16 +1,12 @@
-﻿using System.Net.Sockets;
+﻿using IA.Trame.ServerPlayer;
+using System.Net.Sockets;
 using System.Threading;
 
 namespace IA.Trame
 {
-    class MAPTrame : BaseServerPlayerTrame
+    class MAPDecoder : IDecodable
     {
-        public MAPTrame() : base()
-        {
-            this._trameHeader = "MAP";
-        }
-
-        protected override int[,] _decodeTrame(Socket socket)
+        public int[,] Decode(Socket socket)
         {
             byte[] buffer = new byte[1];
 

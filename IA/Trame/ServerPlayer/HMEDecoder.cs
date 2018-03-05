@@ -1,16 +1,12 @@
-﻿using System.Net.Sockets;
+﻿using IA.Trame.ServerPlayer;
+using System.Net.Sockets;
 using System.Threading;
 
 namespace IA.Trame
 {
-    class SETTrame : BaseServerPlayerTrame
+    class HMEDecoder : IDecodable
     {
-        public SETTrame() : base()
-        {
-            this._trameHeader = "SET";
-        }
-
-        protected override int[,] _decodeTrame(Socket socket)
+        public int[,] Decode(Socket socket)
         {
             byte[] buffer = new byte[2];
 
