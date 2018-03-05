@@ -38,7 +38,7 @@ namespace IA
         {
             if (b_payload.Length % 5 != 0)
             {
-                throw new Exception("[PlayerServerFrameMove] b_payload.Length isn't dividable by 5");
+                throw new Exception("[MOVTrame] b_payload.Length isn't dividable by 5");
             }
             else
             {
