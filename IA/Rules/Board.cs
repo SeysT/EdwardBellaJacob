@@ -7,38 +7,90 @@ using System.Threading.Tasks;
 namespace IA.Rules
 {
     class Board
-         // Class to handle boards
+    // Class to handle boards
     {
 
-        private  Dictionary<Tuple<int, int>, Tuple<string, int>> _grid;
+        private Dictionary<Tuple<int, int>, Tuple<char, int>> _grid;
         private int _x_max;
         private int _y_max;
-         
-        public Board(Dictionary<Tuple<int,int>, Tuple<string,int>> grid, int x_max , int y_max)
+        
+        public Board(Dictionary<Tuple<int, int>, Tuple<char, int>> grid, int x_max, int y_max)
         {
+            ///<summary>
+            ///Constructeur pour définir une Board avec les dimensions et les positions des pions
+            ///</summary>
             this._grid = grid;
             this._x_max = x_max;
             this._y_max = y_max;
         }
-        private Dictionary<Tuple<int, int>, Tuple<string, int>> Our_Positions()
+        private Dictionary<Tuple<int, int>, Tuple<char, int>> Our_Positions()
         {
-            Dictionary<Tuple<int, int>, Tuple<string, int>> dict = new Dictionary<Tuple<int, int>, Tuple<string, int>>();
+            ///<summary>
+            ///Envoie les positions de nos pions sous forme de dictionnaire key:position, value:('n',nombre de pions)
+            ///</summary>
+            Dictionary<Tuple<int, int>, Tuple<char, int>> dict = new Dictionary<Tuple<int, int>, Tuple<char, int>>();
             // 'n' pour nous 
-            
-            foreach(KeyValuePair<Tuple<int, int>, Tuple<string, int>> k in _grid){
+
+            foreach (KeyValuePair<Tuple<int, int>, Tuple<char, int>> k in _grid) {
                 if (k.Value.Item1.Equals('n')) // mettre config.nous
                 {
-                    dict.Add(k.Key,k.Value);
+                    dict.Add(k.Key, k.Value);
                 }
             }
             return dict;
         }
-        private Dictionary<Tuple<int, int>, Tuple<string, int>> Ennemy_positions()
+
+        private Boolean CheckPresence(Dictionary<Tuple<int, int>, Tuple<char, int>> adjacentsDict)
         {
-            Dictionary<Tuple<int, int>, Tuple<string, int>> dict = new Dictionary<Tuple<int, int>, Tuple<string, int>>();
+            ///<summary>
+            ///envoie true s'il y a des pions 'v' ou 'h' dans des cases adjacentes aux pions 'n'
+            ///</summary>
+            foreach (KeyValuePair<Tuple<int, int>, Tuple<char, int>> tuplePosition in adjacentsDict)
+            {
+                if (_grid.ContainsKey(tuplePosition.Key)) {
+                    if (_grid[tuplePosition.Key].Item1.Equals('n')) // mettre config.nous
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        private Dictionary<Tuple<int, int>, Tuple<char, int>> GetAdjacentPositions(Tuple<int, int> targetPosition) {
+            //prend un tuple de position en entrée en renvoie les tuples adjacents sous forme d'un dico
+            Dictionary<Tuple<int, int>, Tuple<char, int>> result = new Dictionary<Tuple<int, int>, Tuple<char, int>>();
+            //on commence par mettre toutes les cases adjacentes, puis on vérifie si elle est bien dans la grid, on met ('h',0) dedans s'il n'y a rien ;)
+            result.Add(new Tuple<int, int>(targetPosition.Item1+1, targetPosition.Item2-1), new Tuple<char, int>('h', 0));
+            result.Add(new Tuple<int, int>(targetPosition.Item1+1, targetPosition.Item2), new Tuple<char, int>('h', 0));
+            result.Add(new Tuple<int, int>(targetPosition.Item1+1, targetPosition.Item2-1), new Tuple<char, int>('h', 0));
+            result.Add(new Tuple<int, int>(targetPosition.Item1, targetPosition.Item2+1), new Tuple<char, int>('h', 0));
+            result.Add(new Tuple<int, int>(targetPosition.Item1, targetPosition.Item2-1), new Tuple<char, int>('h', 0));
+            result.Add(new Tuple<int, int>(targetPosition.Item1-1, targetPosition.Item2+1), new Tuple<char, int>('h', 0));
+            result.Add(new Tuple<int, int>(targetPosition.Item1-1, targetPosition.Item2), new Tuple<char, int>('h', 0));
+            result.Add(new Tuple<int, int>(targetPosition.Item1-1, targetPosition.Item2-1), new Tuple<char, int>('h', 0));
+            foreach (KeyValuePair<Tuple<int, int>, Tuple<char, int>> k in result)
+            {
+                if (k.Key.Item1<0 || k.Key.Item1 >= _x_max || k.Key.Item2<0 ||k.Key.Item2>=_y_max ) // mettre config.nous
+                {
+                    result.Remove(k.Key);
+                }
+                else
+                {
+                    if (_grid.ContainsKey(k.Key))
+                    {
+                        result[k.Key] = _grid[k.Key];
+                    }
+                }
+            }
+            return result;
+        }
+        private Dictionary<Tuple<int, int>, Tuple<char, int>> Ennemy_positions()
+        {
+            Dictionary<Tuple<int, int>, Tuple<char, int>> dict = new Dictionary<Tuple<int, int>, Tuple<char, int>>();
             // 'v' pour vous 
 
-            foreach (KeyValuePair<Tuple<int, int>, Tuple<string, int>> k in _grid)
+            foreach (KeyValuePair<Tuple<int, int>, Tuple<char, int>> k in _grid)
             {
                 if (k.Value.Item1.Equals('v')) // mettre config.vous
                 {
@@ -47,10 +99,10 @@ namespace IA.Rules
             }
             return dict;
         }
-        private Dictionary<Tuple<int, int>, Tuple<string, int>> Human_positions()
+        private Dictionary<Tuple<int, int>, Tuple<char, int>> Human_positions()
         {
-            Dictionary<Tuple<int, int>, Tuple<string, int>> dict = new Dictionary<Tuple<int, int>, Tuple<string, int>>();
-            foreach (KeyValuePair<Tuple<int, int>, Tuple<string, int>> k in _grid)
+            Dictionary<Tuple<int, int>, Tuple<char, int>> dict = new Dictionary<Tuple<int, int>, Tuple<char, int>>();
+            foreach (KeyValuePair<Tuple<int, int>, Tuple<char, int>> k in _grid)
             {
                 if (k.Value.Item1.Equals('h')) // mettre config.human
                 {
@@ -61,9 +113,8 @@ namespace IA.Rules
         }
         private int Human_number()
         {
-            Dictionary<Tuple<int, int>, Tuple<string, int>> dict = new Dictionary<Tuple<int, int>, Tuple<string, int>>();
             int number=0;
-            foreach (KeyValuePair<Tuple<int, int>, Tuple<string, int>> k in Human_positions())
+            foreach (KeyValuePair<Tuple<int, int>, Tuple<char, int>> k in Human_positions())
             {
                 number+= k.Value.Item2;
             }
@@ -71,9 +122,8 @@ namespace IA.Rules
         }
         private int Our_number()
         {
-            Dictionary<Tuple<int, int>, Tuple<string, int>> dict = new Dictionary<Tuple<int, int>, Tuple<string, int>>();
             int number = 0;
-            foreach (KeyValuePair<Tuple<int, int>, Tuple<string, int>> k in Our_Positions())
+            foreach (KeyValuePair<Tuple<int, int>, Tuple<char, int>> k in Our_Positions())
             {
                 number += k.Value.Item2;
             }
@@ -81,9 +131,8 @@ namespace IA.Rules
         }
         private int Ennemy_number()
         {
-            Dictionary<Tuple<int, int>, Tuple<string, int>> dict = new Dictionary<Tuple<int, int>, Tuple<string, int>>();
             int number = 0;
-            foreach (KeyValuePair<Tuple<int, int>, Tuple<string, int>> k in Ennemy_positions())
+            foreach (KeyValuePair<Tuple<int, int>, Tuple<char, int>> k in Ennemy_positions())
             {
                 number += k.Value.Item2;
             }
@@ -91,6 +140,7 @@ namespace IA.Rules
         }
     }
 }
+
 
 
 
