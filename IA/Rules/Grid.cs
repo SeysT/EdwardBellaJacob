@@ -58,7 +58,7 @@ namespace IA.Rules
             ///</summary>
             foreach (var p in Pawns)
             {
-                if (c.Equals(p.Coordinates))
+                if (c.Equals(p._coordinates))
                 {
                     return p;
                 }
@@ -73,10 +73,10 @@ namespace IA.Rules
             ///</summary>
             foreach (var p in Pawns)
             {
-                if (c.Equals(p.Coordinates))
+                if (c.Equals(p._coordinates))
                 {
                     Pawns.Remove(p);
-                    Pawns.Add(new Pawn(p.Type, quantity, p.Coordinates));
+                    Pawns.Add(new Pawn(p._type, quantity, p._coordinates));
                     return;
                 }
             }
