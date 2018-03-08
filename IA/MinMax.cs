@@ -8,7 +8,7 @@ namespace IA
 {
     class MinMax
     {
-        
+
         // Alpha Beta is a branch and bound variation of min max algorithm
         // It allowed us to jump from a 2-depth to a 5-depth and thus to make AI stronger
 
@@ -17,7 +17,9 @@ namespace IA
         // Negative scores is winning
 
         // TODO add Move class
-        // TODO add to Board "MakeMove(currentMove)" method to update board
+        // TODO implement Board.MakeMove(Move)
+        // TODO implement Board.getMoves(Race r)
+        // TODO implement Board.getHeuristicScore(Race)
 
         private float AlphaBeta(Node current, 
                               int depth, 
@@ -40,11 +42,9 @@ namespace IA
                     foreach (Move currentMove in movesCandidate)
                     {
                         // Compute new board after move
-                        // TODO implement Board.MakeMove
                         Board newBoard = new Board(board).MakeMove(currentMove);
 
                         // fetch the new movesCandidate.
-                        // TODO implement Board.getMoves(Race r)
                         List<Move> updatedMoveCandidate = new List<Move>(movesCandidate);
                         updatedMoveCandidate.Remove(currentMove);
                         
@@ -55,7 +55,6 @@ namespace IA
                         current.Children.Add(Child);
 
                         // Compute Node.Weight
-                        // TODO implement Board.getHeuristicScore(Race)
                         Child.Data.HeuristicScore = newBoard.getHeuristicScore(myRace);
 
                         //Alpha beta stuff
@@ -78,11 +77,9 @@ namespace IA
                     {
 
                         // Compute new board after move
-                        // TODO implement Board.MakeMove
                         Board newBoard = new Board(board).MakeMove(currentMove);
 
                         // fetch the new movesCandidate.
-                        // TODO implement Board.getMoves(Race r)
                         List<Move> updatedMoveCandidate = new List<Move>(movesCandidate);
                         updatedMoveCandidate.Remove(currentMove);
 
@@ -93,7 +90,6 @@ namespace IA
                         current.Children.Add(Child);
 
                         // Compute Node.Weight
-                        // TODO implement Board.getHeuristicScore(Race)
                         Race otherRace = myRace == Race.Vampire ? Race.Werewolf : Race.Vampire;
                         Child.Data.HeuristicScore = newBoard.getHeuristicScore(otherRace);
 
