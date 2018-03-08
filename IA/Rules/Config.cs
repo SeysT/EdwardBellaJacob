@@ -8,7 +8,9 @@ namespace IA.Rules
 {
     class Config
     {
-        //'n' pour nous , 'v' pour vous et 'h' pour hommes 
+        public const char US = 'n';
+        public const char THEM = 'v';
+        public const char HUM = 'h';
     }
 
 }

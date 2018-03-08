@@ -10,7 +10,6 @@ namespace IA.Rules
     {
         public float ComputeMinDistance(Tuple<int, int> coord1, Tuple<int, int> coord2)
         {
-
             return Math.Max(Math.Abs(coord2.Item1 - coord1.Item1), Math.Abs(coord2.Item2 - coord1.Item2));
         }
 
