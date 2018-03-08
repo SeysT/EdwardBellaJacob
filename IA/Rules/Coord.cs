@@ -15,6 +15,14 @@ namespace IA.Rules
         }
 
         public int X { get; private set; }
-        public int Y { get; private set; } 
+        public int Y { get; private set; }
+
+        public override bool Equals(object obj)
+        {
+            var coord = obj as Coord;
+            return coord != null &&
+                   X == coord.X &&
+                   Y == coord.Y;
+        }
     }
 }

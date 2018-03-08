@@ -22,6 +22,13 @@ namespace IA.Rules
             Coordinates = new Coord(x,y);
         }
         
+        public Pawn(Pawn p)
+        {
+            Type = p.Type;
+            Quantity = p.Quantity;
+            Coordinates = p.Coordinates;
+        }
+
         public int Quantity { get; private set; }
         public char Type { get; private set; }
         public Coord Coordinates { get; private set; }

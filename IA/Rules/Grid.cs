@@ -23,7 +23,20 @@ namespace IA.Rules
             Pawns.Add(p);
         }
 
-
+        public Pawn getInCoord(Coord c)
+        {
+            ///<summary>
+            ///Renvoie ce qu'il y a dans une case, envoie pawn(h , 0 ,coord) par défaut
+            ///</summary>
+            foreach (var p in Pawns)
+            {
+                if (c.Equals(p.Coordinates))
+                {
+                    return p;
+                }
+            }
+            return new Pawn('h', 0, c);
+        }
 
         public void Move(Pawn p, Coord c)
         {
