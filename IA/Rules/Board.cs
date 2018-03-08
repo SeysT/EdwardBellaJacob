@@ -20,9 +20,24 @@ namespace IA.Rules
             this._y_max = y_max;
         }
 
-        public MakeMove(List<Move> moves)
+        public Board MakeMove(List<Move> moves)
         {
+            //TODO
+            Board newBoard = this;
+            return newBoard;
+        }
 
+        public List<Move> GetPossibleMoves()
+        {
+            //TODO
+            List<Move> list = new List<Move>();
+            return list;
+        }
+
+        public float GetHeuristiqueScore()
+        {
+            //TODO
+            return 0;
         }
 
         public Dictionary<Coord, int> OurPositions()
