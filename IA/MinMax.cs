@@ -34,9 +34,6 @@ namespace IA
             }
             else
             {
-
-
-
                 if (isMyTurn)
                 {
                     float val = float.MinValue;
@@ -117,7 +114,7 @@ namespace IA
         }
 
         // This function alows to convert the score returned by AlphaBeta to the coordinates of the next currentMove
-        private static Move GetNextMove(Node GameTree, int bestScore)
+        private static List<Move> GetNextMove(Node GameTree, int bestScore)
         {
             foreach (Node SubTree in GameTree.Children)
             {
