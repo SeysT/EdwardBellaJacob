@@ -14,7 +14,7 @@ namespace IA
         private Stopwatch _sw;
 
         private string _playerName = "EdwardBellaJacob";
-        private BaseServerPlayerTrame _trame;
+        private ServerPlayerTrame _trame;
 
         private int[,] _startPos;
 
@@ -24,23 +24,23 @@ namespace IA
             this._port = port;
 
             this._socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
-            this._trame = new BaseServerPlayerTrame(this._socket);
+            this._trame = new ServerPlayerTrame(this._socket);
 
             this._sw = new Stopwatch();
         }
 
         private void _initGame() {
             // First trame has already been received outside _initGame()
-            BaseServerPlayerTrame.CheckTrameType(this._trame, "SET");
+            ServerPlayerTrame.CheckTrameType(this._trame, "SET");
 
             this._trame.Receive();
-            BaseServerPlayerTrame.CheckTrameType(this._trame, "HUM");
+            ServerPlayerTrame.CheckTrameType(this._trame, "HUM");
 
             this._startPos = this._trame.Receive();
-            BaseServerPlayerTrame.CheckTrameType(this._trame, "HME");
+            ServerPlayerTrame.CheckTrameType(this._trame, "HME");
 
             this._trame.Receive();
-            BaseServerPlayerTrame.CheckTrameType(this._trame, "MAP");
+            ServerPlayerTrame.CheckTrameType(this._trame, "MAP");
         }
 
         private int[, ] _chooseMove()

@@ -12,7 +12,7 @@ namespace IA
         public NotExpectedTrameException(string message): base(message) { }
     }
 
-    class BaseServerPlayerTrame
+    class ServerPlayerTrame
     {
         private Socket _socket;
         private IDecodable _decoder;
@@ -20,7 +20,7 @@ namespace IA
         public string TrameHeader { get; set; }
         public int[, ] TramePayload { get; set; }
 
-        public BaseServerPlayerTrame(Socket socket)
+        public ServerPlayerTrame(Socket socket)
         {
             this._socket = socket;
         }
@@ -32,7 +32,7 @@ namespace IA
             return this.TramePayload;
         }
 
-        public static void CheckTrameType(BaseServerPlayerTrame trame, string headerToCheck)
+        public static void CheckTrameType(ServerPlayerTrame trame, string headerToCheck)
         {
             if (trame.TrameHeader != headerToCheck)
             {

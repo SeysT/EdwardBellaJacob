@@ -49,7 +49,7 @@
     <Compile Include="Heuristic.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Trame\ServerPlayer\BaseServerPlayerTrame.cs" />
+    <Compile Include="Trame\ServerPlayer\ServerPlayerTrame.cs" />
     <Compile Include="Trame\ServerPlayer\BYEDecoder.cs" />
     <Compile Include="Trame\ServerPlayer\ENDDecoder.cs" />
     <Compile Include="Trame\ServerPlayer\HMEDecoder.cs" />
