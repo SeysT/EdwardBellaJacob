@@ -13,49 +13,62 @@ namespace IA.Rules
 
             return Math.Max(Math.Abs(coord_2.Item1 - coord_1.Item1), Math.Abs(coord_2.Item2 - coord_1.Item2));
         }
-    }
 
-    public Tuple<int, int> FindNextMove(Tuple<int, int> coord_start, Tuple<int, int> coord_goal) {
-        //retourne la prochaine case sur laquelle aller à partir d'une coordonee de depart et une coordonee cible
-        if ((coord_start.Item1 == coord_goal.Item1) && (coord_start.Item2 == coord_goal.Item2))
+        public Tuple<int, int> FindNextMove(Tuple<int, int> coord_start, Tuple<int, int> coord_goal)
         {
-            return  coord_start;
-        }
-        else if (coord_start.Item1 == coord_goal.Item1) {
-            if (coord_start.Item2 < coord_goal.Item2)
+            //retourne la prochaine case sur laquelle aller à partir d'une coordonee de depart et une coordonee cible
+            if ((coord_start.Item1 == coord_goal.Item1) && (coord_start.Item2 == coord_goal.Item2))
             {
-                return new Tuple<int, int>(coord_start.Item1, coord_start.Item2 + 1);
+                return coord_start;
+            }
+            else if (coord_start.Item1 == coord_goal.Item1)
+            {
+                if (coord_start.Item2 < coord_goal.Item2)
+                {
+                    return new Tuple<int, int>(coord_start.Item1, coord_start.Item2 + 1);
+                }
+                else
+                {
+                    return new Tuple<int, int>(coord_start.Item1, coord_start.Item2 - 1);
+                }
+            }
+            else if (coord_start.Item2 == coord_goal.Item2)
+            {
+                if (coord_start.Item1 < coord_goal.Item1)
+                {
+                    return new Tuple<int, int>(coord_start.Item1 + 1, coord_start.Item2);
+                }
+                else
+                {
+                    return new Tuple<int, int>(coord_start.Item1 - 1, coord_start.Item2);
+                }
+            }
+            else if (coord_start.Item1 < coord_goal.Item1)
+            {
+                if (coord_start.Item2 < coord_goal.Item2)
+                {
+                    return new Tuple<int, int>(coord_start.Item1 + 1, coord_start.Item2 + 1);
+                }
+                else { return new Tuple<int, int>(coord_start.Item1 + 1, coord_start.Item2 - 1); }
+
+            }
+            else if (coord_start.Item1 > coord_goal.Item1)
+            {
+                if (coord_start.Item2 < coord_goal.Item2)
+                {
+                    return new Tuple<int, int>(coord_start.Item1 - 1, coord_start.Item2 + 1);
+                }
+                else
+                {
+                    return new Tuple<int, int>(coord_start.Item1 - 1, coord_start.Item2 - 1);
+                }
             }
             else
             {
-                return new Tuple<int, int>(coord_start.Item1, coord_start.Item2 - 1);
+                throw new Exception("[Rules.Utility]FindNextMove: Le code n'est pas supposé arriver là");
             }
         }
-        else if (coord_start.Item2 == coord_goal.Item2) {
-            if (coord_start.Item1 < coord_goal.Item1)
-            {
-                return new Tuple<int, int>(coord_start.Item1 + 1, coord_start.Item2);
-            }
-            else
-            {
-                return new Tuple<int, int>(coord_start.Item1 - 1, coord_start.Item2);
-            }
-        }
-        else if (coord_start.Item1 < coord_goal.Item1) {
-            if (coord_start.Item2 < coord_goal.Item2)
-            {
-                return new Tuple<int, int>(coord_start.Item1 + 1, coord_start.Item2 + 1);
-            }
-            else { return new Tuple<int, int>(coord_start.Item1 + 1, coord_start.Item2 - 1); }
-            
-        }
-        else if (coord_start.Item1 > coord_goal.Item1) {
-            if (coord_start.Item2 < coord_goal.Item2) {
-                return new Tuple<int, int>(coord_start.Item1 - 1, coord_start.Item2 + 1)}
-            else { return new Tuple<int, int>(coord_start.Item1 - 1, coord_start.Item2 - 1); }
-            }
-        else { throw new Exception("[Rules.Utility]FindNextMove: Le code n'est pas supposé arriver là"); }
-    } 
+    }
 }
 
 /*
