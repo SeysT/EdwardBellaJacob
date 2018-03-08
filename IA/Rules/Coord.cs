@@ -14,6 +14,12 @@ namespace IA.Rules
             Y = y;
         }
 
+        public Coord(int[,] coords)
+        {
+            X = coords[0, 0];
+            Y = coords[1, 0];
+        }
+
         public int X { get; private set; }
         public int Y { get; private set; }
 

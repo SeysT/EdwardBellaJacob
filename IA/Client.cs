@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Diagnostics;
 using System;
+using IA.Rules;
 
 namespace IA
 {
@@ -17,6 +18,9 @@ namespace IA
         private ServerPlayerTrame _trame;
 
         private int[,] _startPos;
+        private Board _board;
+        private int _ourIndex;
+        private int _theirIndex;
 
         public Client(string host, int port)
         {
@@ -29,18 +33,51 @@ namespace IA
             this._sw = new Stopwatch();
         }
 
+        private void _setIndex(Coord hmeCoord, int[,] mapInfos)
+        {
+            for (int i = 0; i < mapInfos.GetLength(0); i++)
+            {
+                Coord currentCoord = new Coord(mapInfos[i, 0], mapInfos[i, 1]);
+                if (hmeCoord == currentCoord)
+                {
+                    if (mapInfos[i, 3] != 0)
+                    {
+                        this._ourIndex = 3;
+                        this._theirIndex = 4;
+                    } else
+                    {
+                        this._ourIndex = 4;
+                        this._theirIndex = 3;
+                    }
+
+                    return;
+                }
+            }
+        }
+
         private void _initGame() {
             // First trame has already been received outside _initGame()
+            int[,] boardSize = this._trame.TramePayload;
             ServerPlayerTrame.CheckTrameType(this._trame, "SET");
 
+            // We don't need human coordinates to init game
             this._trame.Receive();
             ServerPlayerTrame.CheckTrameType(this._trame, "HUM");
 
-            this._startPos = this._trame.Receive();
+            // We get our starting coordinates
+            Coord hmeCoords = new Coord(this._startPos = this._trame.Receive());
             ServerPlayerTrame.CheckTrameType(this._trame, "HME");
 
-            this._trame.Receive();
+            // We get all information from map
+            int[,] mapInfos = this._trame.Receive();
             ServerPlayerTrame.CheckTrameType(this._trame, "MAP");
+
+            // We keep in memory what is our specy
+            this._setIndex(hmeCoords, mapInfos);
+
+            // We init the game
+            // Grid grid = new Grid(this._ourIndex, this._theirIndex, mapInfos);
+            // this._board = new Board(grid, boardSize[0, 0], boardSize[1, 0]);
         }
 
         private int[, ] _chooseMove()
@@ -55,6 +92,12 @@ namespace IA
             return next;
         }
 
+        private void _updateGame()
+        {
+            int[,] newMapInfos = this._trame.TramePayload;
+            Thread.Sleep(1000);
+        }
+
         public void Start()
         {
             this._socket.Connect(this._host, this._port);
@@ -67,15 +110,16 @@ namespace IA
             bool finish = false;
             while (!finish)
             {
-                int[, ] received = this._trame.Receive();
+                this._trame.Receive();
 
                 switch (this._trame.TrameHeader)
                 {
                     case "UPD":
-                        Thread.Sleep(1000);
                         this._sw.Start();
 
+                        this._updateGame();
                         int[,] next = this._chooseMove();
+
                         this._sw.Stop();
                         Console.WriteLine($"Elapsed Time={this._sw.Elapsed}");
 

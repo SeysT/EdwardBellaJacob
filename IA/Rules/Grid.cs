@@ -18,6 +18,34 @@ namespace IA.Rules
             Pawns = new List<Pawn>();
         }
 
+        public Grid(int ourIndex, int theirIndex, int[,] mapCoords)
+        {
+            Pawns = new List<Pawn>();
+
+            for (int i = 0; i < mapCoords.GetLength(0); i++)
+            {
+                char type;
+                int quantity;
+                Coord currentCoords = new Coord(mapCoords[i, 0], mapCoords[i, 1]);
+
+                if (mapCoords[i, 2] != 0)
+                {
+                    type = Config.HUM;
+                    quantity = mapCoords[i, 2];
+                } else if (mapCoords[i, ourIndex] != 0)
+                {
+                    type = Config.US;
+                    quantity = mapCoords[i, ourIndex];
+                } else
+                {
+                    type = Config.THEM;
+                    quantity = mapCoords[i, theirIndex];
+                }
+
+                Pawns.Add(new Pawn(type, quantity, currentCoords));
+            }
+        }
+
         public void Add(Pawn p)
         {
             Pawns.Add(p);
