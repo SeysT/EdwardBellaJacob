@@ -8,7 +8,7 @@ namespace IA
 {
     class MinMax
     {
-
+        
         // Alpha Beta is a branch and bound variation of min max algorithm
         // It allowed us to jump from a 2-depth to a 5-depth and thus to make AI stronger
 
