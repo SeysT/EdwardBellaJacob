@@ -10,27 +10,27 @@ namespace IA.Rules
     {
         public Pawn(char type, int quantity, Coord c)
         {
-            Type = type;
-            Quantity = quantity;
-            Coordinates = c;
+            _type = type;
+            _quantity = quantity;
+            _coordinates = c;
         }
 
         public Pawn(char type, int quantity, int x, int y)
         {
-            Type = type;
-            Quantity = quantity;
-            Coordinates = new Coord(x,y);
+            _type = type;
+            _quantity = quantity;
+            _coordinates = new Coord(x,y);
         }
         
         public Pawn(Pawn p)
         {
-            Type = p.Type;
-            Quantity = p.Quantity;
-            Coordinates = p.Coordinates;
+            _type = p._type;
+            _quantity = p._quantity;
+            _coordinates = p._coordinates;
         }
 
-        public int Quantity { get; private set; }
-        public char Type { get; private set; }
-        public Coord Coordinates { get; private set; }
+        public int _quantity { get; private set; }
+        public char _type { get; private set; }
+        public Coord _coordinates { get; private set; }
     }
 }

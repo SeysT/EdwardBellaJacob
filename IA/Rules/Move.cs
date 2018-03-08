@@ -7,9 +7,9 @@ namespace IA.Rules
 
     class Move
     {
-        private Coord _c;
-        private Direction _dir;
-        private int _nbre;
+        public  Coord _c;
+        public Direction _dir;
+        public int _nbre;
 
         /// <summary>
         /// Constructeur de Move: qui prend en entrée les coordonnées, la direction 

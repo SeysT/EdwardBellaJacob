@@ -51,7 +51,7 @@ namespace IA.Rules
             Pawns.Add(p);
         }
 
-        public Pawn getInCoord(Coord c)
+        public Pawn _getInCoord(Coord c)
         {
             ///<summary>
             ///Renvoie ce qu'il y a dans une case, envoie pawn(h , 0 ,coord) par défaut
@@ -66,6 +66,22 @@ namespace IA.Rules
             return new Pawn('h', 0, c);
         }
 
+        public void _setQuantityInCoord(Coord c,int quantity)
+        {
+            ///<summary>
+            ///Renvoie ce qu'il y a dans une case, envoie pawn(h , 0 ,coord) par défaut
+            ///</summary>
+            foreach (var p in Pawns)
+            {
+                if (c.Equals(p.Coordinates))
+                {
+                    Pawns.Remove(p);
+                    Pawns.Add(new Pawn(p.Type, quantity, p.Coordinates));
+                    return;
+                }
+            }
+            //TODO: Throw exception, not supposed to be here
+        }
         public void Move(Pawn p, Coord c)
         {
             // TODO
