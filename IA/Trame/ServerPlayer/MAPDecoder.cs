@@ -1,16 +1,12 @@
-﻿using System.Net.Sockets;
+﻿using IA.Trame.ServerPlayer;
+using System.Net.Sockets;
 using System.Threading;
 
 namespace IA.Trame
 {
-    class MAPTrame : BaseServeurPlayerTrame
+    class MAPDecoder : IDecodable
     {
-        public MAPTrame() : base()
-        {
-            this._trameHeader = "MAP";
-        }
-
-        protected override int[,] _decodeTrame(Socket socket)
+        public int[,] Decode(Socket socket)
         {
             byte[] buffer = new byte[1];
 
@@ -18,13 +14,13 @@ namespace IA.Trame
             socket.Receive(buffer, 0, 1, SocketFlags.Partial);
 
             int caseNumber = (int)buffer[0];
-            int[,] caseConfigurations = new int[caseNumber, 2];
+            int[,] caseConfigurations = new int[caseNumber, 5];
 
             buffer = new byte[5];
             for (int i = 0; i < caseNumber; i++)
             {
-                while (socket.Available < 2) Thread.Sleep(10);
-                socket.Receive(buffer, 0, 2, SocketFlags.Partial);
+                while (socket.Available < 5) Thread.Sleep(10);
+                socket.Receive(buffer, 0, 5, SocketFlags.Partial);
 
                 caseConfigurations[i, 0] = (int) buffer[0];
                 caseConfigurations[i, 1] = (int) buffer[1];
