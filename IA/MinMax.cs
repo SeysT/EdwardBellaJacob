@@ -39,7 +39,7 @@ namespace IA
 
                 if (isMyTurn)
                 {
-                    float val = (float) Int32.MaxValue;
+                    float val = float.MinValue;
                     foreach (Move currentMove in movesCandidate)
                     {
                         // Compute new board after move
@@ -76,7 +76,7 @@ namespace IA
                 }
                 else
                 {
-                    float val = (float)Int32.MaxValue;
+                    float val = float.MaxValue;
                     foreach (Move currentMove in movesCandidate)
                     {
 
@@ -126,7 +126,7 @@ namespace IA
                     return SubTree.Data.Moves;
                 }
             }
-            throw new Exception("[MinMax] GetNextMove couldn't return LastPlayedPosition");
+            throw new Exception("[MinMax] GetNextMove couldn't return Moves");
         }
     }
 }
