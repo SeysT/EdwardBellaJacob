@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IA
+namespace IA.Rules
 {
     class MinMax
     {
