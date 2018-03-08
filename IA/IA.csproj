@@ -43,6 +43,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Client.cs" />
+    <Compile Include="MinMax.cs" />
+    <Compile Include="Node.cs" />
     <Compile Include="Trame\PlayerServer\BasePlayerServerTrame.cs" />
     <Compile Include="Trame\PlayerServer\MOVTrame.cs" />
     <Compile Include="Trame\PlayerServer\NMETrame.cs" />
