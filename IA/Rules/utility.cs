@@ -8,59 +8,59 @@ namespace IA.Rules
 {
     public class Utility
     {
-        public float ComputeMinDistance(Tuple<int, int> coord_1, Tuple<int, int> coord_2)
+        public float ComputeMinDistance(Tuple<int, int> coord1, Tuple<int, int> coord2)
         {
 
-            return Math.Max(Math.Abs(coord_2.Item1 - coord_1.Item1), Math.Abs(coord_2.Item2 - coord_1.Item2));
+            return Math.Max(Math.Abs(coord2.Item1 - coord1.Item1), Math.Abs(coord2.Item2 - coord1.Item2));
         }
 
-        public Tuple<int, int> FindNextMove(Tuple<int, int> coord_start, Tuple<int, int> coord_goal)
+        public Tuple<int, int> FindNextMove(Tuple<int, int> coordStart, Tuple<int, int> coordGoal)
         {
             //retourne la prochaine case sur laquelle aller à partir d'une coordonee de depart et une coordonee cible
-            if ((coord_start.Item1 == coord_goal.Item1) && (coord_start.Item2 == coord_goal.Item2))
+            if ((coordStart.Item1 == coordGoal.Item1) && (coordStart.Item2 == coordGoal.Item2))
             {
-                return coord_start;
+                return coordStart;
             }
-            else if (coord_start.Item1 == coord_goal.Item1)
+            else if (coordStart.Item1 == coordGoal.Item1)
             {
-                if (coord_start.Item2 < coord_goal.Item2)
+                if (coordStart.Item2 < coordGoal.Item2)
                 {
-                    return new Tuple<int, int>(coord_start.Item1, coord_start.Item2 + 1);
+                    return new Tuple<int, int>(coordStart.Item1, coordStart.Item2 + 1);
                 }
                 else
                 {
-                    return new Tuple<int, int>(coord_start.Item1, coord_start.Item2 - 1);
+                    return new Tuple<int, int>(coordStart.Item1, coordStart.Item2 - 1);
                 }
             }
-            else if (coord_start.Item2 == coord_goal.Item2)
+            else if (coordStart.Item2 == coordGoal.Item2)
             {
-                if (coord_start.Item1 < coord_goal.Item1)
+                if (coordStart.Item1 < coordGoal.Item1)
                 {
-                    return new Tuple<int, int>(coord_start.Item1 + 1, coord_start.Item2);
+                    return new Tuple<int, int>(coordStart.Item1 + 1, coordStart.Item2);
                 }
                 else
                 {
-                    return new Tuple<int, int>(coord_start.Item1 - 1, coord_start.Item2);
+                    return new Tuple<int, int>(coordStart.Item1 - 1, coordStart.Item2);
                 }
             }
-            else if (coord_start.Item1 < coord_goal.Item1)
+            else if (coordStart.Item1 < coordGoal.Item1)
             {
-                if (coord_start.Item2 < coord_goal.Item2)
+                if (coordStart.Item2 < coordGoal.Item2)
                 {
-                    return new Tuple<int, int>(coord_start.Item1 + 1, coord_start.Item2 + 1);
+                    return new Tuple<int, int>(coordStart.Item1 + 1, coordStart.Item2 + 1);
                 }
-                else { return new Tuple<int, int>(coord_start.Item1 + 1, coord_start.Item2 - 1); }
+                else { return new Tuple<int, int>(coordStart.Item1 + 1, coordStart.Item2 - 1); }
 
             }
-            else if (coord_start.Item1 > coord_goal.Item1)
+            else if (coordStart.Item1 > coordGoal.Item1)
             {
-                if (coord_start.Item2 < coord_goal.Item2)
+                if (coordStart.Item2 < coordGoal.Item2)
                 {
-                    return new Tuple<int, int>(coord_start.Item1 - 1, coord_start.Item2 + 1);
+                    return new Tuple<int, int>(coordStart.Item1 - 1, coordStart.Item2 + 1);
                 }
                 else
                 {
-                    return new Tuple<int, int>(coord_start.Item1 - 1, coord_start.Item2 - 1);
+                    return new Tuple<int, int>(coordStart.Item1 - 1, coordStart.Item2 - 1);
                 }
             }
             else

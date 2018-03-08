@@ -9,7 +9,6 @@ namespace IA.Rules
     class Board
     // Class to handle boards
     {
-
         private Dictionary<Tuple<int, int>, Tuple<char, int>> _grid;
         private int _x_max;
         private int _y_max;
@@ -23,7 +22,8 @@ namespace IA.Rules
             this._x_max = x_max;
             this._y_max = y_max;
         }
-        private Dictionary<Tuple<int, int>, Tuple<char, int>> Our_Positions()
+
+        public Dictionary<Tuple<int, int>, Tuple<char, int>> OurPositions()
         {
             ///<summary>
             ///Envoie les positions de nos pions sous forme de dictionnaire key:position, value:('n',nombre de pions)
@@ -40,7 +40,7 @@ namespace IA.Rules
             return dict;
         }
 
-        private Boolean CheckPresence(Dictionary<Tuple<int, int>, Tuple<char, int>> adjacentsDict)
+        public Boolean CheckPresence(Dictionary<Tuple<int, int>, Tuple<char, int>> adjacentsDict)
         {
             ///<summary>
             ///envoie true s'il y a des pions 'v' ou 'h' dans des cases adjacentes aux pions 'n'
@@ -57,7 +57,7 @@ namespace IA.Rules
             return false;
         }
 
-        private Dictionary<Tuple<int, int>, Tuple<char, int>> GetAdjacentPositions(Tuple<int, int> targetPosition) {
+        public Dictionary<Tuple<int, int>, Tuple<char, int>> GetAdjacentPositions(Tuple<int, int> targetPosition) {
             //prend un tuple de position en entrée en renvoie les tuples adjacents sous forme d'un dico
             Dictionary<Tuple<int, int>, Tuple<char, int>> result = new Dictionary<Tuple<int, int>, Tuple<char, int>>();
             //on commence par mettre toutes les cases adjacentes, puis on vérifie si elle est bien dans la grid, on met ('h',0) dedans s'il n'y a rien ;)
@@ -85,7 +85,8 @@ namespace IA.Rules
             }
             return result;
         }
-        private Dictionary<Tuple<int, int>, Tuple<char, int>> Ennemy_positions()
+
+        public Dictionary<Tuple<int, int>, Tuple<char, int>> EnnemyPositions()
         {
             Dictionary<Tuple<int, int>, Tuple<char, int>> dict = new Dictionary<Tuple<int, int>, Tuple<char, int>>();
             // 'v' pour vous 
@@ -99,7 +100,8 @@ namespace IA.Rules
             }
             return dict;
         }
-        private Dictionary<Tuple<int, int>, Tuple<char, int>> Human_positions()
+
+        public Dictionary<Tuple<int, int>, Tuple<char, int>> HumanPositions()
         {
             Dictionary<Tuple<int, int>, Tuple<char, int>> dict = new Dictionary<Tuple<int, int>, Tuple<char, int>>();
             foreach (KeyValuePair<Tuple<int, int>, Tuple<char, int>> k in _grid)
@@ -111,28 +113,30 @@ namespace IA.Rules
             }
             return dict;
         }
-        private int Human_number()
-        {
-            int number=0;
-            foreach (KeyValuePair<Tuple<int, int>, Tuple<char, int>> k in Human_positions())
-            {
-                number+= k.Value.Item2;
-            }
-            return number;
-        }
-        private int Our_number()
+
+        private int HumanNumber()
         {
             int number = 0;
-            foreach (KeyValuePair<Tuple<int, int>, Tuple<char, int>> k in Our_Positions())
+            foreach (KeyValuePair<Tuple<int, int>, Tuple<char, int>> k in HumanPositions())
             {
                 number += k.Value.Item2;
             }
             return number;
         }
-        private int Ennemy_number()
+
+        public int OurNumber()
         {
             int number = 0;
-            foreach (KeyValuePair<Tuple<int, int>, Tuple<char, int>> k in Ennemy_positions())
+            foreach (KeyValuePair<Tuple<int, int>, Tuple<char, int>> k in OurPositions())
+            {
+                number += k.Value.Item2;
+            }
+            return number;
+        }
+        public int EnnemyNumber()
+        {
+            int number = 0;
+            foreach (KeyValuePair<Tuple<int, int>, Tuple<char, int>> k in EnnemyPositions())
             {
                 number += k.Value.Item2;
             }
@@ -140,9 +144,6 @@ namespace IA.Rules
         }
     }
 }
-
-
-
 
 /* 
 
