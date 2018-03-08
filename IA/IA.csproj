@@ -58,6 +58,9 @@
     <Compile Include="Trame\ServerPlayer\MAPDecoder.cs" />
     <Compile Include="Trame\ServerPlayer\SETDecoder.cs" />
     <Compile Include="Trame\ServerPlayer\UPDDecoder.cs" />
+    <Compile Include="Rules\Board.cs" />
+    <Compile Include="Rules\Utility.cs" />
+    <Compile Include="Rules\Config.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

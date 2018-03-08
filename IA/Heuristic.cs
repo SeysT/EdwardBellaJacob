@@ -1,4 +1,5 @@
-﻿using System;
+﻿/*using IA.Rules;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,8 +18,8 @@ namespace IA
     {
         public Heuristic(Board board, Race r)
         {
-            v = board.getVampire();
-            w = board.getWerewolf();
+            v = board.GetVampire();
+            w = board.GetWerewolf();
             this.r = r;
         }
 
@@ -39,4 +40,4 @@ namespace IA
             return Score;
         }
     }
-}
+}*/
