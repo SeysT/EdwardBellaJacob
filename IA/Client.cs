@@ -76,8 +76,8 @@ namespace IA
             this._setIndex(hmeCoords, mapInfos);
 
             // We init the game
-            // Grid grid = new Grid(this._ourIndex, this._theirIndex, mapInfos);
-            // this._board = new Board(grid, boardSize[0, 0], boardSize[1, 0]);
+            Grid grid = new Grid(this._ourIndex, this._theirIndex, mapInfos);
+            this._board = new Board(grid, boardSize[0, 0], boardSize[1, 0]);
         }
 
         private int[, ] _chooseMove()
