@@ -51,37 +51,42 @@ namespace IA.Rules
             Pawns.Add(p);
         }
 
-        public Pawn _getInCoord(Coord c)
+        /// <summary>
+        /// Renvoie ce qu'il y a dans une case, envoie pawn(h , 0 ,coord) par défaut
+        /// </summary>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        public Pawn GetInCoord(Coord c)
         {
-            ///<summary>
-            ///Renvoie ce qu'il y a dans une case, envoie pawn(h , 0 ,coord) par défaut
-            ///</summary>
             foreach (var p in Pawns)
             {
-                if (c.Equals(p._coordinates))
+                if (c.Equals(p.Coordinates))
                 {
                     return p;
                 }
             }
-            return new Pawn('h', 0, c);
+            return new Pawn(Config.HUM, 0, c);
         }
 
-        public void _setQuantityInCoord(Coord c,int quantity)
+        /// <summary>
+        /// Renvoie ce qu'il y a dans une case, envoie pawn(h , 0 ,coord) par défaut
+        /// </summary>
+        /// <param name="c"></param>
+        /// <param name="quantity"></param>
+        public void SetQuantityInCoord(Coord c, int quantity)
         {
-            ///<summary>
-            ///Renvoie ce qu'il y a dans une case, envoie pawn(h , 0 ,coord) par défaut
-            ///</summary>
             foreach (var p in Pawns)
             {
-                if (c.Equals(p._coordinates))
+                if (c.Equals(p.Coordinates))
                 {
                     Pawns.Remove(p);
-                    Pawns.Add(new Pawn(p._type, quantity, p._coordinates));
+                    Pawns.Add(new Pawn(p.Type, quantity, p.Coordinates));
                     return;
                 }
             }
             //TODO: Throw exception, not supposed to be here
         }
+
         public void Move(Pawn p, Coord c)
         {
             // TODO
