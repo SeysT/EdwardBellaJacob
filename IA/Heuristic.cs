@@ -1,5 +1,4 @@
-/*using IA.Rules;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,16 +6,8 @@ using System.Threading.Tasks;
 
 namespace IA
 {
-    enum Race { Vampire, Werewolf, Human };
-
     // class to compute scores
-    // To create a new subclass, you only need to touch "ComputeHeuristic()"
-    // which is conveniently protected virtual.
-    // For all else modifications, ask Hyunwoo
-    class Board
-    {
-
-    }
+    // For all modifications, ask Anouar and Baudouin
 
     class Heuristic
     {
@@ -32,42 +23,36 @@ namespace IA
         int h3 = 0;
         float h4 = 0;
 
-        protected virtual void StrengthHeuristic()
+        protected virtual void OurStrengthHeuristic()
         {
-            h11 = board.grid.Our_number();
+            h11 = board.grid.OurNumber();
         }
 
-        protected virtual void StrengthHeuristic()
+        protected virtual void EnnemyStrengthHeuristic()
         {
-            h12 = board.grid.Ennemy_number();
+            h12 = board.grid.EnnemyNumber();
         }
 
         protected virtual void BiggestGroupHeuristic()
         {
-<<<<<<< Updated upstream
-            v = board.GetVampire();
-            w = board.GetWerewolf();
-            this.r = r;
-=======
-            List<int> OurPositions = new List<int>();
-            foreach (Tuple<char, int> t in board.grid.Our_positions().Values())
+            List<int> Our_Positions = new List<int>();
+            foreach (int value in board.grid.OurPositions())
             {
-                OurPositions.Add((t.Item2));
+                Our_Positions.Add((value));
             }
 
-            List<int> EnnemyPositions = new List<int>();
-            foreach (Tuple<char, int> t in board.grid.Ennemy_positions().Values())
+            List<int> Ennemy_Positions = new List<int>();
+            foreach (int value in board.grid.EnnemyPositions())
             {
-                EnnemyPositions.Add((t.Item2));
+                Ennemy_Positions.Add((value));
             }
 
-            h2 = OurPositions.Max() - EnnemyPositions.Max();
->>>>>>> Stashed changes
+            h2 = Our_Positions.Max() - Ennemy_Positions.Max();
         }
 
         protected virtual void DensityHeuristic()
         {
-            h3 = board.grid.Our_number() / board.grid.Our_positions().count() - board.grid.Ennemy_number() / board.grid.Ennemy_positions().count();
+            h3 = board.grid.OurNumber() / board.grid.OurPositions().count() - board.grid.EnnemyNumber() / board.grid.EnnemyPositions().count();
         }
 
         protected virtual void DispersionHeuristic()
@@ -77,45 +62,39 @@ namespace IA
 
             int numerateur_x = 0;
             int numerateur_y = 0;
-            int denominateur_x = 0;
-            int denominateur_y = 0;
-            foreach (var element in board.grid.Our_positions())
+            int denominateur = board.grid.OurNumber();
+            foreach (KeyValuePair<Coord, int> kvp in board.grid.OurPositions())
             {
-                numerateur_x += element.Key.Item1 * element.Value.Item2;
-                numerateur_y += element.Key.Item2 * element.Value.Item2;
-                denominateur_x += element.Key.Item1;
-                denominateur_y += element.Key.Item2;
+                numerateur_x += kvp.Key.x * kvp.Value;
+                numerateur_y += kvp.Key.y * kvp.Value;
             }
-            OurBarycentre[0] = numerateur_x / denominateur_x;
-            OurBarycentre[1] = numerateur_y / denominateur_y;
+            OurBarycentre[0] = numerateur_x / denominateur;
+            OurBarycentre[1] = numerateur_y / denominateur;
 
             int en_numerateur_x = 0;
             int en_numerateur_y = 0;
-            int en_denominateur_x = 0;
-            int en_denominateur_y = 0;
-            foreach (var element in board.grid.Ennemy_positions())
+            int en_denominateur = board.grid.EnnemyNumber();
+            foreach (KeyValuePair<Coord, int> kvp in board.grid.EnnemyPositions())
             {
-                en_numerateur_x += element.Key.Item1 * element.Value.Item2;
-                en_numerateur_y += element.Key.Item2 * element.Value.Item2;
-                en_denominateur_x += element.Key.Item1;
-                en_denominateur_y += element.Key.Item2;
+                en_numerateur_x += kvp.Key.x * kvp.Value;
+                en_numerateur_y += kvp.Key.y * kvp.Value;
             }
-            EnnemyBarycentre[0] = en_numerateur_x / en_denominateur_x;
-            EnnemyBarycentre[1] = en_numerateur_y / en_denominateur_y;
+            EnnemyBarycentre[0] = en_numerateur_x / en_denominateur;
+            EnnemyBarycentre[1] = en_numerateur_y / en_denominateur;
 
 
             float OurDistance = 0;
             float EnnemyDistance = 0;
-            foreach (Tuple<int, int> coord in board.grid.Our_positions().Keys())
+            foreach (Coord key in board.grid.OurPositions())
             {
-                OurDistance += Math.Max(coord.Item1 - OurBarycentre[0], coord.Item2 - OurBarycentre[1]);
+                OurDistance += Math.Max(key.x - OurBarycentre[0], key.y - OurBarycentre[1]);
             }
-            foreach (Tuple<int, int> coord in board.grid.Ennemy_positions().Keys())
+            foreach (Coord key in board.grid.EnnemyPositions())
             {
-                EnnemyDistance += Math.Max(coord.Item1 - EnnemyBarycentre[0], coord.Item2 - EnnemyBarycentre[1]);
+                EnnemyDistance += Math.Max(key.x - EnnemyBarycentre[0], key.y - EnnemyBarycentre[1]);
             }
-            OurDistance = OurDistance / board.grid.Our_positions().count();
-            EnnemyDistance = EnnemyDistance / board.grid.Ennemy_positions().count();
+            OurDistance = OurDistance / board.grid.OurPositions().count();
+            EnnemyDistance = EnnemyDistance / board.grid.EnnemyPositions().count();
 
 
             h4 = OurDistance - EnnemyDistance;
@@ -123,8 +102,8 @@ namespace IA
 
         public float Score(float a11, float a12, float a2, float a3, float a4)
         {
-            return a11 * h11 + a12 * h12 + a2 * h2 + a3 * h3 + a4 * h4;
+            return a11 * h11 - a12 * h12 + a2 * h2 + a3 * h3 + a4 * h4;
         }
 
     }
-}*/
+}
