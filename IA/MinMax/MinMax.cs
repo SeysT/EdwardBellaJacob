@@ -1,4 +1,5 @@
-﻿using System;
+﻿using IA.Rules;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,7 +25,7 @@ namespace IA.Rules
                               int depth, 
                               float alpha, 
                               float beta, 
-                              Race myRace,
+                              Type myRace,
                               bool isMyTurn,
                               List<Move> movesCandidate, 
                               Board board)
@@ -41,7 +42,7 @@ namespace IA.Rules
                     foreach (Move currentMove in movesCandidate)
                     {
                         // Compute new board after move
-                        Board newBoard = new Board(board).MakeMove(currentMove);
+                        Board newBoard = board.MakeMove(new List<Move>() { currentMove });
 
                         // fetch the new movesCandidate.
                         List<Move> updatedMoveCandidate = new List<Move>(movesCandidate);
@@ -54,7 +55,7 @@ namespace IA.Rules
                         current.Children.Add(Child);
 
                         // Compute Node.Weight
-                        Child.Data.HeuristicScore = newBoard.getHeuristicScore(myRace);
+                        Child.Data.HeuristicScore = newBoard.GetHeuristicScore(myRace);
 
                         //Alpha beta stuff
                         val = Math.Max(val, this.AlphaBeta(Child, depth - 1, alpha, beta, myRace, !isMyTurn, updatedMoveCandidate, newBoard));
@@ -76,7 +77,7 @@ namespace IA.Rules
                     {
 
                         // Compute new board after move
-                        Board newBoard = new Board(board).MakeMove(currentMove);
+                        Board newBoard = board.MakeMove(new List<Move>() { currentMove });
 
                         // fetch the new movesCandidate.
                         List<Move> updatedMoveCandidate = new List<Move>(movesCandidate);
@@ -89,8 +90,7 @@ namespace IA.Rules
                         current.Children.Add(Child);
 
                         // Compute Node.Weight
-                        Race otherRace = myRace == Race.Vampire ? Race.Werewolf : Race.Vampire;
-                        Child.Data.HeuristicScore = newBoard.getHeuristicScore(otherRace);
+                        Child.Data.HeuristicScore = newBoard.GetHeuristicScore(Type.THEM);
 
                         //Alpha beta stuff
                         val = Math.Min(val, this.AlphaBeta(Child, depth - 1, alpha, beta, myRace, !isMyTurn, updatedMoveCandidate, newBoard));

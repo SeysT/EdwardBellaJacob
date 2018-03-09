@@ -95,7 +95,7 @@ namespace IA.Rules
             return list;
         }
 
-        public float GetHeuristiqueScore()
+        public float GetHeuristicScore(Type type)
         {
             //TODO
             return 0;
