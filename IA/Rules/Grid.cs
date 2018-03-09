@@ -30,15 +30,15 @@ namespace IA.Rules
 
                 if (mapCoords[i, 2] != 0)
                 {
-                    type = Config.HUM;
+                    type = Type.HUM;
                     quantity = mapCoords[i, 2];
                 } else if (mapCoords[i, ourIndex] != 0)
                 {
-                    type = Config.US;
+                    type = Type.US;
                     quantity = mapCoords[i, ourIndex];
                 } else
                 {
-                    type = Config.THEM;
+                    type = Type.THEM;
                     quantity = mapCoords[i, theirIndex];
                 }
 
@@ -65,7 +65,7 @@ namespace IA.Rules
                     return p;
                 }
             }
-            return new Pawn(Config.HUM, 0, c);
+            return new Pawn(Type.HUM, 0, c);
         }
 
         /// <summary>

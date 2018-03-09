@@ -6,16 +6,18 @@ using System.Threading.Tasks;
 
 namespace IA.Rules
 {
+    enum Type { US, THEM, HUM }
+
     class Pawn
     {
-        public Pawn(char type, int quantity, Coord c)
+        public Pawn(Type type, int quantity, Coord c)
         {
             Type = type;
             Quantity = quantity;
             Coordinates = c;
         }
 
-        public Pawn(char type, int quantity, int x, int y)
+        public Pawn(Type type, int quantity, int x, int y)
         {
             Type = type;
             Quantity = quantity;
@@ -30,7 +32,7 @@ namespace IA.Rules
         }
 
         public int Quantity { get; private set; }
-        public char Type { get; private set; }
+        public Type Type { get; private set; }
         public Coord Coordinates { get; private set; }
     }
 }

@@ -32,48 +32,49 @@ namespace IA.Rules
             foreach (Move move in moves)
             {
                 Pawn p = _grid.GetInCoord(move.Coordinates);
+
                 if (p.Quantity.Equals(move.Quantity) && !p.Quantity.Equals(0))
                 {
                     _grid.Pawns.Remove(p);
-                }
-                else
+                } else
                 {
                     _grid.SetQuantityInCoord(p.Coordinates,p.Quantity - move.Quantity);
-                    Coord newCoord = p.Coordinates;
-                    switch (move.Direction)
-                    {
-                        case Direction.D:
-                            newCoord.Y += 1;
-                            break;
-                        case Direction.U:
-                            newCoord.Y -= 1;
-                            break;
-                        case Direction.R:
-                            newCoord.X += 1;
-                            break;
-                        case Direction.L:
-                            newCoord.X -= 1;
-                            break;
-                        case Direction.UR:
-                            newCoord.X += 1;
-                            newCoord.Y -= 1;
-                            break;
-                        case Direction.UL:
-                            newCoord.X -= 1;
-                            newCoord.Y -= 1;
-                            break;
-                        case Direction.DL:
-                            newCoord.Y += 1;
-                            newCoord.X -= 1;
-                            break;
-                        case Direction.DR:
-                            newCoord.Y += 1;
-                            newCoord.X += 1;
-                            break;
-                    }
 
-                    _grid.Pawns.Add(new Pawn(p.Type, move.Quantity, newCoord));
                 }
+
+                Coord newCoord = p.Coordinates;
+                switch (move.Direction)
+                {
+                    case Direction.D:
+                        newCoord.Y += 1;
+                        break;
+                    case Direction.U:
+                        newCoord.Y -= 1;
+                        break;
+                    case Direction.R:
+                        newCoord.X += 1;
+                        break;
+                    case Direction.L:
+                        newCoord.X -= 1;
+                        break;
+                    case Direction.UR:
+                        newCoord.X += 1;
+                        newCoord.Y -= 1;
+                        break;
+                    case Direction.UL:
+                        newCoord.X -= 1;
+                        newCoord.Y -= 1;
+                        break;
+                    case Direction.DL:
+                        newCoord.Y += 1;
+                        newCoord.X -= 1;
+                        break;
+                    case Direction.DR:
+                        newCoord.Y += 1;
+                        newCoord.X += 1;
+                        break;
+                }
+                _grid.Pawns.Add(new Pawn(p.Type, move.Quantity, newCoord));
             }
         }
 
@@ -110,7 +111,7 @@ namespace IA.Rules
             Dictionary<Coord, int> dict = new Dictionary<Coord,int>();
 
             foreach (Pawn pawn in _grid.Pawns) {
-                if (pawn.Type.Equals(Config.US))
+                if (pawn.Type.Equals(Type.US))
                 {
                     dict.Add(pawn.Coordinates, pawn.Quantity);
                 }
@@ -128,7 +129,7 @@ namespace IA.Rules
 
             foreach (Pawn pawn in _grid.Pawns)
             {
-                if (pawn.Type.Equals(Config.US))
+                if (pawn.Type.Equals(Type.US))
                 {
                     list.Add(pawn);
                 }
@@ -142,14 +143,14 @@ namespace IA.Rules
             {
                 // on commence par mettre toutes les cases adjacentes, 
                 // puis on vérifie si elle est bien dans la grid, on met ('h',0) dedans s'il n'y a rien ;)
-                new Pawn(Config.HUM, 0, targetPosition.X + 1, targetPosition.Y - 1),
-                new Pawn(Config.HUM, 0, targetPosition.X + 1, targetPosition.Y),
-                new Pawn(Config.HUM, 0, targetPosition.X + 1, targetPosition.Y + 1),
-                new Pawn(Config.HUM, 0, targetPosition.X, targetPosition.Y - 1),
-                new Pawn(Config.HUM, 0, targetPosition.X, targetPosition.Y + 1),
-                new Pawn(Config.HUM, 0, targetPosition.X - 1, targetPosition.Y + 1),
-                new Pawn(Config.HUM, 0, targetPosition.X - 1, targetPosition.Y - 1),
-                new Pawn(Config.HUM, 0, targetPosition.X - 1, targetPosition.Y)
+                new Pawn(Type.HUM, 0, targetPosition.X + 1, targetPosition.Y - 1),
+                new Pawn(Type.HUM, 0, targetPosition.X + 1, targetPosition.Y),
+                new Pawn(Type.HUM, 0, targetPosition.X + 1, targetPosition.Y + 1),
+                new Pawn(Type.HUM, 0, targetPosition.X, targetPosition.Y - 1),
+                new Pawn(Type.HUM, 0, targetPosition.X, targetPosition.Y + 1),
+                new Pawn(Type.HUM, 0, targetPosition.X - 1, targetPosition.Y + 1),
+                new Pawn(Type.HUM, 0, targetPosition.X - 1, targetPosition.Y - 1),
+                new Pawn(Type.HUM, 0, targetPosition.X - 1, targetPosition.Y)
             };
 
             foreach (Pawn pawn in result)
@@ -214,7 +215,7 @@ namespace IA.Rules
             Dictionary<Coord, int> dict = new Dictionary<Coord, int>();
             foreach (Pawn pawn in _grid.Pawns)
             {
-                if (pawn.Type.Equals(Config.THEM))
+                if (pawn.Type.Equals(Type.THEM))
                 {
                     dict.Add(pawn.Coordinates, pawn.Quantity);
                 }
@@ -227,7 +228,7 @@ namespace IA.Rules
             Dictionary<Coord, int> dict = new Dictionary<Coord, int>();
             foreach (Pawn pawn in _grid.Pawns)
             {
-                if (pawn.Type.Equals(Config.HUM))
+                if (pawn.Type.Equals(Type.HUM))
                 {
                     dict.Add(pawn.Coordinates, pawn.Quantity);
                 }
@@ -240,7 +241,7 @@ namespace IA.Rules
             int number = 0;
             foreach (Pawn pawn in _grid.Pawns)
             {
-                if (pawn.Type.Equals(Config.HUM))
+                if (pawn.Type.Equals(Type.HUM))
                 {
                     number += pawn.Quantity;
                 }
@@ -253,7 +254,7 @@ namespace IA.Rules
             int number = 0;
             foreach (Pawn pawn in _grid.Pawns)
             {
-                if (pawn.Type.Equals(Config.US))
+                if (pawn.Type.Equals(Type.US))
                 {
                     number += pawn.Quantity;
                 }
@@ -266,7 +267,7 @@ namespace IA.Rules
             int number = 0;
             foreach (Pawn pawn in _grid.Pawns)
             {
-                if (pawn.Type.Equals(Config.THEM))
+                if (pawn.Type.Equals(Type.THEM))
                 {
                     number += pawn.Quantity;
                 }
