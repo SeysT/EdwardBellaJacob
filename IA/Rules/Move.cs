@@ -7,9 +7,9 @@ namespace IA.Rules
 
     class Move
     {
-        public  Coord _c;
-        public Direction _dir;
-        public int _nbre;
+        public  Coord Coordinates { get; set; }
+        public Direction Direction { get; set; }
+        public int Quantity { get; set; }
 
         /// <summary>
         /// Constructeur de Move: qui prend en entrée les coordonnées, la direction 
@@ -17,16 +17,16 @@ namespace IA.Rules
         /// </summary>
         public Move(Coord initialCoord, Direction dir, int q)
         {
-            this._c = initialCoord;
-            this._dir = dir;
-            this._nbre = q;
+            this.Coordinates = initialCoord;
+            this.Direction = dir;
+            this.Quantity = q;
         }
 
         public Move(int x, int y, Direction dir, int q)
         {
-            this._c = new Coord(x, y);
-            this._dir = dir;
-            this._nbre = q;
+            this.Coordinates = new Coord(x, y);
+            this.Direction = dir;
+            this.Quantity = q;
         }
     }
 }
