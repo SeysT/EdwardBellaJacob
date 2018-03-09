@@ -24,7 +24,7 @@ namespace IA.Rules
 
             for (int i = 0; i < mapCoords.GetLength(0); i++)
             {
-                char type;
+                Type type;
                 int quantity;
                 Coord currentCoords = new Coord(mapCoords[i, 0], mapCoords[i, 1]);
 

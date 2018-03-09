@@ -120,5 +120,10 @@ namespace IA.Rules
             }
             throw new Exception("[MinMax] GetNextMove couldn't return Moves");
         }
+
+        static public int[,] GetNextMoves()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
