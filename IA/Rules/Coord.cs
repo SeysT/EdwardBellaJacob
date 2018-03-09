@@ -14,8 +14,14 @@ namespace IA.Rules
             Y = y;
         }
 
-        public int X { get; private set; }
-        public int Y { get; private set; }
+        public Coord(int[,] coords)
+        {
+            X = coords[0, 0];
+            Y = coords[1, 0];
+        }
+
+        public int X { get; set; }
+        public int Y { get; set; }
 
         public override bool Equals(object obj)
         {
@@ -23,6 +29,14 @@ namespace IA.Rules
             return coord != null &&
                    X == coord.X &&
                    Y == coord.Y;
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = 1861411795;
+            hashCode = hashCode * -1521134295 + X.GetHashCode();
+            hashCode = hashCode * -1521134295 + Y.GetHashCode();
+            return hashCode;
         }
     }
 }
