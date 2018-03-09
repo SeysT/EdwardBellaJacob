@@ -1,4 +1,5 @@
-﻿using System;
+﻿using IA.Rules;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,46 +14,46 @@ namespace IA
     {
         public Heuristic(Board board)
         {
-            this.board = board;
+            this._board = board;
         }
 
-        private Board board;
-        int h11 = 0;
-        int h12 = 0;
-        int h2 = 0;
-        int h3 = 0;
-        float h4 = 0;
+        private Board _board;
+        private int _h11 = 0;
+        private int _h12 = 0;
+        private int _h2 = 0;
+        private int _h3 = 0;
+        private float _h4 = 0;
 
         protected virtual void OurStrengthHeuristic()
         {
-            h11 = board.grid.OurNumber();
+            _h11 = _board.OurNumber();
         }
 
         protected virtual void EnnemyStrengthHeuristic()
         {
-            h12 = board.grid.EnnemyNumber();
+            _h12 = _board.EnnemyNumber();
         }
 
         protected virtual void BiggestGroupHeuristic()
         {
-            List<int> Our_Positions = new List<int>();
-            foreach (int value in board.grid.OurPositions())
+            List<int> OurPositions = new List<int>();
+            foreach (KeyValuePair<Coord, int> keyPair in _board.OurPositions())
             {
-                Our_Positions.Add((value));
+                OurPositions.Add((keyPair.Value));
             }
 
-            List<int> Ennemy_Positions = new List<int>();
-            foreach (int value in board.grid.EnnemyPositions())
+            List<int> EnnemyPositions = new List<int>();
+            foreach (KeyValuePair<Coord, int> keyPair in _board.EnnemyPositions())
             {
-                Ennemy_Positions.Add((value));
+                EnnemyPositions.Add((keyPair.Value));
             }
 
-            h2 = Our_Positions.Max() - Ennemy_Positions.Max();
+            _h2 = OurPositions.Max() - EnnemyPositions.Max();
         }
 
         protected virtual void DensityHeuristic()
         {
-            h3 = board.grid.OurNumber() / board.grid.OurPositions().count() - board.grid.EnnemyNumber() / board.grid.EnnemyPositions().count();
+            _h3 = _board.OurNumber() / _board.OurPositions().Count - _board.EnnemyNumber() / _board.EnnemyPositions().Count;
         }
 
         protected virtual void DispersionHeuristic()
@@ -60,49 +61,47 @@ namespace IA
             List<float> OurBarycentre = new List<float>();
             List<float> EnnemyBarycentre = new List<float>();
 
-            int numerateur_x = 0;
-            int numerateur_y = 0;
-            int denominateur = board.grid.OurNumber();
-            foreach (KeyValuePair<Coord, int> kvp in board.grid.OurPositions())
+            int numerateurX = 0;
+            int numerateurY = 0;
+            int denominateur = _board.OurNumber();
+            foreach (KeyValuePair<Coord, int> kvp in _board.OurPositions())
             {
-                numerateur_x += kvp.Key.x * kvp.Value;
-                numerateur_y += kvp.Key.y * kvp.Value;
+                numerateurX += kvp.Key.X * kvp.Value;
+                numerateurY += kvp.Key.Y * kvp.Value;
             }
-            OurBarycentre[0] = numerateur_x / denominateur;
-            OurBarycentre[1] = numerateur_y / denominateur;
+            OurBarycentre[0] = numerateurX / denominateur;
+            OurBarycentre[1] = numerateurY / denominateur;
 
-            int en_numerateur_x = 0;
-            int en_numerateur_y = 0;
-            int en_denominateur = board.grid.EnnemyNumber();
-            foreach (KeyValuePair<Coord, int> kvp in board.grid.EnnemyPositions())
+            int enNumerateurX = 0;
+            int enNumerateurY = 0;
+            int enDenominateur = _board.EnnemyNumber();
+            foreach (KeyValuePair<Coord, int> kvp in _board.EnnemyPositions())
             {
-                en_numerateur_x += kvp.Key.x * kvp.Value;
-                en_numerateur_y += kvp.Key.y * kvp.Value;
+                enNumerateurX += kvp.Key.X * kvp.Value;
+                enNumerateurY += kvp.Key.Y * kvp.Value;
             }
-            EnnemyBarycentre[0] = en_numerateur_x / en_denominateur;
-            EnnemyBarycentre[1] = en_numerateur_y / en_denominateur;
-
+            EnnemyBarycentre[0] = enNumerateurX / enDenominateur;
+            EnnemyBarycentre[1] = enNumerateurY / enDenominateur;
 
             float OurDistance = 0;
             float EnnemyDistance = 0;
-            foreach (Coord key in board.grid.OurPositions())
+            foreach (KeyValuePair<Coord, int> keyPair in _board.OurPositions())
             {
-                OurDistance += Math.Max(key.x - OurBarycentre[0], key.y - OurBarycentre[1]);
+                OurDistance += Math.Max(keyPair.Key.X - OurBarycentre[0], keyPair.Key.Y - OurBarycentre[1]);
             }
-            foreach (Coord key in board.grid.EnnemyPositions())
+            foreach (KeyValuePair<Coord, int> keyPair in _board.EnnemyPositions())
             {
-                EnnemyDistance += Math.Max(key.x - EnnemyBarycentre[0], key.y - EnnemyBarycentre[1]);
+                EnnemyDistance += Math.Max(keyPair.Key.X - EnnemyBarycentre[0], keyPair.Key.Y - EnnemyBarycentre[1]);
             }
-            OurDistance = OurDistance / board.grid.OurPositions().count();
-            EnnemyDistance = EnnemyDistance / board.grid.EnnemyPositions().count();
+            OurDistance = OurDistance / _board.OurPositions().Count;
+            EnnemyDistance = EnnemyDistance / _board.EnnemyPositions().Count();
 
-
-            h4 = OurDistance - EnnemyDistance;
+            _h4 = OurDistance - EnnemyDistance;
         }
 
         public float Score(float a11, float a12, float a2, float a3, float a4)
         {
-            return a11 * h11 - a12 * h12 + a2 * h2 + a3 * h3 + a4 * h4;
+            return a11 * _h11 - a12 * _h12 + a2 * _h2 + a3 * _h3 + a4 * _h4;
         }
 
     }
