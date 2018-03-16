@@ -48,6 +48,7 @@ namespace IA.Rules
 
                     // Compute Node.Weight
                     Child.Data.HeuristicScore = newBoard.GetHeuristicScore();
+                    Child.Data.Moves = new List<Move>() { currentMove };
 
                     //Alpha beta stuff
                     val = Math.Max(val, this.AlphaBeta(Child, depth - 1, alpha, beta, !isMyTurn, updatedMoveCandidate, newBoard));
@@ -82,6 +83,7 @@ namespace IA.Rules
 
                     // Compute Node.Weight
                     Child.Data.HeuristicScore = newBoard.GetHeuristicScore();
+                    Child.Data.Moves = new List<Move>() { currentMove };
 
                     //Alpha beta stuff
                     val = Math.Min(val, this.AlphaBeta(Child, depth - 1, alpha, beta, !isMyTurn, updatedMoveCandidate, newBoard));
@@ -109,11 +111,6 @@ namespace IA.Rules
                 }
             }
             throw new Exception("[MinMax] GetNextMove couldn't return Moves");
-        }
-
-        static public int[,] GetNextMoves()
-        {
-            throw new NotImplementedException();
         }
     }
 }

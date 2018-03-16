@@ -14,21 +14,21 @@ namespace IA.Rules
         {
             Type = type;
             Quantity = quantity;
-            Coordinates = c;
+            Coordinates = new Coord(c);
         }
 
         public Pawn(Type type, int quantity, int x, int y)
         {
             Type = type;
             Quantity = quantity;
-            Coordinates = new Coord(x,y);
+            Coordinates = new Coord(x, y);
         }
         
         public Pawn(Pawn p)
         {
             Type = p.Type;
             Quantity = p.Quantity;
-            Coordinates = p.Coordinates;
+            Coordinates = new Coord(p.Coordinates);
         }
 
         public int Quantity { get; private set; }

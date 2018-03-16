@@ -90,11 +90,10 @@ namespace IA
             // moves = MinMax.GetNextMove(root, value)
             Node root = new Node(new NodeData());
             List<Move> moveCandidates = this._board.GetPossibleMoves();
-            float value = new MinMax().AlphaBeta(root, 21, float.MinValue, float.MaxValue, true, moveCandidates, this._board);
+            float value = new MinMax().AlphaBeta(root, 7, float.MinValue, float.MaxValue, true, moveCandidates, this._board);
             List<Move> moves = MinMax.GetNextMove(root, value);
 
-            int[, ] toReturn = new int[0, 0];
-            return toReturn;
+            return MOVTrame.GetPayloadFromMoves(moves);
         }
 
         private void _updateGame()

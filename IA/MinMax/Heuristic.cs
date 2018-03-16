@@ -99,7 +99,7 @@ namespace IA
                     EnnemyDistance += Math.Max(keyPair.Key.X - EnnemyBarycentre[0], keyPair.Key.Y - EnnemyBarycentre[1]);
                 }
                 OurDistance = OurDistance / _board.OurPositions().Count;
-                EnnemyDistance = EnnemyDistance / _board.EnnemyPositions().Count();
+                EnnemyDistance = EnnemyDistance / _board.EnnemyPositions().Count;
 
                 return OurDistance - EnnemyDistance;
             }

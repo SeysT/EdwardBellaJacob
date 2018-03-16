@@ -7,17 +7,23 @@ namespace IA.Rules
 
     class Move
     {
-        public  Coord Coordinates { get; set; }
+        public Coord Coordinates { get; set; }
         public Direction Direction { get; set; }
         public int Quantity { get; set; }
 
+        public Move(Move m)
+        {
+            this.Coordinates = new Coord(m.Coordinates);
+            this.Direction = m.Direction;
+            this.Quantity = m.Quantity;
+        }
         /// <summary>
         /// Constructeur de Move: qui prend en entrée les coordonnées, la direction 
         /// et le nombre de pions à bouger
         /// </summary>
         public Move(Coord initialCoord, Direction dir, int q)
         {
-            this.Coordinates = initialCoord;
+            this.Coordinates = new Coord(initialCoord);
             this.Direction = dir;
             this.Quantity = q;
         }
