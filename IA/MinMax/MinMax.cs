@@ -21,7 +21,7 @@ namespace IA.Rules
         // TODO implement Board.getMoves(Race r)
         // TODO implement Board.getHeuristicScore(Race)
 
-        private float AlphaBeta(Node current, 
+        public float AlphaBeta(Node current, 
                               int depth, 
                               float alpha, 
                               float beta, 
@@ -109,7 +109,7 @@ namespace IA.Rules
         }
 
         // This function alows to convert the score returned by AlphaBeta to the coordinates of the next currentMove
-        private static List<Move> GetNextMove(Node GameTree, int bestScore)
+        static public List<Move> GetNextMove(Node GameTree, float bestScore)
         {
             foreach (Node SubTree in GameTree.Children)
             {

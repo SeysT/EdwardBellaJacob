@@ -85,12 +85,10 @@ namespace IA.Rules
             List<Pawn> ourPawns = this.OurPawns();
             foreach(Pawn p in ourPawns)
             {
-                Dictionary<Coord,Direction> AdjCoord=this.GetAdjacentCoordAndDir(p.Coordinates);
-                foreach (Coord coord in AdjCoord.Keys)
+                Dictionary<Coord, Direction> adjCoords = this.GetAdjacentCoordAndDir(p.Coordinates);
+                foreach (Coord coord in adjCoords.Keys)
                 {
-                    list.Add( new Move(coord, AdjCoord[coord], p.Quantity));
-
-                    //nbre = p._quantity Moving all the pawns
+                    list.Add(new Move(coord, adjCoords[coord], p.Quantity));
                 }
             }
             return list;
