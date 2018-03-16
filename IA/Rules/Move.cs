@@ -21,9 +21,9 @@ namespace IA.Rules
         /// Constructeur de Move: qui prend en entrée les coordonnées, la direction 
         /// et le nombre de pions à bouger
         /// </summary>
-        public Move(Coord initialCoord, Direction dir, int q)
+        public Move(Coord coord, Direction dir, int q)
         {
-            this.Coordinates = new Coord(initialCoord);
+            this.Coordinates = new Coord(coord);
             this.Direction = dir;
             this.Quantity = q;
         }

@@ -126,12 +126,12 @@ namespace IA.Rules
             //TO MODIFY: Take into account Split moves
             List<Move> list = new List<Move>();
             List<Pawn> ourPawns = this.OurPawns();
-            foreach(Pawn p in ourPawns)
+            foreach(Pawn pawn in ourPawns)
             {
-                Dictionary<Coord, Direction> adjCoords = this.GetAdjacentCoordAndDir(p.Coordinates);
-                foreach (Coord coord in adjCoords.Keys)
+                Dictionary<Coord, Direction> adjCoords = this.GetAdjacentCoordAndDir(pawn.Coordinates);
+                foreach (Direction direction in adjCoords.Values)
                 {
-                    list.Add(new Move(coord, adjCoords[coord], p.Quantity));
+                    list.Add(new Move(pawn.Coordinates, direction, pawn.Quantity));
                 }
             }
             return list;

@@ -10,6 +10,10 @@ namespace IA.Rules
 
     class Pawn
     {
+        public int Quantity { get; private set; }
+        public Type Type { get; private set; }
+        public Coord Coordinates { get; private set; }
+
         public Pawn(Type type, int quantity, Coord c)
         {
             Type = type;
@@ -30,9 +34,5 @@ namespace IA.Rules
             Quantity = p.Quantity;
             Coordinates = new Coord(p.Coordinates);
         }
-
-        public int Quantity { get; private set; }
-        public Type Type { get; private set; }
-        public Coord Coordinates { get; private set; }
     }
 }
