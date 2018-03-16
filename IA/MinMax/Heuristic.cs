@@ -105,7 +105,7 @@ namespace IA
             }
         }
 
-        public float Score(float a11, float a12, float a2, float a3, float a4)
+        public float GetScore(float a11, float a12, float a2, float a3, float a4)
         {
             return (
                 a11 * this.OurStrengthHeuristic -
