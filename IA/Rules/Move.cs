@@ -17,6 +17,7 @@ namespace IA.Rules
             this.Direction = m.Direction;
             this.Quantity = m.Quantity;
         }
+
         /// <summary>
         /// Constructeur de Move: qui prend en entrée les coordonnées, la direction 
         /// et le nombre de pions à bouger

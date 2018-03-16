@@ -10,6 +10,11 @@ namespace IA.Rules
     {
         public List<Pawn> Pawns { get; private set; }
 
+        public Grid()
+        {
+            this.Pawns = new List<Pawn>();
+        }
+
         public Grid(Grid g)
         {
             this.Pawns = new List<Pawn>(g.Pawns);
@@ -20,41 +25,13 @@ namespace IA.Rules
             Pawns = pawns;
         }
 
-        public Grid(int ourIndex, int theirIndex, int[,] mapCoords)
-        {
-            Pawns = new List<Pawn>();
-
-            for (int i = 0; i < mapCoords.GetLength(0); i++)
-            {
-                Type type;
-                int quantity;
-                Coord currentCoords = new Coord(mapCoords[i, 0], mapCoords[i, 1]);
-
-                if (mapCoords[i, 2] != 0)
-                {
-                    type = Type.HUM;
-                    quantity = mapCoords[i, 2];
-                } else if (mapCoords[i, ourIndex] != 0)
-                {
-                    type = Type.US;
-                    quantity = mapCoords[i, ourIndex];
-                } else
-                {
-                    type = Type.THEM;
-                    quantity = mapCoords[i, theirIndex];
-                }
-
-                Pawns.Add(new Pawn(type, quantity, currentCoords));
-            }
-        }
-
         public void Add(Pawn p)
         {
             Pawns.Add(p);
         }
 
         /// <summary>
-        /// Renvoie ce qu'il y a dans une case, envoie pawn(h , 0 ,coord) par défaut
+        /// Renvoie ce qu'il y a dans une case, envoie pawn(h , 0, coord) par défaut
         /// </summary>
         /// <param name="c"></param>
         /// <returns></returns>
@@ -67,26 +44,47 @@ namespace IA.Rules
                     return new Pawn(p);
                 }
             }
-            return new Pawn(Type.HUM, 0, c);
+            return new Pawn(Race.HUM, 0, c);
         }
 
         /// <summary>
-        /// Renvoie ce qu'il y a dans une case, envoie pawn(h , 0 ,coord) par défaut
+        /// Permet d'update la quantité du pawn de coordonnées c dans la grille.
         /// </summary>
         /// <param name="c"></param>
         /// <param name="quantity"></param>
-        public void SetQuantityInCoord(Coord c, int quantity)
+        /// <returns>return true in a pawn has been updated</returns>
+        public bool SetQuantityInCoord(Coord c, int quantity)
         {
-            foreach (var p in Pawns)
+            foreach (var pawn in Pawns)
             {
-                if (c.Equals(p.Coordinates))
+                if (c.Equals(pawn.Coordinates))
                 {
-                    Pawns.Remove(p);
-                    Pawns.Add(new Pawn(p.Type, quantity, p.Coordinates));
-                    return;
+                    Pawns.Remove(pawn);
+                    if (quantity > 0)
+                    {
+                        Pawns.Add(new Pawn(pawn.Race, quantity, pawn.Coordinates));
+                    }
+                    return true;
                 }
             }
-            //TODO: Throw exception, not supposed to be here
+            return false;
+        }
+
+        /// <summary>
+        /// This function updates quantity in coords if it exists or create with given quantity and race
+        /// </summary>
+        /// <param name="c">coord to look</param>
+        /// <param name="quantity">quantity to set</param>
+        /// <param name="race">race to add if pawn does not already exist</param>
+        /// <returns>true if pawn has been updated false if it has been created</returns>
+        public bool SetQuantityInCoord(Coord c, int quantity, Race race)
+        {
+            if (this.SetQuantityInCoord(c, quantity))
+            {
+                return true;
+            }
+            this.Pawns.Add(new Pawn(race, quantity, c));
+            return false;
         }
     }
 }

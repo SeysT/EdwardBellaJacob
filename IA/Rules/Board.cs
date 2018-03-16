@@ -9,20 +9,20 @@ namespace IA.Rules
     class Board
     // Class to handle boards
     {
-        private Grid _grid;
+        public Grid Grid { get; private set; }
         private int _x_max;
         private int _y_max;
         
         public Board(Board b)
         {
-            this._grid = new Grid(b._grid);
+            this.Grid = new Grid(b.Grid);
             this._x_max = b._x_max;
             this._y_max = b._y_max;
         }
 
         public Board(Grid grid, int x_max, int y_max)
         {
-            this._grid = new Grid(grid);
+            this.Grid = new Grid(grid);
             this._x_max = x_max;
             this._y_max = y_max;
         }
@@ -38,40 +38,32 @@ namespace IA.Rules
         {
             foreach (Move move in moves)
             {
-                Pawn pawn = _grid.GetInCoord(move.Coordinates);
-
-                if (pawn.Quantity.Equals(move.Quantity) && !pawn.Quantity.Equals(0))
-                {
-                    _grid.Pawns.Remove(pawn);
-                }
-                else
-                {
-                    _grid.SetQuantityInCoord(pawn.Coordinates, pawn.Quantity - move.Quantity);
-                }
+                Pawn pawn = Grid.GetInCoord(move.Coordinates);
+                Grid.SetQuantityInCoord(pawn.Coordinates, pawn.Quantity - move.Quantity);
 
                 Coord newCoord = Coord.DirectionMove(pawn.Coordinates, move.Direction);
 
-                Pawn inNewCoord = _grid.GetInCoord(newCoord);
+                Pawn inNewCoord = Grid.GetInCoord(newCoord);
                 if (inNewCoord.Quantity == 0)
                 {
-                    _grid.Pawns.Add(new Pawn(pawn.Type, move.Quantity, newCoord));
+                    Grid.Pawns.Add(new Pawn(pawn.Race, move.Quantity, newCoord));
                 }
                 else
                 {
-                    if (inNewCoord.Type.Equals(pawn.Type))
+                    if (inNewCoord.Race.Equals(pawn.Race))
                     {
-                        _grid.Pawns.Remove(inNewCoord);
-                        _grid.Pawns.Add(
-                            new Pawn(pawn.Type, move.Quantity + inNewCoord.Quantity, newCoord)
+                        Grid.Pawns.Remove(inNewCoord);
+                        Grid.Pawns.Add(
+                            new Pawn(pawn.Race, move.Quantity + inNewCoord.Quantity, newCoord)
                         );
                     }
-                    else if (inNewCoord.Type.Equals(Type.HUM))
+                    else if (inNewCoord.Race.Equals(Race.HUM))
                     {
                         if (inNewCoord.Quantity <=  move.Quantity)
                         {
-                            _grid.Pawns.Remove(inNewCoord);
-                            _grid.Pawns.Add(
-                                new Pawn(pawn.Type, move.Quantity + inNewCoord.Quantity, newCoord)
+                            Grid.Pawns.Remove(inNewCoord);
+                            Grid.Pawns.Add(
+                                new Pawn(pawn.Race, move.Quantity + inNewCoord.Quantity, newCoord)
                             );
                         }
                         else
@@ -81,39 +73,40 @@ namespace IA.Rules
                             break;
                         }
                     }
-                    else if (!inNewCoord.Type.Equals(pawn.Type))
+                    else if (!inNewCoord.Race.Equals(pawn.Race))
                     {
                         if (inNewCoord.Quantity >= 1.5 * move.Quantity)
                         {
                             break;
-                        }else if(inNewCoord.Quantity <= 1.5 * move.Quantity)
+                        }
+                        else if(inNewCoord.Quantity <= 1.5 * move.Quantity)
                         {
-                            _grid.Pawns.Remove(inNewCoord);
-                            _grid.Pawns.Add(new Pawn(pawn.Type, move.Quantity + inNewCoord.Quantity, newCoord));
+                            Grid.Pawns.Remove(inNewCoord);
+                            Grid.Pawns.Add(new Pawn(pawn.Race, move.Quantity + inNewCoord.Quantity, newCoord));
                         }
                         else
                         {
-                            //TODO: proba proba proba proba
+                            // TODO: proba proba proba proba
                             if(inNewCoord.Quantity.Equals(move.Quantity))
                             {
-                                //Proba de gagner = 0.5
-                                //si attaquant gagne, chaque pion a une proba de surivie de P
-                                //si attaquant perd , chaque pion a une proba de survie 1 - P
-                                _grid.Pawns.Remove(inNewCoord);
-                                _grid.Pawns.Add(new Pawn(pawn.Type, (int)(move.Quantity * 0.5) , newCoord));
+                                // Proba de gagner = 0.5
+                                // si attaquant gagne, chaque pion a une proba de surivie de P
+                                // si attaquant perd , chaque pion a une proba de survie 1 - P
+                                Grid.Pawns.Remove(inNewCoord);
+                                Grid.Pawns.Add(new Pawn(pawn.Race, (int)(move.Quantity * 0.5) , newCoord));
 
                             }
                             else if (inNewCoord.Quantity > move.Quantity)
                             {
-                                //Proba de gagner = move.Quantity / (2 * inNewCoord.Quantity)
-                                _grid.Pawns.Remove(inNewCoord);
-                                _grid.Pawns.Add(new Pawn(inNewCoord.Type, (int)(inNewCoord.Quantity * (1 - move.Quantity /(2 * inNewCoord.Quantity))), inNewCoord.Coordinates));
+                                // Proba de gagner = move.Quantity / (2 * inNewCoord.Quantity)
+                                Grid.Pawns.Remove(inNewCoord);
+                                Grid.Pawns.Add(new Pawn(inNewCoord.Race, (int)(inNewCoord.Quantity * (1 - move.Quantity /(2 * inNewCoord.Quantity))), inNewCoord.Coordinates));
                             }
                             else if (inNewCoord.Quantity < move.Quantity)
                             {
-                                //Proba de gagner = move.Quantity / inNewCoord.Quantity - 0.5
-                                _grid.Pawns.Remove(inNewCoord);
-                                _grid.Pawns.Add(new Pawn(pawn.Type, (int)(move.Quantity * (move.Quantity / inNewCoord.Quantity - 0.5)), newCoord));
+                                // Proba de gagner = move.Quantity / inNewCoord.Quantity - 0.5
+                                Grid.Pawns.Remove(inNewCoord);
+                                Grid.Pawns.Add(new Pawn(pawn.Race, (int)(move.Quantity * (move.Quantity / inNewCoord.Quantity - 0.5)), newCoord));
                             }
                         }
                     }   
@@ -151,8 +144,8 @@ namespace IA.Rules
         {
             Dictionary<Coord, int> dict = new Dictionary<Coord,int>();
 
-            foreach (Pawn pawn in _grid.Pawns) {
-                if (pawn.Type.Equals(Type.US))
+            foreach (Pawn pawn in Grid.Pawns) {
+                if (pawn.Race.Equals(Race.US))
                 {
                     dict.Add(pawn.Coordinates, pawn.Quantity);
                 }
@@ -168,9 +161,9 @@ namespace IA.Rules
         {
             List<Pawn> list = new List<Pawn>();
 
-            foreach (Pawn pawn in _grid.Pawns)
+            foreach (Pawn pawn in Grid.Pawns)
             {
-                if (pawn.Type.Equals(Type.US))
+                if (pawn.Race.Equals(Race.US))
                 {
                     list.Add(pawn);
                 }
@@ -183,15 +176,15 @@ namespace IA.Rules
             List<Pawn> result = new List<Pawn>
             {
                 // on commence par mettre toutes les cases adjacentes, 
-                // puis on vérifie si elle est bien dans la grid, on met ('h',0) dedans s'il n'y a rien ;)
-                new Pawn(Type.HUM, 0, targetPosition.X + 1, targetPosition.Y - 1),
-                new Pawn(Type.HUM, 0, targetPosition.X + 1, targetPosition.Y),
-                new Pawn(Type.HUM, 0, targetPosition.X + 1, targetPosition.Y + 1),
-                new Pawn(Type.HUM, 0, targetPosition.X, targetPosition.Y - 1),
-                new Pawn(Type.HUM, 0, targetPosition.X, targetPosition.Y + 1),
-                new Pawn(Type.HUM, 0, targetPosition.X - 1, targetPosition.Y + 1),
-                new Pawn(Type.HUM, 0, targetPosition.X - 1, targetPosition.Y - 1),
-                new Pawn(Type.HUM, 0, targetPosition.X - 1, targetPosition.Y)
+                // puis on vérifie si elle est bien dans la grid, on met ('h', 0) dedans s'il n'y a rien ;)
+                new Pawn(Race.HUM, 0, targetPosition.X + 1, targetPosition.Y - 1),
+                new Pawn(Race.HUM, 0, targetPosition.X + 1, targetPosition.Y),
+                new Pawn(Race.HUM, 0, targetPosition.X + 1, targetPosition.Y + 1),
+                new Pawn(Race.HUM, 0, targetPosition.X, targetPosition.Y - 1),
+                new Pawn(Race.HUM, 0, targetPosition.X, targetPosition.Y + 1),
+                new Pawn(Race.HUM, 0, targetPosition.X - 1, targetPosition.Y + 1),
+                new Pawn(Race.HUM, 0, targetPosition.X - 1, targetPosition.Y - 1),
+                new Pawn(Race.HUM, 0, targetPosition.X - 1, targetPosition.Y)
             };
 
             for (int i = result.Count - 1; i <= 0; i--)
@@ -206,13 +199,13 @@ namespace IA.Rules
                 }
                 else
                 {
-                    result[i] = _grid.GetInCoord(result[i].Coordinates);
+                    result[i] = Grid.GetInCoord(result[i].Coordinates);
                 }
             }
             return result;
         }
 
-        public Dictionary<Coord,Direction> GetAdjacentCoordAndDir(Coord targetPosition)
+        public Dictionary<Coord, Direction> GetAdjacentCoordAndDir(Coord targetPosition)
         {
             // prend un tuple de position en entrée en renvoie les tuples adjacents sous forme d'un dico
             Dictionary<Coord, Direction> result = new Dictionary<Coord, Direction>
@@ -252,9 +245,9 @@ namespace IA.Rules
         public Dictionary<Coord, int> EnnemyPositions()
         {
             Dictionary<Coord, int> dict = new Dictionary<Coord, int>();
-            foreach (Pawn pawn in _grid.Pawns)
+            foreach (Pawn pawn in Grid.Pawns)
             {
-                if (pawn.Type.Equals(Type.THEM))
+                if (pawn.Race.Equals(Race.THEM))
                 {
                     dict.Add(pawn.Coordinates, pawn.Quantity);
                 }
@@ -265,9 +258,9 @@ namespace IA.Rules
         public Dictionary<Coord, int> HumanPositions()
         {
             Dictionary<Coord, int> dict = new Dictionary<Coord, int>();
-            foreach (Pawn pawn in _grid.Pawns)
+            foreach (Pawn pawn in Grid.Pawns)
             {
-                if (pawn.Type.Equals(Type.HUM))
+                if (pawn.Race.Equals(Race.HUM))
                 {
                     dict.Add(pawn.Coordinates, pawn.Quantity);
                 }
@@ -278,9 +271,9 @@ namespace IA.Rules
         public int HumanNumber()
         {
             int number = 0;
-            foreach (Pawn pawn in _grid.Pawns)
+            foreach (Pawn pawn in Grid.Pawns)
             {
-                if (pawn.Type.Equals(Type.HUM))
+                if (pawn.Race.Equals(Race.HUM))
                 {
                     number += pawn.Quantity;
                 }
@@ -291,9 +284,9 @@ namespace IA.Rules
         public int OurNumber()
         {
             int number = 0;
-            foreach (Pawn pawn in _grid.Pawns)
+            foreach (Pawn pawn in Grid.Pawns)
             {
-                if (pawn.Type.Equals(Type.US))
+                if (pawn.Race.Equals(Race.US))
                 {
                     number += pawn.Quantity;
                 }
@@ -304,9 +297,9 @@ namespace IA.Rules
         public int EnnemyNumber()
         {
             int number = 0;
-            foreach (Pawn pawn in _grid.Pawns)
+            foreach (Pawn pawn in Grid.Pawns)
             {
-                if (pawn.Type.Equals(Type.THEM))
+                if (pawn.Race.Equals(Race.THEM))
                 {
                     number += pawn.Quantity;
                 }

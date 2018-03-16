@@ -1,9 +1,9 @@
 ﻿using System.Net.Sockets;
 using System.Threading;
 using System.Diagnostics;
-using System;
 using IA.Rules;
 using System.Collections.Generic;
+using System;
 
 namespace IA
 {
@@ -18,10 +18,8 @@ namespace IA
         private string _playerName = "EdwardBellaJacob";
         private ServerPlayerTrame _trame;
 
-        private int[,] _startPos;
         private Board _board;
-        private int _ourIndex;
-        private int _theirIndex;
+        private Dictionary<Race, int> _indexes;
 
         public Client(string host, int port)
         {
@@ -31,29 +29,9 @@ namespace IA
             this._socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
             this._trame = new ServerPlayerTrame(this._socket);
 
+            this._indexes = new Dictionary<Rules.Race, int>() { {Race.HUM, 2}, {Race.THEM, 0}, {Race.US, 0} };
+
             this._sw = new Stopwatch();
-        }
-
-        private void _setIndex(Coord hmeCoord, int[,] mapInfos)
-        {
-            for (int i = 0; i < mapInfos.GetLength(0); i++)
-            {
-                Coord currentCoord = new Coord(mapInfos[i, 0], mapInfos[i, 1]);
-                if (hmeCoord.Equals(currentCoord))
-                {
-                    if (mapInfos[i, 3] != 0)
-                    {
-                        this._ourIndex = 3;
-                        this._theirIndex = 4;
-                    } else
-                    {
-                        this._ourIndex = 4;
-                        this._theirIndex = 3;
-                    }
-
-                    return;
-                }
-            }
         }
 
         private void _initGame() {
@@ -66,31 +44,44 @@ namespace IA
             ServerPlayerTrame.CheckTrameType(this._trame, "HUM");
 
             // We get our starting coordinates
-            Coord hmeCoords = new Coord(this._startPos = this._trame.Receive());
+            Coord hmeCoords = new Coord(this._trame.Receive());
             ServerPlayerTrame.CheckTrameType(this._trame, "HME");
 
             // We get all information from map
             int[,] mapInfos = this._trame.Receive();
             ServerPlayerTrame.CheckTrameType(this._trame, "MAP");
 
-            // We keep in memory what is our specy
-            this._setIndex(hmeCoords, mapInfos);
-
             // We init the game
-            Grid grid = new Grid(this._ourIndex, this._theirIndex, mapInfos);
+            Grid grid = new Grid();
+            for (int i = 0; i < mapInfos.GetLength(0); i++)
+            {
+                Coord coords = new Coord(mapInfos[i, 0], mapInfos[i, 1]);
+                if (mapInfos[i, this._indexes[Race.HUM]] != 0)
+                {
+                    grid.Add(new Pawn(Race.HUM, mapInfos[i, this._indexes[Race.HUM]], coords));
+                }
+                else
+                {
+                    if (hmeCoords.Equals(coords))
+                    {
+                        this._indexes[Race.US] = mapInfos[i, 3] != 0 ? 3 : 4;
+                        grid.Add(new Pawn(Race.US, mapInfos[i, this._indexes[Race.US]], coords));
+                    }
+                    else
+                    {
+                        this._indexes[Race.THEM] = mapInfos[i, 3] != 0 ? 3 : 4;
+                        grid.Add(new Pawn(Race.THEM, mapInfos[i, this._indexes[Race.THEM]], coords));
+                    }
+                }
+            }
             this._board = new Board(grid, boardSize[0, 0], boardSize[1, 0]);
         }
 
         private int[, ] _chooseMove()
-        {
-            // TODO
-            // root = new Node(new NodeData())
-            // moveCandidates = board.GetMoves(Type.US)
-            // value = new MinMax().alphaBeta(root, 7, float.MinValue, float.MaxValue, Type.US, true, moveCandidates, board)
-            // moves = MinMax.GetNextMove(root, value)
+        { 
             Node root = new Node(new NodeData());
             List<Move> moveCandidates = this._board.GetPossibleMoves();
-            float value = new MinMax().AlphaBeta(root, 7, float.MinValue, float.MaxValue, true, moveCandidates, this._board);
+            float value = new MinMax().AlphaBeta(root, 357, float.MinValue, float.MaxValue, true, moveCandidates, this._board);
             List<Move> moves = MinMax.GetNextMove(root, value);
 
             return MOVTrame.GetPayloadFromMoves(moves);
@@ -98,9 +89,23 @@ namespace IA
 
         private void _updateGame()
         {
-            // TODO
             int[,] updates = this._trame.TramePayload;
-            Thread.Sleep(1000);
+            for (int i = 0; i < updates.GetLength(0); i++)
+            {
+                Coord coord = new Coord(updates[i, 0], updates[i, 1]);
+
+                // Get race from mapInfos trame :
+                // if we find a non null pawn we get its race else we get the non null quantity in updates
+                Pawn pawn = this._board.Grid.GetInCoord(coord);
+                Race race = pawn.Race;
+                if (pawn.Race == Race.HUM && pawn.Quantity == 0)
+                {
+                    race = updates[i, this._indexes[Race.HUM]] != 0 ? Race.HUM : updates[i, this._indexes[Race.US]] != 0 ? Race.US : Race.THEM;
+                }
+
+                // Update Board
+                this._board.Grid.SetQuantityInCoord(coord, updates[i, this._indexes[race]], race);
+            }
         }
 
         public void Start()

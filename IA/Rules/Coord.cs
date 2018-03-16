@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace IA.Rules
+﻿namespace IA.Rules
 {
     class Coord
     {
@@ -14,7 +8,7 @@ namespace IA.Rules
             this.Y = c.Y;
         }
 
-        public Coord(int x, int y)
+        public Coord(int x = 0, int y = 0)
         {
             X = x;
             Y = y;
