@@ -8,14 +8,16 @@ namespace IA.Rules
 {
     class Grid
     {
+        public List<Pawn> Pawns { get; private set; }
+
+        public Grid(Grid g)
+        {
+            this.Pawns = new List<Pawn>(g.Pawns);
+        }
+
         public Grid(List<Pawn> pawns)
         {
             Pawns = pawns;
-        }
-
-        public Grid()
-        {
-            Pawns = new List<Pawn>();
         }
 
         public Grid(int ourIndex, int theirIndex, int[,] mapCoords)
@@ -62,7 +64,7 @@ namespace IA.Rules
             {
                 if (c.Equals(p.Coordinates))
                 {
-                    return p;
+                    return new Pawn(p);
                 }
             }
             return new Pawn(Type.HUM, 0, c);
@@ -86,12 +88,5 @@ namespace IA.Rules
             }
             //TODO: Throw exception, not supposed to be here
         }
-
-        public void Move(Pawn p, Coord c)
-        {
-            // TODO
-        }
-
-        public List<Pawn> Pawns { get; private set; }
     }
 }

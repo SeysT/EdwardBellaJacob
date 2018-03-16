@@ -21,95 +21,87 @@ namespace IA.Rules
         // TODO implement Board.getMoves(Race r)
         // TODO implement Board.getHeuristicScore(Race)
 
-        private float AlphaBeta(Node current, 
-                              int depth, 
-                              float alpha, 
-                              float beta, 
-                              Type myRace,
-                              bool isMyTurn,
-                              List<Move> movesCandidate, 
-                              Board board)
+        public float AlphaBeta(Node current, int depth, float alpha, float beta, bool isMyTurn, List<Move> movesCandidate, Board board)
         {
             if (movesCandidate.Count() == 0 || depth == 0)
             {
                 return current.Data.HeuristicScore;
             }
+
+            if (isMyTurn)
+            {
+                float val = float.MinValue;
+                foreach (Move currentMove in movesCandidate)
+                {
+                    // Compute new board after move
+                    Board newBoard = board.MakeMove(new List<Move>() { currentMove });
+
+                    // fetch the new movesCandidate.
+                    List<Move> updatedMoveCandidate = new List<Move>(movesCandidate);
+                    updatedMoveCandidate.Remove(currentMove);
+                        
+                    // The new Leaf is the child we're going to explore next
+                    Node Child = new Node(new NodeData());
+
+                    // Add each child Tree to parent node
+                    current.Children.Add(Child);
+
+                    // Compute Node.Weight
+                    Child.Data.HeuristicScore = newBoard.GetHeuristicScore();
+                    Child.Data.Moves = new List<Move>() { currentMove };
+
+                    //Alpha beta stuff
+                    val = Math.Max(val, this.AlphaBeta(Child, depth - 1, alpha, beta, !isMyTurn, updatedMoveCandidate, newBoard));
+                    Child.Data.MinMaxScore = val;
+                        
+                    beta = Math.Max(beta, val);
+                    if (beta <= alpha)
+                    {
+                        break;
+                    }
+                }
+
+                return val;
+            }
             else
             {
-                if (isMyTurn)
+                float val = float.MaxValue;
+                foreach (Move currentMove in movesCandidate)
                 {
-                    float val = float.MinValue;
-                    foreach (Move currentMove in movesCandidate)
+                    // Compute new board after move
+                    Board newBoard = board.MakeMove(new List<Move>() { currentMove });
+
+                    // fetch the new movesCandidate.
+                    List<Move> updatedMoveCandidate = new List<Move>(movesCandidate);
+                    updatedMoveCandidate.Remove(currentMove);
+
+                    // The new Leaf is the child we're going to explore next
+                    Node Child = new Node(new NodeData());
+
+                    // Add each child Tree to parent node
+                    current.Children.Add(Child);
+
+                    // Compute Node.Weight
+                    Child.Data.HeuristicScore = newBoard.GetHeuristicScore();
+                    Child.Data.Moves = new List<Move>() { currentMove };
+
+                    //Alpha beta stuff
+                    val = Math.Min(val, this.AlphaBeta(Child, depth - 1, alpha, beta, !isMyTurn, updatedMoveCandidate, newBoard));
+                    Child.Data.MinMaxScore = val;
+
+                    alpha = Math.Min(alpha, val);
+                    if (beta <= alpha)
                     {
-                        // Compute new board after move
-                        Board newBoard = board.MakeMove(new List<Move>() { currentMove });
-
-                        // fetch the new movesCandidate.
-                        List<Move> updatedMoveCandidate = new List<Move>(movesCandidate);
-                        updatedMoveCandidate.Remove(currentMove);
-                        
-                        // The new Leaf is the child we're going to explore next
-                        Node Child = new Node(new NodeData());
-
-                        // Add each child Tree to parent node
-                        current.Children.Add(Child);
-
-                        // Compute Node.Weight
-                        Child.Data.HeuristicScore = newBoard.GetHeuristicScore(myRace);
-
-                        //Alpha beta stuff
-                        val = Math.Max(val, this.AlphaBeta(Child, depth - 1, alpha, beta, myRace, !isMyTurn, updatedMoveCandidate, newBoard));
-                        Child.Data.MinMaxScore = val;
-                        
-                        beta = Math.Max(beta, val);
-                        if (beta <= alpha)
-                        {
-                            break;
-                        }
+                        break;
                     }
-
-                    return val;
                 }
-                else
-                {
-                    float val = float.MaxValue;
-                    foreach (Move currentMove in movesCandidate)
-                    {
 
-                        // Compute new board after move
-                        Board newBoard = board.MakeMove(new List<Move>() { currentMove });
-
-                        // fetch the new movesCandidate.
-                        List<Move> updatedMoveCandidate = new List<Move>(movesCandidate);
-                        updatedMoveCandidate.Remove(currentMove);
-
-                        // The new Leaf is the child we're going to explore next
-                        Node Child = new Node(new NodeData());
-
-                        // Add each child Tree to parent node
-                        current.Children.Add(Child);
-
-                        // Compute Node.Weight
-                        Child.Data.HeuristicScore = newBoard.GetHeuristicScore(Type.THEM);
-
-                        //Alpha beta stuff
-                        val = Math.Min(val, this.AlphaBeta(Child, depth - 1, alpha, beta, myRace, !isMyTurn, updatedMoveCandidate, newBoard));
-                        Child.Data.MinMaxScore = val;
-
-                        alpha = Math.Min(alpha, val);
-                        if (beta <= alpha)
-                        {
-                            break;
-                        }
-                    }
-
-                    return val;
-                }
+                return val;
             }
         }
 
         // This function alows to convert the score returned by AlphaBeta to the coordinates of the next currentMove
-        private static List<Move> GetNextMove(Node GameTree, int bestScore)
+        static public List<Move> GetNextMove(Node GameTree, float bestScore)
         {
             foreach (Node SubTree in GameTree.Children)
             {
@@ -119,11 +111,6 @@ namespace IA.Rules
                 }
             }
             throw new Exception("[MinMax] GetNextMove couldn't return Moves");
-        }
-
-        static public int[,] GetNextMoves()
-        {
-            throw new NotImplementedException();
         }
     }
 }

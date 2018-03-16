@@ -3,6 +3,7 @@ using System.Threading;
 using System.Diagnostics;
 using System;
 using IA.Rules;
+using System.Collections.Generic;
 
 namespace IA
 {
@@ -38,7 +39,7 @@ namespace IA
             for (int i = 0; i < mapInfos.GetLength(0); i++)
             {
                 Coord currentCoord = new Coord(mapInfos[i, 0], mapInfos[i, 1]);
-                if (hmeCoord == currentCoord)
+                if (hmeCoord.Equals(currentCoord))
                 {
                     if (mapInfos[i, 3] != 0)
                     {
@@ -82,19 +83,23 @@ namespace IA
 
         private int[, ] _chooseMove()
         {
-            int[,] nextPos = (int[,]) this._startPos.Clone();
-            nextPos[0, 0] = nextPos[0, 0] - 1;
-            nextPos[1, 0] = nextPos[1, 0];
+            // TODO
+            // root = new Node(new NodeData())
+            // moveCandidates = board.GetMoves(Type.US)
+            // value = new MinMax().alphaBeta(root, 7, float.MinValue, float.MaxValue, Type.US, true, moveCandidates, board)
+            // moves = MinMax.GetNextMove(root, value)
+            Node root = new Node(new NodeData());
+            List<Move> moveCandidates = this._board.GetPossibleMoves();
+            float value = new MinMax().AlphaBeta(root, 7, float.MinValue, float.MaxValue, true, moveCandidates, this._board);
+            List<Move> moves = MinMax.GetNextMove(root, value);
 
-            int[,] next = { { this._startPos[0, 0], this._startPos[1, 0], 4, nextPos[0, 0], nextPos[1, 0] } };
-
-            this._startPos = nextPos;
-            return next;
+            return MOVTrame.GetPayloadFromMoves(moves);
         }
 
         private void _updateGame()
         {
-            int[,] newMapInfos = this._trame.TramePayload;
+            // TODO
+            int[,] updates = this._trame.TramePayload;
             Thread.Sleep(1000);
         }
 

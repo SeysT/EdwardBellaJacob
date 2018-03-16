@@ -1,4 +1,5 @@
-﻿using System;
+﻿using IA.Rules;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,6 +21,23 @@ namespace IA
             SetHeader(HeaderPlayer.MOV);
             b_payload = bytePayload;
             SetSize();
+        }
+
+        public static int[,] GetPayloadFromMoves(List<Move> moves)
+        {
+            int[,] payload = new int[moves.Count, 5];
+
+            for (int i = 0; i < moves.Count; i++)
+            {
+                payload[i, 0] = moves[i].Coordinates.X;
+                payload[i, 1] = moves[i].Coordinates.Y;
+                payload[i, 2] = moves[i].Quantity;
+                Coord newCoords = Coord.DirectionMove(moves[i].Coordinates, moves[i].Direction);
+                payload[i, 3] = newCoords.X;
+                payload[i, 4] = newCoords.Y;
+            }
+
+            return payload;
         }
 
         protected override void SetPayload(int[,] intPayload)
