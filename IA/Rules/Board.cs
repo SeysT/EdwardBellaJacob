@@ -88,7 +88,8 @@ namespace IA.Rules
                 Dictionary<Coord,Direction> AdjCoord=this.GetAdjacentCoordAndDir(p.Coordinates);
                 foreach (Coord coord in AdjCoord.Keys)
                 {
-                    Move move = new Move(coord, AdjCoord[coord], p.Quantity);
+                    list.Add( new Move(coord, AdjCoord[coord], p.Quantity));
+
                     //nbre = p._quantity Moving all the pawns
                 }
             }
@@ -153,23 +154,19 @@ namespace IA.Rules
                 new Pawn(Type.HUM, 0, targetPosition.X - 1, targetPosition.Y)
             };
 
-            foreach (Pawn pawn in result)
+            for (int i = result.Count - 1; i <= 0; i--)
             {
-                if (pawn.Coordinates.X<0 
-                    || pawn.Coordinates.X >= _x_max 
-                    || pawn.Coordinates.Y < 0 
-                    || pawn.Coordinates.Y >= _y_max )
+                Coord coord = result[i].Coordinates;
+                if (coord.X < 0
+                    || coord.X >= _x_max
+                    || coord.Y < 0
+                    || coord.Y >= _y_max)
                 {
-                    result.Remove(pawn);
+                    result.Remove(result[i]);
                 }
                 else
                 {
-                    Pawn pawnVol = _grid.GetInCoord(pawn.Coordinates);
-                    if (pawnVol.Quantity.Equals(0))
-                    {
-                        result.Remove(pawn);
-                        result.Add(new Pawn(pawnVol));
-                    }
+                    result[i] = _grid.GetInCoord(result[i].Coordinates);
                 }
             }
             return result;
@@ -192,8 +189,10 @@ namespace IA.Rules
                 { new Coord(targetPosition.X - 1, targetPosition.Y), Direction.L }
             };
 
-            foreach (Coord coord in result.Keys)
+
+            for (int i = result.Keys.Count - 1; i <= 0; i--)
             {
+                Coord coord = result.Keys.ToList()[i];
                 if (coord.X < 0
                     || coord.X >= _x_max
                     || coord.Y < 0
