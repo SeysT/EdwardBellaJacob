@@ -47,7 +47,7 @@ namespace IA.Rules
                     current.Children.Add(Child);
 
                     // Compute Node.Weight
-                    Child.Data.HeuristicScore = newBoard.GetHeuristicScore(Type.US);
+                    Child.Data.HeuristicScore = newBoard.GetHeuristicScore();
 
                     //Alpha beta stuff
                     val = Math.Max(val, this.AlphaBeta(Child, depth - 1, alpha, beta, !isMyTurn, updatedMoveCandidate, newBoard));
@@ -81,7 +81,7 @@ namespace IA.Rules
                     current.Children.Add(Child);
 
                     // Compute Node.Weight
-                    Child.Data.HeuristicScore = newBoard.GetHeuristicScore(Type.THEM);
+                    Child.Data.HeuristicScore = newBoard.GetHeuristicScore();
 
                     //Alpha beta stuff
                     val = Math.Min(val, this.AlphaBeta(Child, depth - 1, alpha, beta, !isMyTurn, updatedMoveCandidate, newBoard));

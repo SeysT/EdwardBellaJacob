@@ -63,8 +63,8 @@ namespace IA
         {
             get
             {
-                List<float> OurBarycentre = new List<float>();
-                List<float> EnnemyBarycentre = new List<float>();
+                float[] OurBarycentre = new float[2];
+                float[] EnnemyBarycentre = new float[2];
 
                 int numerateurX = 0;
                 int numerateurY = 0;
