@@ -31,18 +31,18 @@ namespace IA.Rules
         {
             foreach (Move move in moves)
             {
-                Pawn p = _grid.GetInCoord(move.Coordinates);
+                Pawn pawn = _grid.GetInCoord(move.Coordinates);
 
-                if (p.Quantity.Equals(move.Quantity) && !p.Quantity.Equals(0))
+                if (pawn.Quantity.Equals(move.Quantity) && !pawn.Quantity.Equals(0))
                 {
-                    _grid.Pawns.Remove(p);
+                    _grid.Pawns.Remove(pawn);
                 } else
                 {
-                    _grid.SetQuantityInCoord(p.Coordinates,p.Quantity - move.Quantity);
+                    _grid.SetQuantityInCoord(pawn.Coordinates,pawn.Quantity - move.Quantity);
 
                 }
 
-                Coord newCoord = p.Coordinates;
+                Coord newCoord = pawn.Coordinates;
                 switch (move.Direction)
                 {
                     case Direction.D:
@@ -74,7 +74,75 @@ namespace IA.Rules
                         newCoord.X += 1;
                         break;
                 }
-                _grid.Pawns.Add(new Pawn(p.Type, move.Quantity, newCoord));
+                //vérifier ce qu'il y a dans newCoord
+                Pawn inNewCoord = _grid.GetInCoord(newCoord);
+                if (inNewCoord.Quantity == 0)
+                {
+                    _grid.Pawns.Add(new Pawn(pawn.Type, move.Quantity, newCoord));
+                }
+                else
+                {
+                    if (inNewCoord.Type.Equals(pawn.Type))
+                    {
+                        _grid.Pawns.Remove(inNewCoord);
+                        _grid.Pawns.Add(
+                            new Pawn(pawn.Type, move.Quantity + inNewCoord.Quantity, newCoord)
+                        );
+                    }
+                    else if (inNewCoord.Type.Equals(Type.HUM))
+                    {
+                        if (inNewCoord.Quantity <=  move.Quantity)
+                        {
+                            _grid.Pawns.Remove(inNewCoord);
+                            _grid.Pawns.Add(
+                                new Pawn(pawn.Type, move.Quantity + inNewCoord.Quantity, newCoord)
+                            );
+                        }
+                        else
+                        {
+                            //TODO: proba proba proba proba proba proba
+                            //on dit pour le moment que si les humains sont plus nombreux, on est mort
+                            break;
+                        }
+                    }
+                    else if (!inNewCoord.Type.Equals(pawn.Type))
+                    {
+                        if (inNewCoord.Quantity >= 1.5 * move.Quantity)
+                        {
+                            break;
+                        }else if(inNewCoord.Quantity <= 1.5 * move.Quantity)
+                        {
+                            _grid.Pawns.Remove(inNewCoord);
+                            _grid.Pawns.Add(new Pawn(pawn.Type, move.Quantity + inNewCoord.Quantity, newCoord));
+                        }
+                        else
+                        {
+                            //TODO: proba proba proba proba
+                            if(inNewCoord.Quantity.Equals(move.Quantity))
+                            {
+                                //Proba de gagner = 0.5
+                                //si attaquant gagne, chaque pion a une proba de surivie de P
+                                //si attaquant perd , chaque pion a une proba de survie 1 - P
+                                _grid.Pawns.Remove(inNewCoord);
+                                _grid.Pawns.Add(new Pawn(pawn.Type, (int)(move.Quantity * 0.5) , newCoord));
+
+                            }
+                            else if (inNewCoord.Quantity > move.Quantity)
+                            {
+                                //Proba de gagner = move.Quantity / (2 * inNewCoord.Quantity)
+                                _grid.Pawns.Remove(inNewCoord);
+                                _grid.Pawns.Add(new Pawn(inNewCoord.Type, (int)(inNewCoord.Quantity * (1 - move.Quantity /(2 * inNewCoord.Quantity))), inNewCoord.Coordinates));
+                            }
+                            else if (inNewCoord.Quantity < move.Quantity)
+                            {
+                                //Proba de gagner = move.Quantity / inNewCoord.Quantity - 0.5
+                                _grid.Pawns.Remove(inNewCoord);
+                                _grid.Pawns.Add(new Pawn(pawn.Type, (int)(move.Quantity * (move.Quantity / inNewCoord.Quantity - 0.5)), newCoord));
+                            }
+                        }
+                    }
+                    
+                }
             }
         }
 
@@ -96,7 +164,7 @@ namespace IA.Rules
 
         public float GetHeuristicScore()
         {
-            return new Heuristic(this).GetScore(0.2f, 0.2f, 0.2f, 0.2f, 0.2f);
+            return new Heuristic(this).GetScore(0.3f, 0.1f, 0.2f, 0.2f, 0.2f);
         }
 
         /// <summary>
