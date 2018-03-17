@@ -91,6 +91,7 @@ namespace IA.Rules
                     return true;
                 }
             }
+            Pawns.Add(new Pawn(race, quantity, c));
             return false;
 
         }
