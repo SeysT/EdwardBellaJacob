@@ -79,7 +79,7 @@ namespace IA.Rules
                         {
                             break;
                         }
-                        else if(inNewCoord.Quantity <= 1.5 * move.Quantity)
+                        else if(1.5 * inNewCoord.Quantity <=  move.Quantity)
                         {
                             Grid.Pawns.Remove(inNewCoord);
                             Grid.Pawns.Add(new Pawn(pawn.Race, move.Quantity + inNewCoord.Quantity, newCoord));
