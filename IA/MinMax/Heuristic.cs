@@ -12,12 +12,12 @@ namespace IA
 
     class Heuristic
     {
+        private Board _board;
+
         public Heuristic(Board board)
         {
             this._board = board;
         }
-
-        private Board _board;
 
         float OurStrengthHeuristic {
             get
