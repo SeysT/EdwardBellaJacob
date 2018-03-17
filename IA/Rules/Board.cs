@@ -154,7 +154,7 @@ namespace IA.Rules
 
         public float GetHeuristicScore()
         {
-            return new Heuristic(this).GetScore(10f, 0.1f, 0.2f, 0.2f, 0.2f);
+            return new Heuristic(this).GetScore(2f, -1f, 0.2f, 0.2f, 0.2f);
         }
 
         /// <summary>
@@ -205,6 +205,9 @@ namespace IA.Rules
             {
                 if (pawn.Race.Equals(Race.THEM))
                 {
+                    if(dict.ContainsKey(pawn.Coordinates)){
+                        dict.Remove(pawn.Coordinates);
+                    }
                     dict.Add(pawn.Coordinates, pawn.Quantity);
                 }
             }

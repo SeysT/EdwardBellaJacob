@@ -81,7 +81,7 @@ namespace IA
         { 
             Node root = new Node(new NodeData());
             List<Move> moveCandidates = this._board.GetPossibleMoves();
-            float value = new MinMax().AlphaBeta(root, 4, float.MinValue, float.MaxValue, true, moveCandidates, this._board);
+            float value = new MinMax().AlphaBeta(root, 40, float.MinValue, float.MaxValue, true, moveCandidates, this._board);
             List<Move> moves = MinMax.GetNextMove(root, value);
 
             return MOVTrame.GetPayloadFromMoves(moves);

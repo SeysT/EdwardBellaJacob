@@ -46,7 +46,14 @@ namespace IA
                 {
                     EnnemyPositions.Add((keyPair.Value));
                 }
-
+                if (OurPositions.Count.Equals(0))
+                {
+                    return 0;
+                }
+                else if (EnnemyPositions.Count.Equals(0))
+                {
+                    return 1;
+                }
                 return OurPositions.Max() - EnnemyPositions.Max();
             }
         }
@@ -55,6 +62,15 @@ namespace IA
         {
             get
             {
+                //TODO: améliorer
+                if (_board.OurPositions().Count.Equals(0))
+                {
+                    return 0;
+                }
+                else if (_board.EnnemyPositions().Count.Equals(0))
+                {
+                    return 1;
+                }
                 return _board.OurNumber() / _board.OurPositions().Count - _board.EnnemyNumber() / _board.EnnemyPositions().Count;
             }
         }
@@ -69,6 +85,12 @@ namespace IA
                 int numerateurX = 0;
                 int numerateurY = 0;
                 int denominateur = _board.OurNumber();
+
+                if (denominateur.Equals(0))
+                {
+                    return 0;
+                }
+
                 foreach (KeyValuePair<Coord, int> kvp in _board.OurPositions())
                 {
                     numerateurX += kvp.Key.X * kvp.Value;
@@ -80,6 +102,12 @@ namespace IA
                 int enNumerateurX = 0;
                 int enNumerateurY = 0;
                 int enDenominateur = _board.EnnemyNumber();
+
+                if (enDenominateur.Equals(0))
+                {
+                    return 1;
+                }
+
                 foreach (KeyValuePair<Coord, int> kvp in _board.EnnemyPositions())
                 {
                     enNumerateurX += kvp.Key.X * kvp.Value;
