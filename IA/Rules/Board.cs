@@ -79,7 +79,7 @@ namespace IA.Rules
                         {
                             break;
                         }
-                        else if(1.5 * inNewCoord.Quantity <=  move.Quantity)
+                        else if(1.5 * inNewCoord.Quantity <= move.Quantity)
                         {
                             Grid.Pawns.Remove(inNewCoord);
                             Grid.Pawns.Add(new Pawn(pawn.Race, move.Quantity + inNewCoord.Quantity, newCoord));
@@ -143,8 +143,8 @@ namespace IA.Rules
             {
                 if (coord.X > 0
                     && coord.X <= _x_max
-                    || coord.Y > 0
-                    || coord.Y <= _y_max)
+                    && coord.Y > 0
+                    && coord.Y <= _y_max)
                 {
                     coordDirections.Add(coord, possibleCoordDirections[coord]);
                 }
@@ -154,7 +154,7 @@ namespace IA.Rules
 
         public float GetHeuristicScore()
         {
-            return new Heuristic(this).GetScore(0.3f, 0.1f, 0.2f, 0.2f, 0.2f);
+            return new Heuristic(this).GetScore(10f, 0.1f, 0.2f, 0.2f, 0.2f);
         }
 
         /// <summary>

@@ -74,7 +74,7 @@ namespace IA
                     }
                 }
             }
-            this._board = new Board(grid, boardSize[0, 0], boardSize[1, 0]);
+            this._board = new Board(grid, boardSize[1, 0], boardSize[0, 0]);
         }
 
         private int[, ] _chooseMove()
