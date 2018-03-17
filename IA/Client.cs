@@ -81,7 +81,7 @@ namespace IA
         { 
             Node root = new Node(new NodeData());
             List<Move> moveCandidates = this._board.GetPossibleMoves();
-            float value = new MinMax().AlphaBeta(root, 357, float.MinValue, float.MaxValue, true, moveCandidates, this._board);
+            float value = new MinMax().AlphaBeta(root, 4, float.MinValue, float.MaxValue, true, moveCandidates, this._board);
             List<Move> moves = MinMax.GetNextMove(root, value);
 
             return MOVTrame.GetPayloadFromMoves(moves);
@@ -93,17 +93,11 @@ namespace IA
             for (int i = 0; i < updates.GetLength(0); i++)
             {
                 Coord coord = new Coord(updates[i, 0], updates[i, 1]);
-
                 // Get race from mapInfos trame :
-                // if we find a non null pawn we get its race else we get the non null quantity in updates
-                Pawn pawn = this._board.Grid.GetInCoord(coord);
-                Race race = pawn.Race;
-                if (pawn.Race == Race.HUM && pawn.Quantity == 0)
-                {
-                    race = updates[i, this._indexes[Race.HUM]] != 0 ? Race.HUM : updates[i, this._indexes[Race.US]] != 0 ? Race.US : Race.THEM;
-                }
+                Race race = updates[i, this._indexes[Race.HUM]] != 0 ? Race.HUM : updates[i, this._indexes[Race.US]] != 0 ? Race.US : Race.THEM;
 
                 // Update Board
+                // if quantity == 0, we will only remove the pawn that moved
                 this._board.Grid.SetQuantityInCoord(coord, updates[i, this._indexes[race]], race);
             }
         }

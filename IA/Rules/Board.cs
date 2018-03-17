@@ -141,10 +141,10 @@ namespace IA.Rules
             Dictionary<Coord, Direction> coordDirections = new Dictionary<Coord, Direction>();
             foreach (Coord coord in possibleCoordDirections.Keys)
             {
-                if (coord.X > 0
-                    && coord.X <= _x_max
-                    && coord.Y > 0
-                    && coord.Y <= _y_max)
+                if (coord.X >= 0
+                    && coord.X < _x_max
+                    && coord.Y >= 0
+                    && coord.Y < _y_max)
                 {
                     coordDirections.Add(coord, possibleCoordDirections[coord]);
                 }

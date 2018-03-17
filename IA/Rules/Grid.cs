@@ -79,12 +79,20 @@ namespace IA.Rules
         /// <returns>true if pawn has been updated false if it has been created</returns>
         public bool SetQuantityInCoord(Coord c, int quantity, Race race)
         {
-            if (this.SetQuantityInCoord(c, quantity))
+            foreach (var pawn in Pawns)
             {
-                return true;
+                if (c.Equals(pawn.Coordinates))
+                {
+                    Pawns.Remove(pawn);
+                    if (quantity > 0)
+                    {
+                        Pawns.Add(new Pawn(race, quantity, c));
+                    }
+                    return true;
+                }
             }
-            this.Pawns.Add(new Pawn(race, quantity, c));
             return false;
+
         }
     }
 }
