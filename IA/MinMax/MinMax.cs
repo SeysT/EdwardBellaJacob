@@ -126,7 +126,7 @@ namespace IA.Rules
 
         private float _getHeuristicScore(Board board)
         {
-            return new Heuristic(board).GetScore(10f, -1f, 0.2f, 0.2f, 0.2f);
+            return new Heuristic(board).GetScore();
         }
 
         override public int[,] ChooseNextMove(Board board)

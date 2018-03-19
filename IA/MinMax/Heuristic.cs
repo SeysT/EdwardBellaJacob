@@ -1,6 +1,7 @@
 ﻿using IA.Rules;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -133,8 +134,14 @@ namespace IA
             }
         }
 
-        public float GetScore(float a11, float a12, float a2, float a3, float a4)
+        public float GetScore()
         {
+            float.TryParse(ConfigurationManager.AppSettings["Heuristica11"], out float a11);
+            float.TryParse(ConfigurationManager.AppSettings["Heuristica11"], out float a12);
+            float.TryParse(ConfigurationManager.AppSettings["Heuristica11"], out float a2);
+            float.TryParse(ConfigurationManager.AppSettings["Heuristica11"], out float a3);
+            float.TryParse(ConfigurationManager.AppSettings["Heuristica11"], out float a4);
+
             return (
                 a11 * this.OurStrengthHeuristic -
                 a12 * this.EnnemyStrengthHeuristic + 

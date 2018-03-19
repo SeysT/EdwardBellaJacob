@@ -5,6 +5,7 @@ using IA.Rules;
 using System.Collections.Generic;
 using System;
 using IA.IA;
+using System.Configuration;
 
 namespace IA
 {
@@ -31,9 +32,10 @@ namespace IA
             this._socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
             this._trame = new ServerPlayerTrame(this._socket);
 
-            this._ia = new MinMax(5);
+            int.TryParse(ConfigurationManager.AppSettings["MinMaxDepth"], out int depth);
+            this._ia = new MinMax(depth);
 
-            this._indexes = new Dictionary<Rules.Race, int>() { {Race.HUM, 2}, {Race.THEM, 0}, {Race.US, 0} };
+            this._indexes = new Dictionary<Race, int>() { {Race.HUM, 2}, {Race.THEM, 0}, {Race.US, 0} };
         }
 
         private void _initGame() {
