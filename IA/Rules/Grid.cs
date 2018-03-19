@@ -8,26 +8,31 @@ namespace IA.Rules
 {
     public class Grid
     {
-        public List<Pawn> Pawns { get; private set; }
+        private Dictionary<Coord, Pawn> _pawns;
 
         public Grid()
         {
-            this.Pawns = new List<Pawn>();
+            this._pawns = new Dictionary<Coord, Pawn>();
         }
 
         public Grid(Grid g)
         {
-            this.Pawns = new List<Pawn>(g.Pawns);
+            this._pawns = new Dictionary<Coord, Pawn>(g._pawns);
         }
 
-        public Grid(List<Pawn> pawns)
+        public Grid(Dictionary<Coord, Pawn> pawns)
         {
-            Pawns = pawns;
+            this._pawns = pawns;
+        }
+
+        public List<Pawn> GetPawns()
+        {
+            return new List<Pawn> (this._pawns.Values);
         }
 
         public void Add(Pawn p)
         {
-            Pawns.Add(p);
+            this._pawns.Add(p.Coordinates, p);
         }
 
         /// <summary>
@@ -37,12 +42,9 @@ namespace IA.Rules
         /// <returns></returns>
         public Pawn GetInCoord(Coord c)
         {
-            foreach (var p in Pawns)
+            if (this._pawns.TryGetValue(c, out Pawn pawn))
             {
-                if (c.Equals(p.Coordinates))
-                {
-                    return new Pawn(p);
-                }
+                return pawn;
             }
             return new Pawn(Race.HUM, 0, c);
         }
@@ -55,17 +57,14 @@ namespace IA.Rules
         /// <returns>return true in a pawn has been updated</returns>
         public bool SetQuantityInCoord(Coord c, int quantity)
         {
-            foreach (var pawn in Pawns)
+            if (this._pawns.TryGetValue(c, out Pawn pawn))
             {
-                if (c.Equals(pawn.Coordinates))
+                this._pawns.Remove(c);
+                if (quantity > 0)
                 {
-                    Pawns.Remove(pawn);
-                    if (quantity > 0)
-                    {
-                        Pawns.Add(new Pawn(pawn.Race, quantity, pawn.Coordinates));
-                    }
-                    return true;
+                    _pawns.Add(c, new Pawn(pawn.Race, quantity, pawn.Coordinates));
                 }
+                return true;
             }
             return false;
         }
@@ -73,20 +72,17 @@ namespace IA.Rules
         /// <summary>
         /// Permet de remove le pawn d coordonnées c dans la grille.
         /// </summary>
-        /// <param name="c"></param>
-        /// <param name="quantity"></param>
-        /// <returns>return true in a pawn has been updated</returns>
-        public bool Remove(Coord c)
+        public void Remove(Coord c)
         {
-            foreach (var pawn in Pawns)
-            {
-                if (c.Equals(pawn.Coordinates))
-                {
-                    Pawns.Remove(pawn);
-                    return true;
-                }
-            }
-            return false;
+            this._pawns.Remove(c);
+        }
+
+        /// <summary>
+        /// Remove le pawn de la grille.
+        /// </summary>
+        public void Remove(Pawn pawn)
+        {
+            this.Remove(pawn.Coordinates);
         }
 
         /// <summary>
@@ -98,19 +94,15 @@ namespace IA.Rules
         /// <returns>true if pawn has been updated false if it has been created</returns>
         public bool SetQuantityInCoord(Coord c, int quantity, Race race)
         {
-            foreach (var pawn in Pawns)
-            {
-                if (c.Equals(pawn.Coordinates))
+            if (this._pawns.TryGetValue(c, out Pawn pawn)) {
+                this._pawns.Remove(c);
+                if (quantity > 0)
                 {
-                    Pawns.Remove(pawn);
-                    if (quantity > 0)
-                    {
-                        Pawns.Add(new Pawn(race, quantity, c));
-                    }
-                    return true;
+                    this._pawns.Add(c, new Pawn(race, quantity, c));
                 }
+                return true;
             }
-            Pawns.Add(new Pawn(race, quantity, c));
+            this._pawns.Add(c, new Pawn(race, quantity, c));
             return false;
         }
     }
