@@ -112,15 +112,42 @@ namespace IA.Rules
 
         public List<Move> GetPossibleMoves()
         {
-            //TO MODIFY: Take into account Split moves
             List<Move> list = new List<Move>();
             List<Pawn> ourPawns = this.OurPawns();
+            int X = 2; //TODO : get min split value
             foreach(Pawn pawn in ourPawns)
             {
-                Dictionary<Coord, Direction> possibleDirections = this.GetPossibleCoordDirections(pawn.Coordinates);
-                foreach (Direction direction in possibleDirections.Values)
+                List<Direction> possibleDirections = this.GetPossibleCoordDirections(pawn.Coordinates);
+                int Y = pawn.Quantity;
+                list.AddRange(GetRecursiveMoves(pawn.Coordinates, possibleDirections, Y, X));
+            }
+            return list;
+        }
+
+        public List<Move> GetRecursiveMoves(Coord coord, List<Direction> possibleDirections, int quantity, int minSplitValue)
+        {
+            List<Move> list = new List<Move>();
+            if (quantity - minSplitValue <= minSplitValue) //Pas de split possible : on bouge tous les effectifs dans une direction
                 {
-                    list.Add(new Move(pawn.Coordinates, direction, pawn.Quantity));
+                    foreach (Direction direction in possibleDirections)
+                    {
+                        list.Add(new Move(coord, direction, quantity));
+                    }
+                }
+            else // Split possible : on envoie successivement i = X, X+1, ..., Y-X pions dans une direction et on appelle récursivement 
+                     //GetPossibleMoves() sur les pions restant en quantité Y-i sur la case initiale 
+            {
+                    foreach (Direction directionSplit in possibleDirections)
+                    {
+                        for (int i = minSplitValue; i < quantity - minSplitValue; i++)
+                        {
+                            List<Direction> remainingDirections = new List<Direction>();
+                            foreach (Direction direction in possibleDirections)
+                                if (direction != directionSplit)
+                                    remainingDirections.Add(direction);
+
+                            GetRecursiveMoves(coord, remainingDirections, quantity - i, minSplitValue);
+                    }
                 }
             }
             return list;
@@ -131,10 +158,10 @@ namespace IA.Rules
         /// </summary>
         /// <param name="coordToCheck">Coord from which we want to calculate possible move in all directions</param>
         /// <returns>use keys to get possible coords and values to get possible directions</returns>
-        public Dictionary<Coord, Direction> GetPossibleCoordDirections(Coord coordToCheck)
+        public List<Direction> GetPossibleCoordDirections(Coord coordToCheck)
         {
             Dictionary<Coord, Direction> possibleCoordDirections = Coord.PossibleCoordsFromDirectionMoves(coordToCheck);
-            Dictionary<Coord, Direction> coordDirections = new Dictionary<Coord, Direction>();
+            List<Direction> coordDirections = new List<Direction>();
             foreach (Coord coord in possibleCoordDirections.Keys)
             {
                 if (coord.X >= 0
@@ -142,7 +169,7 @@ namespace IA.Rules
                     && coord.Y >= 0
                     && coord.Y < _yMax)
                 {
-                    coordDirections.Add(coord, possibleCoordDirections[coord]);
+                    coordDirections.Add(possibleCoordDirections[coord]);
                 }
             }
             return coordDirections;
