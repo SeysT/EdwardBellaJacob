@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace IA.Rules
 {
@@ -10,21 +6,21 @@ namespace IA.Rules
     // Class to handle boards
     {
         public Grid Grid { get; private set; }
-        private int _x_max;
-        private int _y_max;
+        private int _xMax;
+        private int _yMax;
         
         public Board(Board b)
         {
             this.Grid = new Grid(b.Grid);
-            this._x_max = b._x_max;
-            this._y_max = b._y_max;
+            this._xMax = b._xMax;
+            this._yMax = b._yMax;
         }
 
-        public Board(Grid grid, int x_max, int y_max)
+        public Board(Grid grid, int xMax, int yMax)
         {
             this.Grid = new Grid(grid);
-            this._x_max = x_max;
-            this._y_max = y_max;
+            this._xMax = xMax;
+            this._yMax = yMax;
         }
 
         public Board MakeMove(List<Move> moves)
@@ -142,9 +138,9 @@ namespace IA.Rules
             foreach (Coord coord in possibleCoordDirections.Keys)
             {
                 if (coord.X >= 0
-                    && coord.X < _x_max
+                    && coord.X < _xMax
                     && coord.Y >= 0
-                    && coord.Y < _y_max)
+                    && coord.Y < _yMax)
                 {
                     coordDirections.Add(coord, possibleCoordDirections[coord]);
                 }
@@ -154,7 +150,7 @@ namespace IA.Rules
 
         public float GetHeuristicScore()
         {
-            return new Heuristic(this).GetScore(2f, -1f, 0.2f, 0.2f, 0.2f);
+            return new Heuristic(this).GetScore(10f, -1f, 0.2f, 0.2f, 0.2f);
         }
 
         /// <summary>
