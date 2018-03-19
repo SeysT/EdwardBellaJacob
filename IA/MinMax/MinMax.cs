@@ -38,7 +38,7 @@ namespace IA.Rules
             if (depth == 0)
             {
                 current.Data.MinMaxScore = current.Data.HeuristicScore;
-                return current.Data.HeuristicScore;
+                return current.Data.HeuristicScore * (depth + 1) /(_depth + 1);
             }
 
             if (isMyTurn)
@@ -52,10 +52,10 @@ namespace IA.Rules
                     current.Data.HeuristicScore = this._getHeuristicScore(board);
 
                     //Alpha beta stuff
-                    val = current.Data.HeuristicScore;
+                    val = current.Data.HeuristicScore * (depth + 1) / (_depth + 1);
                     if (val >= beta)
                     {
-                        return val;
+                        return val ;
                     }
                     else
                     {
@@ -79,7 +79,7 @@ namespace IA.Rules
                     Child.Data.Moves = new List<Move>() { currentMove };
 
                     //Alpha beta stuff
-                    val = Math.Max(val, this._getAlphaBeta(Child, depth - 1, alpha, beta, !isMyTurn, newBoard));
+                    val = Math.Max(val, this._getAlphaBeta(Child, depth - 1, alpha, beta, !isMyTurn, newBoard)) * (depth + 1) / (_depth + 1);
                     if (val >= beta)
                     {
                         break;
@@ -114,7 +114,7 @@ namespace IA.Rules
 
                     //Alpha beta stuff
                     //val = Child.Data.HeuristicScore;
-                    val = Math.Min(val, this._getAlphaBeta(Child, depth - 1, alpha, beta, !isMyTurn, newBoard));
+                    val = Math.Min(val, this._getAlphaBeta(Child, depth - 1, alpha, beta, !isMyTurn, newBoard)) * (depth + 1) / (_depth + 1);
                     
                     if (val < alpha)
                     {
