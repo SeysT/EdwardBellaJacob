@@ -70,7 +70,6 @@ namespace IA
                     break;
                 case "UPD":
                     this._decoder = new UPDDecoder();
-                    Thread.Sleep(1000);
                     break;
                 default:
                     break;
