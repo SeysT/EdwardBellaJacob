@@ -160,7 +160,7 @@ namespace IA.Rules
 
             foreach (Pawn pawn in Grid.GetPawns())
             {
-                if (pawn.Race.Equals(Race.US))
+                if (pawn.Race.Equals(race))
                 {
                     list.Add(pawn);
                 }
