@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace IA.Rules
 {
@@ -10,21 +6,21 @@ namespace IA.Rules
     // Class to handle boards
     {
         public Grid Grid { get; private set; }
-        private int _x_max;
-        private int _y_max;
+        private int _xMax;
+        private int _yMax;
         
         public Board(Board b)
         {
             this.Grid = new Grid(b.Grid);
-            this._x_max = b._x_max;
-            this._y_max = b._y_max;
+            this._xMax = b._xMax;
+            this._yMax = b._yMax;
         }
 
-        public Board(Grid grid, int x_max, int y_max)
+        public Board(Grid grid, int xMax, int yMax)
         {
             this.Grid = new Grid(grid);
-            this._x_max = x_max;
-            this._y_max = y_max;
+            this._xMax = xMax;
+            this._yMax = yMax;
         }
 
         public Board MakeMove(List<Move> moves)
@@ -79,7 +75,7 @@ namespace IA.Rules
                         {
                             break;
                         }
-                        else if(inNewCoord.Quantity <= 1.5 * move.Quantity)
+                        else if(1.5 * inNewCoord.Quantity <= move.Quantity)
                         {
                             Grid.Pawns.Remove(inNewCoord);
                             Grid.Pawns.Add(new Pawn(pawn.Race, move.Quantity + inNewCoord.Quantity, newCoord));
@@ -121,8 +117,8 @@ namespace IA.Rules
             List<Pawn> ourPawns = this.OurPawns();
             foreach(Pawn pawn in ourPawns)
             {
-                Dictionary<Coord, Direction> adjCoords = this.GetAdjacentCoordAndDir(pawn.Coordinates);
-                foreach (Direction direction in adjCoords.Values)
+                Dictionary<Coord, Direction> possibleDirections = this.GetPossibleCoordDirections(pawn.Coordinates);
+                foreach (Direction direction in possibleDirections.Values)
                 {
                     list.Add(new Move(pawn.Coordinates, direction, pawn.Quantity));
                 }
@@ -130,9 +126,31 @@ namespace IA.Rules
             return list;
         }
 
+        /// <summary>
+        /// Get all possible coord and direction where we can move
+        /// </summary>
+        /// <param name="coordToCheck">Coord from which we want to calculate possible move in all directions</param>
+        /// <returns>use keys to get possible coords and values to get possible directions</returns>
+        public Dictionary<Coord, Direction> GetPossibleCoordDirections(Coord coordToCheck)
+        {
+            Dictionary<Coord, Direction> possibleCoordDirections = Coord.PossibleCoordsFromDirectionMoves(coordToCheck);
+            Dictionary<Coord, Direction> coordDirections = new Dictionary<Coord, Direction>();
+            foreach (Coord coord in possibleCoordDirections.Keys)
+            {
+                if (coord.X >= 0
+                    && coord.X < _xMax
+                    && coord.Y >= 0
+                    && coord.Y < _yMax)
+                {
+                    coordDirections.Add(coord, possibleCoordDirections[coord]);
+                }
+            }
+            return coordDirections;
+        }
+
         public float GetHeuristicScore()
         {
-            return new Heuristic(this).GetScore(0.3f, 0.1f, 0.2f, 0.2f, 0.2f);
+            return new Heuristic(this).GetScore(10f, -1f, 0.2f, 0.2f, 0.2f);
         }
 
         /// <summary>
@@ -171,72 +189,6 @@ namespace IA.Rules
             return list;
         }
 
-        public List<Pawn> GetAdjacentPositions(Coord targetPosition) {
-            // prend un tuple de position en entrée en renvoie les tuples adjacents sous forme d'un dico
-            List<Pawn> result = new List<Pawn>
-            {
-                // on commence par mettre toutes les cases adjacentes, 
-                // puis on vérifie si elle est bien dans la grid, on met ('h', 0) dedans s'il n'y a rien ;)
-                new Pawn(Race.HUM, 0, targetPosition.X + 1, targetPosition.Y - 1),
-                new Pawn(Race.HUM, 0, targetPosition.X + 1, targetPosition.Y),
-                new Pawn(Race.HUM, 0, targetPosition.X + 1, targetPosition.Y + 1),
-                new Pawn(Race.HUM, 0, targetPosition.X, targetPosition.Y - 1),
-                new Pawn(Race.HUM, 0, targetPosition.X, targetPosition.Y + 1),
-                new Pawn(Race.HUM, 0, targetPosition.X - 1, targetPosition.Y + 1),
-                new Pawn(Race.HUM, 0, targetPosition.X - 1, targetPosition.Y - 1),
-                new Pawn(Race.HUM, 0, targetPosition.X - 1, targetPosition.Y)
-            };
-
-            for (int i = result.Count - 1; i <= 0; i--)
-            {
-                Coord coord = result[i].Coordinates;
-                if (coord.X < 0
-                    || coord.X >= _x_max
-                    || coord.Y < 0
-                    || coord.Y >= _y_max)
-                {
-                    result.Remove(result[i]);
-                }
-                else
-                {
-                    result[i] = Grid.GetInCoord(result[i].Coordinates);
-                }
-            }
-            return result;
-        }
-
-        public Dictionary<Coord, Direction> GetAdjacentCoordAndDir(Coord targetPosition)
-        {
-            // prend un tuple de position en entrée en renvoie les tuples adjacents sous forme d'un dico
-            Dictionary<Coord, Direction> result = new Dictionary<Coord, Direction>
-            {
-                // on commence par mettre toutes les cases adjacentes, 
-                // puis on vérifie si elle est bien dans la grid, on met ('h', 0) dedans s'il n'y a rien ;)
-                { new Coord(targetPosition.X + 1, targetPosition.Y - 1), Direction.UR },
-                { new Coord(targetPosition.X + 1, targetPosition.Y), Direction.R },
-                { new Coord(targetPosition.X + 1, targetPosition.Y + 1), Direction.DR },
-                { new Coord(targetPosition.X, targetPosition.Y - 1), Direction.U },
-                { new Coord(targetPosition.X, targetPosition.Y + 1), Direction.D },
-                { new Coord(targetPosition.X - 1, targetPosition.Y + 1), Direction.DL },
-                { new Coord(targetPosition.X - 1, targetPosition.Y - 1), Direction.UL },
-                { new Coord(targetPosition.X - 1, targetPosition.Y), Direction.L }
-            };
-
-
-            for (int i = result.Keys.Count - 1; i <= 0; i--)
-            {
-                Coord coord = result.Keys.ToList()[i];
-                if (coord.X < 0
-                    || coord.X >= _x_max
-                    || coord.Y < 0
-                    || coord.Y >= _y_max)
-                {
-                    result.Remove(coord);
-                }
-            }
-            return result;
-        }
-
         /// <summary>
         /// Envoie les positions de les pions des ennemis sous forme de dictionnaire 
         /// key:Coord, value:(nombre de pions)
@@ -249,6 +201,9 @@ namespace IA.Rules
             {
                 if (pawn.Race.Equals(Race.THEM))
                 {
+                    if(dict.ContainsKey(pawn.Coordinates)){
+                        dict.Remove(pawn.Coordinates);
+                    }
                     dict.Add(pawn.Coordinates, pawn.Quantity);
                 }
             }

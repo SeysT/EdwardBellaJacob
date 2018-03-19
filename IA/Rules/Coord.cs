@@ -1,4 +1,6 @@
-﻿namespace IA.Rules
+﻿using System.Collections.Generic;
+
+namespace IA.Rules
 {
     class Coord
     {
@@ -37,6 +39,21 @@
             hashCode = hashCode * -1521134295 + X.GetHashCode();
             hashCode = hashCode * -1521134295 + Y.GetHashCode();
             return hashCode;
+        }
+
+        static public Dictionary<Coord, Direction> PossibleCoordsFromDirectionMoves(Coord coord)
+        {
+            return new Dictionary<Coord, Direction>
+            {
+                { new Coord(coord.X + 1, coord.Y - 1), Direction.UR },
+                { new Coord(coord.X + 1, coord.Y), Direction.R },
+                { new Coord(coord.X + 1, coord.Y + 1), Direction.DR },
+                { new Coord(coord.X, coord.Y - 1), Direction.U },
+                { new Coord(coord.X, coord.Y + 1), Direction.D },
+                { new Coord(coord.X - 1, coord.Y + 1), Direction.DL },
+                { new Coord(coord.X - 1, coord.Y - 1), Direction.UL },
+                { new Coord(coord.X - 1, coord.Y), Direction.L }
+            };
         }
 
         static public Coord DirectionMove(Coord coord, Direction direction)
