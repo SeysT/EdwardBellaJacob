@@ -127,7 +127,7 @@ namespace IA.Rules
         public List<Move> GetRecursiveMoves(Coord coord, List<Direction> possibleDirections, int quantity, int minSplitValue)
         {
             List<Move> list = new List<Move>();
-            if (quantity - minSplitValue <= minSplitValue) //Pas de split possible : on bouge tous les effectifs dans une direction
+            if (quantity - minSplitValue < minSplitValue) //Pas de split possible : on bouge tous les effectifs dans une direction
                 {
                     foreach (Direction direction in possibleDirections)
                     {
@@ -135,18 +135,18 @@ namespace IA.Rules
                     }
                 }
             else // Split possible : on envoie successivement i = X, X+1, ..., Y-X pions dans une direction et on appelle récursivement 
-                     //GetPossibleMoves() sur les pions restant en quantité Y-i sur la case initiale 
+                     //GetRecursiveMoves() sur les pions restant en quantité Y-i sur la case initiale 
             {
                     foreach (Direction directionSplit in possibleDirections)
                     {
-                        for (int i = minSplitValue; i < quantity - minSplitValue; i++)
+                        for (int i = minSplitValue; i <= quantity - minSplitValue; i++)
                         {
                             List<Direction> remainingDirections = new List<Direction>();
                             foreach (Direction direction in possibleDirections)
                                 if (direction != directionSplit)
                                     remainingDirections.Add(direction);
 
-                            GetRecursiveMoves(coord, remainingDirections, quantity - i, minSplitValue);
+                            list.AddRange(GetRecursiveMoves(coord, remainingDirections, quantity - i, minSplitValue));
                     }
                 }
             }
