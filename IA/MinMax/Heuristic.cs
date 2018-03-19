@@ -10,7 +10,7 @@ namespace IA
     // class to compute scores
     // For all modifications, ask Anouar and Baudouin
 
-    class Heuristic
+    public class Heuristic
     {
         private Board _board;
 

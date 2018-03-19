@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace IA.Rules
 {
-    class Grid
+    public class Grid
     {
         public List<Pawn> Pawns { get; private set; }
 
@@ -93,7 +93,6 @@ namespace IA.Rules
             }
             Pawns.Add(new Pawn(race, quantity, c));
             return false;
-
         }
     }
 }

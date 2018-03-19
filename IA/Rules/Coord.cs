@@ -2,7 +2,7 @@
 
 namespace IA.Rules
 {
-    class Coord
+    public class Coord
     {
         public Coord(Coord c)
         {

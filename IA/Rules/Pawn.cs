@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace IA.Rules
 {
-    enum Race { US, THEM, HUM }
+    public enum Race { US, THEM, HUM }
 
-    class Pawn
+    public class Pawn
     {
         public int Quantity { get; private set; }
         public Race Race { get; private set; }

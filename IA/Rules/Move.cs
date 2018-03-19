@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 
 namespace IA.Rules
 {
-    enum Direction { UL, U, UR, L, R, DL, D, DR }
+    public enum Direction { UL, U, UR, L, R, DL, D, DR }
 
-    class Move
+    public class Move
     {
         public Coord Coordinates { get; set; }
         public Direction Direction { get; set; }

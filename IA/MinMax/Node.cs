@@ -30,9 +30,9 @@ namespace IA
 
     class Node
     {
-        public Node(NodeData NodeData)
+        public Node()
         {
-            Data = NodeData;
+            this.Data = new NodeData();
             this.Children = new List<Node>();
         }
 

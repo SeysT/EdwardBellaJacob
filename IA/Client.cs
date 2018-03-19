@@ -4,6 +4,7 @@ using System.Diagnostics;
 using IA.Rules;
 using System.Collections.Generic;
 using System;
+using IA.IA;
 
 namespace IA
 {
@@ -13,7 +14,8 @@ namespace IA
         private int _port;
 
         private Socket _socket;
-        private Stopwatch _sw;
+
+        private BaseIA _ia;
 
         private string _playerName = "EdwardBellaJacob";
         private ServerPlayerTrame _trame;
@@ -29,9 +31,9 @@ namespace IA
             this._socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
             this._trame = new ServerPlayerTrame(this._socket);
 
-            this._indexes = new Dictionary<Rules.Race, int>() { {Race.HUM, 2}, {Race.THEM, 0}, {Race.US, 0} };
+            this._ia = new MinMax(5);
 
-            this._sw = new Stopwatch();
+            this._indexes = new Dictionary<Rules.Race, int>() { {Race.HUM, 2}, {Race.THEM, 0}, {Race.US, 0} };
         }
 
         private void _initGame() {
@@ -78,13 +80,8 @@ namespace IA
         }
 
         private int[, ] _chooseMove()
-        { 
-            Node root = new Node(new NodeData());
-            List<Move> moveCandidates = this._board.GetPossibleMoves();
-            float value = new MinMax().AlphaBeta(root, 40, float.MinValue, float.MaxValue, true, moveCandidates, this._board);
-            List<Move> moves = MinMax.GetNextMove(root, value);
-
-            return MOVTrame.GetPayloadFromMoves(moves);
+        {
+            return this._ia.ChooseNextMove(this._board);
         }
 
         private void _updateGame()
@@ -119,26 +116,24 @@ namespace IA
                 switch (this._trame.TrameHeader)
                 {
                     case "UPD":
-                        this._sw.Start();
-
                         this._updateGame();
                         int[,] next = this._chooseMove();
-
-                        this._sw.Stop();
-                        Console.WriteLine($"Elapsed Time={this._sw.Elapsed}");
-
+                        
                         new MOVTrame(next).Send(this._socket);
                         break;
+
                     case "END":
                         this._trame.Receive();
                         if (this._trame.TrameHeader == "BYE")
                         {
                             finish = true;
-                        } else
+                        }
+                        else
                         {
                             this._initGame();
                         }
                         break;
+
                     default:
                         break;
                 }

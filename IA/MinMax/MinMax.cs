@@ -1,4 +1,5 @@
-﻿using IA.Rules;
+﻿using IA.IA;
+using IA.Rules;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace IA.Rules
 {
-    class MinMax
+    public class MinMax: BaseIA
     {
         // Alpha Beta is a branch and bound variation of min max algorithm
         // It allowed us to jump from a 2-depth to a 5-depth and thus to make AI stronger
@@ -20,8 +21,18 @@ namespace IA.Rules
         // TODO implement Board.MakeMove(Move)
         // TODO implement Board.getMoves(Race r)
         // TODO implement Board.getHeuristicScore(Race)
+        private int _depth;
+        private float _maxAlpha;
+        private float _minBeta;
 
-        public float AlphaBeta(Node current, int depth, float alpha, float beta, bool isMyTurn, List<Move> movesCandidate, Board board)
+        public MinMax(int depth): base()
+        {
+            this._depth = depth;
+            this._maxAlpha = float.MaxValue;
+            this._minBeta = float.MinValue;
+        }
+
+        private float _getAlphaBeta(Node current, int depth, float alpha, float beta, bool isMyTurn, List<Move> movesCandidate, Board board)
         {
             if (movesCandidate.Count() == 0 || depth == 0)
             {
@@ -41,17 +52,17 @@ namespace IA.Rules
                     updatedMoveCandidate.Remove(currentMove);
                         
                     // The new Leaf is the child we're going to explore next
-                    Node Child = new Node(new NodeData());
+                    Node Child = new Node();
 
                     // Add each child Tree to parent node
                     current.Children.Add(Child);
 
                     // Compute Node.Weight
-                    Child.Data.HeuristicScore = newBoard.GetHeuristicScore();
+                    Child.Data.HeuristicScore = this._getHeuristicScore(newBoard);
                     Child.Data.Moves = new List<Move>() { currentMove };
 
                     //Alpha beta stuff
-                    val = Math.Max(val, this.AlphaBeta(Child, depth - 1, alpha, beta, !isMyTurn, updatedMoveCandidate, newBoard));
+                    val = Math.Max(val, this._getAlphaBeta(Child, depth - 1, alpha, beta, !isMyTurn, updatedMoveCandidate, newBoard));
                     Child.Data.MinMaxScore = val;
                         
                     beta = Math.Max(beta, val);
@@ -76,17 +87,17 @@ namespace IA.Rules
                     updatedMoveCandidate.Remove(currentMove);
 
                     // The new Leaf is the child we're going to explore next
-                    Node Child = new Node(new NodeData());
+                    Node Child = new Node();
 
                     // Add each child Tree to parent node
                     current.Children.Add(Child);
 
                     // Compute Node.Weight
-                    Child.Data.HeuristicScore = newBoard.GetHeuristicScore();
+                    Child.Data.HeuristicScore = this._getHeuristicScore(newBoard);
                     Child.Data.Moves = new List<Move>() { currentMove };
 
                     //Alpha beta stuff
-                    val = Math.Min(val, this.AlphaBeta(Child, depth - 1, alpha, beta, !isMyTurn, updatedMoveCandidate, newBoard));
+                    val = Math.Min(val, this._getAlphaBeta(Child, depth - 1, alpha, beta, !isMyTurn, updatedMoveCandidate, newBoard));
                     Child.Data.MinMaxScore = val;
 
                     alpha = Math.Min(alpha, val);
@@ -101,16 +112,29 @@ namespace IA.Rules
         }
 
         // This function alows to convert the score returned by AlphaBeta to the coordinates of the next currentMove
-        static public List<Move> GetNextMove(Node GameTree, float bestScore)
+        private List<Move> _getNextMove(Node GameTree, float alphaBeta)
         {
             foreach (Node SubTree in GameTree.Children)
             {
-                if (SubTree.Data.MinMaxScore == bestScore)
+                if (SubTree.Data.MinMaxScore == alphaBeta)
                 {
                     return SubTree.Data.Moves;
                 }
             }
             throw new Exception("[MinMax] GetNextMove couldn't return Moves");
+        }
+
+        private float _getHeuristicScore(Board board)
+        {
+            return new Heuristic(board).GetScore(10f, -1f, 0.2f, 0.2f, 0.2f);
+        }
+
+        override public int[,] ChooseNextMove(Board board)
+        {
+            Node root = new Node();
+            List<Move> moveCanditates = board.GetPossibleMoves();
+            float alphaBeta = this._getAlphaBeta(root, this._depth, this._maxAlpha, this._minBeta, true, moveCanditates, board);
+            return MOVTrame.GetPayloadFromMoves(this._getNextMove(root, alphaBeta));
         }
     }
 }

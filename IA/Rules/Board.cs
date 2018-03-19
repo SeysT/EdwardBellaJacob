@@ -2,7 +2,7 @@
 
 namespace IA.Rules
 {
-    class Board
+    public class Board
     // Class to handle boards
     {
         public Grid Grid { get; private set; }
@@ -146,11 +146,6 @@ namespace IA.Rules
                 }
             }
             return coordDirections;
-        }
-
-        public float GetHeuristicScore()
-        {
-            return new Heuristic(this).GetScore(10f, -1f, 0.2f, 0.2f, 0.2f);
         }
 
         /// <summary>
