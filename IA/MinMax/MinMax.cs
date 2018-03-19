@@ -32,24 +32,22 @@ namespace IA.Rules
             this._minBeta = float.MinValue;
         }
 
-        private float _getAlphaBeta(Node current, int depth, float alpha, float beta, bool isMyTurn, List<Move> movesCandidate, Board board)
+        private float _getAlphaBeta(Node current, int depth, float alpha, float beta, bool isMyTurn, Board board)
         {
-            if (movesCandidate.Count() == 0 || depth == 0)
+            
+            if (depth == 0)
             {
                 return current.Data.HeuristicScore;
             }
 
             if (isMyTurn)
             {
+                List<Move> movesCandidate = board.GetPossibleMoves(Race.US);
                 float val = float.MinValue;
                 foreach (Move currentMove in movesCandidate)
                 {
                     // Compute new board after move
                     Board newBoard = board.MakeMove(new List<Move>() { currentMove });
-
-                    // fetch the new movesCandidate.
-                    List<Move> updatedMoveCandidate = new List<Move>(movesCandidate);
-                    updatedMoveCandidate.Remove(currentMove);
                         
                     // The new Leaf is the child we're going to explore next
                     Node Child = new Node();
@@ -62,7 +60,7 @@ namespace IA.Rules
                     Child.Data.Moves = new List<Move>() { currentMove };
 
                     //Alpha beta stuff
-                    val = Math.Max(val, this._getAlphaBeta(Child, depth - 1, alpha, beta, !isMyTurn, updatedMoveCandidate, newBoard));
+                    val = Math.Max(val, this._getAlphaBeta(Child, depth - 1, alpha, beta, !isMyTurn, newBoard));
                     Child.Data.MinMaxScore = val;
                         
                     beta = Math.Max(beta, val);
@@ -77,14 +75,11 @@ namespace IA.Rules
             else
             {
                 float val = float.MaxValue;
+                List<Move> movesCandidate = board.GetPossibleMoves(Race.THEM);
                 foreach (Move currentMove in movesCandidate)
                 {
                     // Compute new board after move
                     Board newBoard = board.MakeMove(new List<Move>() { currentMove });
-
-                    // fetch the new movesCandidate.
-                    List<Move> updatedMoveCandidate = new List<Move>(movesCandidate);
-                    updatedMoveCandidate.Remove(currentMove);
 
                     // The new Leaf is the child we're going to explore next
                     Node Child = new Node();
@@ -97,7 +92,7 @@ namespace IA.Rules
                     Child.Data.Moves = new List<Move>() { currentMove };
 
                     //Alpha beta stuff
-                    val = Math.Min(val, this._getAlphaBeta(Child, depth - 1, alpha, beta, !isMyTurn, updatedMoveCandidate, newBoard));
+                    val = Math.Min(val, this._getAlphaBeta(Child, depth - 1, alpha, beta, !isMyTurn, newBoard));
                     Child.Data.MinMaxScore = val;
 
                     alpha = Math.Min(alpha, val);
@@ -132,8 +127,7 @@ namespace IA.Rules
         override public int[,] ChooseNextMove(Board board)
         {
             Node root = new Node();
-            List<Move> moveCanditates = board.GetPossibleMoves();
-            float alphaBeta = this._getAlphaBeta(root, this._depth, this._maxAlpha, this._minBeta, true, moveCanditates, board);
+            float alphaBeta = this._getAlphaBeta(root, this._depth, this._maxAlpha, this._minBeta, true, board);
             return MOVTrame.GetPayloadFromMoves(this._getNextMove(root, alphaBeta));
         }
     }

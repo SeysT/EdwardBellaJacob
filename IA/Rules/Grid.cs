@@ -71,6 +71,25 @@ namespace IA.Rules
         }
 
         /// <summary>
+        /// Permet de remove le pawn d coordonnées c dans la grille.
+        /// </summary>
+        /// <param name="c"></param>
+        /// <param name="quantity"></param>
+        /// <returns>return true in a pawn has been updated</returns>
+        public bool Remove(Coord c)
+        {
+            foreach (var pawn in Pawns)
+            {
+                if (c.Equals(pawn.Coordinates))
+                {
+                    Pawns.Remove(pawn);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
         /// This function updates quantity in coords if it exists or create with given quantity and race
         /// </summary>
         /// <param name="c">coord to look</param>

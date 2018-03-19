@@ -48,7 +48,7 @@ namespace IA.Rules
                 {
                     if (inNewCoord.Race.Equals(pawn.Race))
                     {
-                        Grid.Pawns.Remove(inNewCoord);
+                        Grid.Remove(inNewCoord.Coordinates);
                         Grid.Pawns.Add(
                             new Pawn(pawn.Race, move.Quantity + inNewCoord.Quantity, newCoord)
                         );
@@ -57,7 +57,7 @@ namespace IA.Rules
                     {
                         if (inNewCoord.Quantity <=  move.Quantity)
                         {
-                            Grid.Pawns.Remove(inNewCoord);
+                            Grid.Remove(inNewCoord.Coordinates);
                             Grid.Pawns.Add(
                                 new Pawn(pawn.Race, move.Quantity + inNewCoord.Quantity, newCoord)
                             );
@@ -110,12 +110,12 @@ namespace IA.Rules
             }
         }
 
-        public List<Move> GetPossibleMoves()
+        public List<Move> GetPossibleMoves(Race race)
         {
             //TO MODIFY: Take into account Split moves
             List<Move> list = new List<Move>();
-            List<Pawn> ourPawns = this.OurPawns();
-            foreach(Pawn pawn in ourPawns)
+            List<Pawn> pawns = race == Race.US ? this.OurPawns() : this.EnnemyPawns();
+            foreach (Pawn pawn in pawns)
             {
                 Dictionary<Coord, Direction> possibleDirections = this.GetPossibleCoordDirections(pawn.Coordinates);
                 foreach (Direction direction in possibleDirections.Values)
@@ -177,6 +177,24 @@ namespace IA.Rules
             foreach (Pawn pawn in Grid.Pawns)
             {
                 if (pawn.Race.Equals(Race.US))
+                {
+                    list.Add(pawn);
+                }
+            }
+            return list;
+        }
+
+        /// <summary>
+        /// Envoie les pions adverses sous forme de liste
+        /// </summary>
+        /// <returns></returns>
+        public List<Pawn> EnnemyPawns()
+        {
+            List<Pawn> list = new List<Pawn>();
+
+            foreach (Pawn pawn in Grid.Pawns)
+            {
+                if (pawn.Race.Equals(Race.THEM))
                 {
                     list.Add(pawn);
                 }

@@ -137,10 +137,10 @@ namespace IA
         public float GetScore()
         {
             float.TryParse(ConfigurationManager.AppSettings["Heuristica11"], out float a11);
-            float.TryParse(ConfigurationManager.AppSettings["Heuristica11"], out float a12);
-            float.TryParse(ConfigurationManager.AppSettings["Heuristica11"], out float a2);
-            float.TryParse(ConfigurationManager.AppSettings["Heuristica11"], out float a3);
-            float.TryParse(ConfigurationManager.AppSettings["Heuristica11"], out float a4);
+            float.TryParse(ConfigurationManager.AppSettings["Heuristica12"], out float a12);
+            float.TryParse(ConfigurationManager.AppSettings["Heuristica2"], out float a2);
+            float.TryParse(ConfigurationManager.AppSettings["Heuristica3"], out float a3);
+            float.TryParse(ConfigurationManager.AppSettings["Heuristica4"], out float a4);
 
             return (
                 a11 * this.OurStrengthHeuristic -
