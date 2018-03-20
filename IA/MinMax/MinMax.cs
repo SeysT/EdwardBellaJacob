@@ -56,10 +56,8 @@ namespace IA.Rules
                     {
                         return val ;
                     }
-                    else
-                    {
-                        alpha = Math.Max(alpha, val);
-                    }
+                    alpha = Math.Max(alpha, val);
+                    
                 }
                 foreach (Move currentMove in movesCandidate)
                 {
@@ -83,12 +81,11 @@ namespace IA.Rules
                     {
                         break;
                     }
-                    else
-                    {
-                        alpha = Math.Max(alpha, val);
-                    }
+                    
+                    alpha = Math.Max(alpha, val);
+                    
                 }
-                current.Data.MinMaxScore =Math.Min(current.Data.MinMaxScore, val);
+                current.Data.MinMaxScore = val; //Math.Min(current.Data.MinMaxScore, val);
                 return val;
             }
             else
@@ -128,7 +125,7 @@ namespace IA.Rules
                 {
                     System.Console.WriteLine("Problem");
                 }
-                current.Data.MinMaxScore = Math.Max(current.Data.MinMaxScore, val);
+                current.Data.MinMaxScore = val;//Math.Max(current.Data.MinMaxScore, val);
                 return val;
             }
         }
