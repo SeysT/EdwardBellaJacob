@@ -136,18 +136,18 @@ namespace IA
 
         public float GetScore()
         {
-            float.TryParse(ConfigurationManager.AppSettings["Heuristica11"], out float a11);
-            float.TryParse(ConfigurationManager.AppSettings["Heuristica11"], out float a12);
-            float.TryParse(ConfigurationManager.AppSettings["Heuristica11"], out float a2);
-            float.TryParse(ConfigurationManager.AppSettings["Heuristica11"], out float a3);
-            float.TryParse(ConfigurationManager.AppSettings["Heuristica11"], out float a4);
+            float.TryParse(ConfigurationManager.AppSettings["ourNumber"], out float ourNumber);
+            float.TryParse(ConfigurationManager.AppSettings["ennemyNumber"], out float ennemyNumber);
+            float.TryParse(ConfigurationManager.AppSettings["biggestGroup"], out float biggestGroup);
+            float.TryParse(ConfigurationManager.AppSettings["density"], out float density);
+            float.TryParse(ConfigurationManager.AppSettings["dispersion"], out float dispersion);
 
             return (
-                a11 * this.OurStrengthHeuristic -
-                a12 * this.EnnemyStrengthHeuristic + 
-                a2 * this.BiggestGroupHeuristic +
-                a3 * this.DensityHeuristic + 
-                a4 * this.DispersionHeuristic
+                ourNumber * this.OurStrengthHeuristic -
+                ennemyNumber * this.EnnemyStrengthHeuristic + 
+                biggestGroup * this.BiggestGroupHeuristic +
+                density * this.DensityHeuristic + 
+                dispersion * this.DispersionHeuristic
             );
         }
 
