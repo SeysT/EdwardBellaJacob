@@ -167,6 +167,72 @@ namespace IA.Rules
             return list;
         }
 
+        public List<List<Move>> GetRecursiveMovesTest(List<List<Move>> previousMoves, Coord coord, List<Direction> possibleDirections, int quantity, int minSplitValue)
+        {
+            List<List<Move>> presentMoves = new List<List<Move>>();
+            if (quantity - minSplitValue < minSplitValue) //Pas de split possible : on bouge tous les effectifs dans une direction
+            {
+                if(previousMoves.Count != 0) 
+                {
+                    foreach (List<Move> list in previousMoves) //Pour chaque liste L des mov des groupes splités, on va créer n sous-listes
+                    // crées en ajoutant à L l'un des mov possibles du groupe restant dans l'une des n directions.
+                    {
+                        presentMoves.Add(list); // on traite le cas où le groupe restant ne bouge pas
+                        foreach (Direction direction in possibleDirections)
+                        {
+                            List<Move> moveToAdd = new List<Move>();
+                            moveToAdd.AddRange(list);
+                            moveToAdd.Add(new Move(coord, direction, quantity));
+                            presentMoves.Add(moveToAdd);
+                        }
+                    }
+                }
+                else //Pas de coup précédent : il n'y a pas eu de split effectué. Chaque liste de mov contiendra 1 seul élément
+                {
+                    presentMoves.Add(new List<Move>()); // on traite le cas où le groupe restant ne bouge pas
+                    foreach (Direction direction in possibleDirections)
+                    {
+                        presentMoves.Add(new List<Move>() { new Move(coord, direction, quantity) });
+                    }
+                }
+            }
+            else // Split possible : on envoie successivement i = X, X+1, ..., Y-X pions dans une direction et on appelle récursivement 
+                 //GetRecursiveMoves() sur les pions restant en quantité Y-i sur la case initiale 
+            {
+                if (previousMoves.Count != 0)
+                {
+                    foreach (List<Move> list in previousMoves) //Pour chaque liste L des mov des groupes splités, on va créer n sous-listes
+                    // crées en ajoutant à L l'un des mov possibles du groupe restant dans l'une des n directions.
+                    {
+                        foreach (Direction directionSplit in possibleDirections) //on choisit une direction de split
+                        {
+                            for (int i = minSplitValue; i <= quantity - minSplitValue; i++)
+                            {
+                                List<Move> actualMoves = new List<Move>();
+                                actualMoves.AddRange(list);
+                                actualMoves.Add(new Move(coord, directionSplit, i));
+                                List<Direction> remainingDirections = new List<Direction>(); //on regarde les directions restantes
+                                foreach (Direction direction in possibleDirections)
+                                    if (direction != directionSplit)
+                                        remainingDirections.Add(direction);
+
+                                presentMoves.AddRange(GetRecursiveMovesTest(coord, remainingDirections, quantity - i, minSplitValue));
+                            }
+                        }
+                        foreach (Direction direction in possibleDirections)
+                        {
+                            List<Move> moveToAdd = new List<Move>();
+                            moveToAdd.AddRange(list);
+                            moveToAdd.Add(new Move(coord, direction, quantity));
+                            presentMoves.Add(moveToAdd);
+                        }
+                    }
+                }
+                
+            }
+            return presentMoves;
+        }
+
 
         /// <summary>
         /// Get all possible coord and direction where we can move
