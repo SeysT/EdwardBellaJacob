@@ -9,7 +9,7 @@ namespace IA.Rules
     {
         public Coord Coordinates { get; set; }
         public Direction Direction { get; set; }
-        public float Quantity { get; set; }
+        public int Quantity { get; set; }
 
         public Move(Move m)
         {
@@ -22,7 +22,7 @@ namespace IA.Rules
         /// Constructeur de Move: qui prend en entrée les coordonnées, la direction 
         /// et le nombre de pions à bouger
         /// </summary>
-        public Move(Coord coord, Direction dir, float q)
+        public Move(Coord coord, Direction dir, int q)
         {
             this.Coordinates = new Coord(coord);
             this.Direction = dir;
