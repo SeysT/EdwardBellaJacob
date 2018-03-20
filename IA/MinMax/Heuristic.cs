@@ -134,6 +134,41 @@ namespace IA
             }
         }
 
+        float OurHumanDistance
+        {
+            get
+            {
+                Dictionary<Coord, int> humanPositions = this._board.HumanPositions();
+                Dictionary<Coord, int> ourPositions = this._board.OurPositions();
+
+                int totalDistance = 0;
+
+                foreach(KeyValuePair<Coord, int> ourPos in ourPositions)
+                {
+                    int minDistance = int.MaxValue;
+                    foreach(KeyValuePair<Coord, int> humPos in humanPositions)
+                    {
+                        // Si les humains sont plus nombreux on ne les prends pas en compte
+                        if (humPos.Value > ourPos.Value)
+                        {
+                            continue;
+                        }
+
+                        // Sinon on regarde la distance
+                        int distance = Math.Min(Math.Abs(humPos.Key.X - ourPos.Key.X), Math.Abs(humPos.Key.Y - ourPos.Key.Y));
+                        if (distance < minDistance)
+                        {
+                            minDistance = distance;
+                        }
+                    }
+
+                    totalDistance += minDistance == int.MaxValue ? 0 : minDistance;
+                }
+
+                return (float) -totalDistance;
+            }
+        }
+
         public float GetScore()
         {
             float.TryParse(ConfigurationManager.AppSettings["ourNumber"], out float ourNumber);
@@ -141,13 +176,15 @@ namespace IA
             float.TryParse(ConfigurationManager.AppSettings["biggestGroup"], out float biggestGroup);
             float.TryParse(ConfigurationManager.AppSettings["density"], out float density);
             float.TryParse(ConfigurationManager.AppSettings["dispersion"], out float dispersion);
+            float.TryParse(ConfigurationManager.AppSettings["ourHumanDistance"], out float ourHumanDistance);
 
             return (
                 ourNumber * this.OurStrengthHeuristic -
                 ennemyNumber * this.EnnemyStrengthHeuristic + 
                 biggestGroup * this.BiggestGroupHeuristic +
                 density * this.DensityHeuristic + 
-                dispersion * this.DispersionHeuristic
+                dispersion * this.DispersionHeuristic +
+                ourHumanDistance * this.OurHumanDistance
             );
         }
 
