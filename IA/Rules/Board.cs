@@ -110,21 +110,35 @@ namespace IA.Rules
             }
         }
 
+        /// <summary>
+        /// Get the min number of a group on the board
+        /// </summary>
+        public float GetMinGroupNumber()
+        {
+            float min = this.OurNumber();
+            foreach (Pawn pawn in this.Grid.Pawns)
+            {
+                if (pawn.Quantity < min)
+                {
+                    min = pawn.Quantity;
+                }
+            }
+            return min;
+        }
+
         public List<Move> GetPossibleMoves()
         {
             List<Move> list = new List<Move>();
-            List<Pawn> ourPawns = this.OurPawns();
-            int X = 2; //TODO : get min split value
-            foreach(Pawn pawn in ourPawns)
+            float minSplitValue = this.GetMinGroupNumber();
+            foreach(Pawn pawn in this.OurPawns())
             {
                 List<Direction> possibleDirections = this.GetPossibleCoordDirections(pawn.Coordinates);
-                int Y = pawn.Quantity;
-                list.AddRange(GetRecursiveMoves(pawn.Coordinates, possibleDirections, Y, X));
+                list.AddRange(GetRecursiveMoves(pawn.Coordinates, possibleDirections, pawn.Quantity, minSplitValue));
             }
             return list;
         }
 
-        public List<Move> GetRecursiveMoves(Coord coord, List<Direction> possibleDirections, int quantity, int minSplitValue)
+        public List<Move> GetRecursiveMoves(Coord coord, List<Direction> possibleDirections, float quantity, float minSplitValue)
         {
             List<Move> list = new List<Move>();
             if (quantity - minSplitValue < minSplitValue) //Pas de split possible : on bouge tous les effectifs dans une direction
@@ -139,7 +153,7 @@ namespace IA.Rules
             {
                     foreach (Direction directionSplit in possibleDirections)
                     {
-                        for (int i = minSplitValue; i <= quantity - minSplitValue; i++)
+                        for (float i = minSplitValue; i <= quantity - minSplitValue; i++)
                         {
                             List<Direction> remainingDirections = new List<Direction>();
                             foreach (Direction direction in possibleDirections)
@@ -152,6 +166,7 @@ namespace IA.Rules
             }
             return list;
         }
+
 
         /// <summary>
         /// Get all possible coord and direction where we can move
@@ -180,9 +195,9 @@ namespace IA.Rules
         /// key:Coord, value:(nombre de pions) 
         /// </summary>
         /// <returns></returns>
-        public Dictionary<Coord, int> OurPositions()
+        public Dictionary<Coord, float> OurPositions()
         {
-            Dictionary<Coord, int> dict = new Dictionary<Coord,int>();
+            Dictionary<Coord, float> dict = new Dictionary<Coord,float>();
 
             foreach (Pawn pawn in Grid.Pawns) {
                 if (pawn.Race.Equals(Race.US))
@@ -216,9 +231,9 @@ namespace IA.Rules
         /// key:Coord, value:(nombre de pions)
         /// </summary>
         /// <returns></returns>
-        public Dictionary<Coord, int> EnnemyPositions()
+        public Dictionary<Coord, float> EnnemyPositions()
         {
-            Dictionary<Coord, int> dict = new Dictionary<Coord, int>();
+            Dictionary<Coord, float> dict = new Dictionary<Coord, float>();
             foreach (Pawn pawn in Grid.Pawns)
             {
                 if (pawn.Race.Equals(Race.THEM))
@@ -232,9 +247,9 @@ namespace IA.Rules
             return dict;
         }
 
-        public Dictionary<Coord, int> HumanPositions()
+        public Dictionary<Coord, float> HumanPositions()
         {
-            Dictionary<Coord, int> dict = new Dictionary<Coord, int>();
+            Dictionary<Coord, float> dict = new Dictionary<Coord, float>();
             foreach (Pawn pawn in Grid.Pawns)
             {
                 if (pawn.Race.Equals(Race.HUM))
@@ -245,9 +260,9 @@ namespace IA.Rules
             return dict;
         }
 
-        public int HumanNumber()
+        public float HumanNumber()
         {
-            int number = 0;
+            float number = 0;
             foreach (Pawn pawn in Grid.Pawns)
             {
                 if (pawn.Race.Equals(Race.HUM))
@@ -258,9 +273,9 @@ namespace IA.Rules
             return number;
         }
 
-        public int OurNumber()
+        public float OurNumber()
         {
-            int number = 0;
+            float number = 0;
             foreach (Pawn pawn in Grid.Pawns)
             {
                 if (pawn.Race.Equals(Race.US))
@@ -271,9 +286,9 @@ namespace IA.Rules
             return number;
         }
 
-        public int EnnemyNumber()
+        public float EnnemyNumber()
         {
-            int number = 0;
+            float number = 0;
             foreach (Pawn pawn in Grid.Pawns)
             {
                 if (pawn.Race.Equals(Race.THEM))

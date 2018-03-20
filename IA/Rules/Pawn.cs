@@ -10,18 +10,18 @@ namespace IA.Rules
 
     public class Pawn
     {
-        public int Quantity { get; private set; }
+        public float Quantity { get; private set; }
         public Race Race { get; private set; }
         public Coord Coordinates { get; private set; }
 
-        public Pawn(Race race, int quantity, Coord c)
+        public Pawn(Race race, float quantity, Coord c)
         {
             Race = race;
             Quantity = quantity;
             Coordinates = new Coord(c);
         }
 
-        public Pawn(Race race, int quantity, int x, int y)
+        public Pawn(Race race, float quantity, int x, int y)
         {
             Race = race;
             Quantity = quantity;

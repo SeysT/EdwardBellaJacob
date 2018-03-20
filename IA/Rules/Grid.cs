@@ -53,7 +53,7 @@ namespace IA.Rules
         /// <param name="c"></param>
         /// <param name="quantity"></param>
         /// <returns>return true in a pawn has been updated</returns>
-        public bool SetQuantityInCoord(Coord c, int quantity)
+        public bool SetQuantityInCoord(Coord c, float quantity)
         {
             foreach (var pawn in Pawns)
             {
