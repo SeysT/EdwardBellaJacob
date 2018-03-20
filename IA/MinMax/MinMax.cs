@@ -38,7 +38,7 @@ namespace IA.Rules
             if (depth == 0)
             {
                 current.Data.MinMaxScore = current.Data.HeuristicScore;
-                return current.Data.HeuristicScore * (depth + 1) /(_depth + 1);
+                return current.Data.HeuristicScore;
             }
 
             if (isMyTurn)
@@ -48,11 +48,10 @@ namespace IA.Rules
                 //à checker
                 if (movesCandidate.Count.Equals(0))
                 {
-                    
                     current.Data.HeuristicScore = this._getHeuristicScore(board);
 
                     //Alpha beta stuff
-                    val = current.Data.HeuristicScore * (depth + 1) / (_depth + 1);
+                    val = current.Data.HeuristicScore;
                     if (val >= beta)
                     {
                         return val ;
@@ -79,7 +78,7 @@ namespace IA.Rules
                     Child.Data.Moves = new List<Move>() { currentMove };
 
                     //Alpha beta stuff
-                    val = Math.Max(val, this._getAlphaBeta(Child, depth - 1, alpha, beta, !isMyTurn, newBoard)) * (depth + 1) / (_depth + 1);
+                    val = Math.Max(val, this._getAlphaBeta(Child, depth - 1, alpha, beta, !isMyTurn, newBoard));
                     if (val >= beta)
                     {
                         break;
@@ -89,7 +88,7 @@ namespace IA.Rules
                         alpha = Math.Max(alpha, val);
                     }
                 }
-                current.Data.MinMaxScore =Math.Min(current.Data.MinMaxScore,val);
+                current.Data.MinMaxScore =Math.Min(current.Data.MinMaxScore, val);
                 return val;
             }
             else
@@ -114,9 +113,9 @@ namespace IA.Rules
 
                     //Alpha beta stuff
                     //val = Child.Data.HeuristicScore;
-                    val = Math.Min(val, this._getAlphaBeta(Child, depth - 1, alpha, beta, !isMyTurn, newBoard)) * (depth + 1) / (_depth + 1);
+                    val = Math.Min(val, this._getAlphaBeta(Child, depth - 1, alpha, beta, !isMyTurn, newBoard));
                     
-                    if (val < alpha)
+                    if (val <= alpha)
                     {
                         break;
                     }
@@ -129,7 +128,7 @@ namespace IA.Rules
                 {
                     System.Console.WriteLine("Problem");
                 }
-                current.Data.MinMaxScore = Math.Max(val, current.Data.MinMaxScore);
+                current.Data.MinMaxScore = Math.Max(current.Data.MinMaxScore, val);
                 return val;
             }
         }
