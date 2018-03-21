@@ -43,25 +43,21 @@ namespace IA.Rules
                 Pawn inNewCoord = Grid.GetInCoord(newCoord);
                 if (inNewCoord.Quantity == 0)
                 {
-                    Grid.Pawns.Add(new Pawn(pawn.Race, move.Quantity, newCoord));
+                    Grid.Add(new Pawn(pawn.Race, move.Quantity, newCoord));
                 }
                 else
                 {
                     if (inNewCoord.Race.Equals(pawn.Race))
                     {
-                        Grid.Pawns.Remove(inNewCoord);
-                        Grid.Pawns.Add(
-                            new Pawn(pawn.Race, move.Quantity + inNewCoord.Quantity, newCoord)
-                        );
+                        Grid.Remove(inNewCoord.Coordinates);
+                        Grid.Add(new Pawn(pawn.Race, move.Quantity + inNewCoord.Quantity, newCoord));
                     }
                     else if (inNewCoord.Race.Equals(Race.HUM))
                     {
                         if (inNewCoord.Quantity <=  move.Quantity)
                         {
-                            Grid.Pawns.Remove(inNewCoord);
-                            Grid.Pawns.Add(
-                                new Pawn(pawn.Race, move.Quantity + inNewCoord.Quantity, newCoord)
-                            );
+                            Grid.Remove(inNewCoord.Coordinates);
+                            Grid.Add(new Pawn(pawn.Race, move.Quantity + inNewCoord.Quantity, newCoord));
                         }
                         else
                         {
@@ -78,8 +74,8 @@ namespace IA.Rules
                         }
                         else if(1.5 * inNewCoord.Quantity <= move.Quantity)
                         {
-                            Grid.Pawns.Remove(inNewCoord);
-                            Grid.Pawns.Add(new Pawn(pawn.Race, move.Quantity + inNewCoord.Quantity, newCoord));
+                            Grid.Remove(inNewCoord.Coordinates);
+                            Grid.Add(new Pawn(pawn.Race, move.Quantity + inNewCoord.Quantity, newCoord));
                         }
                         else
                         {
@@ -89,21 +85,21 @@ namespace IA.Rules
                                 // Proba de gagner = 0.5
                                 // si attaquant gagne, chaque pion a une proba de surivie de P
                                 // si attaquant perd , chaque pion a une proba de survie 1 - P
-                                Grid.Pawns.Remove(inNewCoord);
-                                Grid.Pawns.Add(new Pawn(pawn.Race, (int)(move.Quantity * 0.5) , newCoord));
+                                Grid.Remove(inNewCoord.Coordinates);
+                                Grid.Add(new Pawn(pawn.Race, (int)(move.Quantity * 0.5) , newCoord));
 
                             }
                             else if (inNewCoord.Quantity > move.Quantity)
                             {
                                 // Proba de gagner = move.Quantity / (2 * inNewCoord.Quantity)
-                                Grid.Pawns.Remove(inNewCoord);
-                                Grid.Pawns.Add(new Pawn(inNewCoord.Race, (int)(inNewCoord.Quantity * (1 - move.Quantity /(2 * inNewCoord.Quantity))), inNewCoord.Coordinates));
+                                Grid.Remove(inNewCoord.Coordinates);
+                                Grid.Add(new Pawn(inNewCoord.Race, (int)(inNewCoord.Quantity * (1 - move.Quantity /(2 * inNewCoord.Quantity))), inNewCoord.Coordinates));
                             }
                             else if (inNewCoord.Quantity < move.Quantity)
                             {
                                 // Proba de gagner = move.Quantity / inNewCoord.Quantity - 0.5
-                                Grid.Pawns.Remove(inNewCoord);
-                                Grid.Pawns.Add(new Pawn(pawn.Race, (int)(move.Quantity * (move.Quantity / inNewCoord.Quantity - 0.5)), newCoord));
+                                Grid.Remove(inNewCoord.Coordinates);
+                                Grid.Add(new Pawn(pawn.Race, (int)(move.Quantity * (move.Quantity / inNewCoord.Quantity - 0.5)), newCoord));
                             }
                         }
                     }   
@@ -117,7 +113,7 @@ namespace IA.Rules
         public int GetMinGroupNumber()
         {
             int min = this.OurNumber();
-            foreach (Pawn pawn in this.Grid.Pawns)
+            foreach (Pawn pawn in this.Grid.GetPawns())
             {
                 if (pawn.Quantity < min)
                 {
@@ -127,12 +123,15 @@ namespace IA.Rules
             return min;
         }
 
-        public List<Move> GetPossibleMoves()
+        public List<Move> GetPossibleMoves(Race race)
         {
             List<Move> list = new List<Move>();
+            List<Pawn> pawns = race == Race.US ? this.OurPawns() : this.EnnemyPawns();
+
             int minSplitValue = this.GetMinGroupNumber();
             int maxSplitGroups = 2;
-            foreach(Pawn pawn in this.OurPawns())
+
+            foreach(Pawn pawn in pawns)
             {
                 foreach (List<Move> listMove in GetAllConfigurationForOnePawn(pawn, minSplitValue, maxSplitGroups))
                     list.AddRange(listMove);
@@ -140,14 +139,15 @@ namespace IA.Rules
             return list;
         }
 
-        public List<List<Move>> GetPossibleMovesBis()
+        public List<List<Move>> GetPossibleMovesBis(Race race, int maxSplitGroups)
         {
             List<List<Move>> outList = new List<List<Move>>();
             var sequenceList = new List<List<List<Move>>>();
             
-            int minSplitValue = this.GetMinGroupNumber();
-            int maxSplitGroups = 1;
-            foreach (Pawn pawn in this.OurPawns())
+            List<Pawn> pawns = race == Race.US ? this.OurPawns() : this.EnnemyPawns();
+            int minSplitValue = System.Math.Max(this.GetMinGroupNumber(), 2);
+
+            foreach (Pawn pawn in pawns)
             {
                 sequenceList.Add(GetAllConfigurationForOnePawn(pawn, minSplitValue, maxSplitGroups));
             }
@@ -167,7 +167,7 @@ namespace IA.Rules
             {
                 List<Move> toAdd = new List<Move>();
                 for (int j = 0; j < n; j++)
-                    toAdd.Add(tempList[i + j][0]);
+                    toAdd.AddRange(tempList[i + j]);
                 outList.Add(toAdd);
             }
             return outList;
@@ -188,38 +188,10 @@ namespace IA.Rules
                     }
                 }
 
-                allConfs.Add(allMoves);
+                if(allMoves.Count >0)
+                    allConfs.Add(allMoves);
             }
             return allConfs;
-        }
-
-            public List<Move> GetRecursiveMoves(Coord coord, List<Direction> possibleDirections, int quantity, int minSplitValue)
-        {
-            List<Move> list = new List<Move>();
-            if (quantity - minSplitValue < minSplitValue) //Pas de split possible : on bouge tous les effectifs dans une direction
-                {
-                    foreach (Direction direction in possibleDirections)
-                    {
-                        list.Add(new Move(coord, direction, quantity));
-                    }
-                }
-            else // Split possible : on envoie successivement i = X, X+1, ..., Y-X pions dans une direction et on appelle récursivement 
-                     //GetRecursiveMoves() sur les pions restant en quantité Y-i sur la case initiale 
-            {
-                    foreach (Direction directionSplit in possibleDirections)
-                    {
-                        for (int i = minSplitValue; i <= quantity - minSplitValue; i++)
-                        {
-                            List<Direction> remainingDirections = new List<Direction>();
-                            foreach (Direction direction in possibleDirections)
-                                if (direction != directionSplit)
-                                    remainingDirections.Add(direction);
-
-                            list.AddRange(GetRecursiveMoves(coord, remainingDirections, quantity - i, minSplitValue));
-                    }
-                }
-            }
-            return list;
         }
 
 
@@ -246,34 +218,17 @@ namespace IA.Rules
         }
 
         /// <summary>
-        /// Envoie les positions de nos pions sous forme de dictionnaire 
-        /// key:Coord, value:(nombre de pions) 
+        /// Get race list pawns from given race.
         /// </summary>
+        /// <param name="race"></param>
         /// <returns></returns>
-        public Dictionary<Coord, int> OurPositions()
-        {
-            Dictionary<Coord, int> dict = new Dictionary<Coord,int>();
-
-            foreach (Pawn pawn in Grid.Pawns) {
-                if (pawn.Race.Equals(Race.US))
-                {
-                    dict.Add(pawn.Coordinates, pawn.Quantity);
-                }
-            }
-            return dict;
-        }
-
-        /// <summary>
-        /// Envoie nos pions sous forme de liste
-        /// </summary>
-        /// <returns></returns>
-        public List<Pawn> OurPawns()
+        public List<Pawn> RacePawns(Race race)
         {
             List<Pawn> list = new List<Pawn>();
 
-            foreach (Pawn pawn in Grid.Pawns)
+            foreach (Pawn pawn in Grid.GetPawns())
             {
-                if (pawn.Race.Equals(Race.US))
+                if (pawn.Race.Equals(race))
                 {
                     list.Add(pawn);
                 }
@@ -281,46 +236,66 @@ namespace IA.Rules
             return list;
         }
 
+        public List<Pawn> OurPawns()
+        {
+            return this.RacePawns(Race.US);
+        }
+
+        public List<Pawn> EnnemyPawns()
+        {
+            return this.RacePawns(Race.THEM);
+        }
+
+        public List<Pawn> HumanPawns()
+        {
+            return this.RacePawns(Race.HUM);
+        }
+
         /// <summary>
-        /// Envoie les positions de les pions des ennemis sous forme de dictionnaire 
-        /// key:Coord, value:(nombre de pions)
+        /// Get race positions on grid from given race
         /// </summary>
+        /// <param name="race"></param>
         /// <returns></returns>
-        public Dictionary<Coord, int> EnnemyPositions()
+        public Dictionary<Coord, int> RacePositions(Race race)
         {
             Dictionary<Coord, int> dict = new Dictionary<Coord, int>();
-            foreach (Pawn pawn in Grid.Pawns)
+
+            foreach (Pawn pawn in Grid.GetPawns())
             {
-                if (pawn.Race.Equals(Race.THEM))
+                if (pawn.Race.Equals(race))
                 {
-                    if(dict.ContainsKey(pawn.Coordinates)){
-                        dict.Remove(pawn.Coordinates);
-                    }
                     dict.Add(pawn.Coordinates, pawn.Quantity);
                 }
             }
             return dict;
+        }
+
+        public Dictionary<Coord, int> OurPositions()
+        {
+            return this.RacePositions(Race.US);
+        }
+
+        public Dictionary<Coord, int> EnnemyPositions()
+        {
+            return this.RacePositions(Race.THEM);
         }
 
         public Dictionary<Coord, int> HumanPositions()
         {
-            Dictionary<Coord, int> dict = new Dictionary<Coord, int>();
-            foreach (Pawn pawn in Grid.Pawns)
-            {
-                if (pawn.Race.Equals(Race.HUM))
-                {
-                    dict.Add(pawn.Coordinates, pawn.Quantity);
-                }
-            }
-            return dict;
+            return this.RacePositions(Race.HUM);
         }
 
-        public int HumanNumber()
+        /// <summary>
+        /// Get race number from given race
+        /// </summary>
+        /// <param name="race"></param>
+        /// <returns></returns>
+        public int RaceNumber(Race race)
         {
             int number = 0;
-            foreach (Pawn pawn in Grid.Pawns)
+            foreach (Pawn pawn in Grid.GetPawns())
             {
-                if (pawn.Race.Equals(Race.HUM))
+                if (pawn.Race.Equals(race))
                 {
                     number += pawn.Quantity;
                 }
@@ -330,28 +305,17 @@ namespace IA.Rules
 
         public int OurNumber()
         {
-            int number = 0;
-            foreach (Pawn pawn in Grid.Pawns)
-            {
-                if (pawn.Race.Equals(Race.US))
-                {
-                    number += pawn.Quantity;
-                }
-            }
-            return number;
+            return this.RaceNumber(Race.US);
         }
 
         public int EnnemyNumber()
         {
-            int number = 0;
-            foreach (Pawn pawn in Grid.Pawns)
-            {
-                if (pawn.Race.Equals(Race.THEM))
-                {
-                    number += pawn.Quantity;
-                }
-            }
-            return number;
+            return this.RaceNumber(Race.THEM);
+        }
+
+        public int HumanNumber()
+        {
+            return this.RaceNumber(Race.HUM);
         }
     }
 }
