@@ -11,34 +11,33 @@ namespace IA.Rules
 
         public static List<int[]> GetEnumeration(int q, int minSplit, int maxSplitGroups)
         {
-            return _removeTooManySplitGroups(_removeDoubles(_getEnumerationRecursive(new int[] { 0, 0, 0, 0, 0, 0, 0, 0 }, q, minSplit)), maxSplitGroups);
+            return _removeDoubles(_getEnumerationRecursive(new int[] { 0, 0, 0, 0, 0, 0, 0, 0 }, q, minSplit, maxSplitGroups));
         }
 
-        private static List<int[]> _getEnumerationRecursive(int[] previous, int q, int minSplit)
+        private static List<int[]> _getEnumerationRecursive(int[] previous, int q, int minSplit, int maxSplitGroups)
         {
             List<int[]> returnList = new List<int[]>();
-            if (q > 0)
-            {
-                for (int j = 0; j < 8; j++)
-                {
-                    int[] L = (int[])previous.Clone();
-                    L[j] = q;
-                    returnList.Add(L);
-                }
-            }
-            if (q < 2 * minSplit)
+            if(previous.Count(i => i != 0) >= maxSplitGroups || q < 2 * minSplit) //on ne peut plus spliter
             {
                 returnList.Add(previous);
+                for (int j = 0; j < 8; j++)
+                {
+                    if(previous[j] !=0)
+                    {
+                        int[] L = (int[])previous.Clone();
+                        L[j] += q; // on met toute la quantité restante sur une case déjà occupée
+                        returnList.Add(L);
+                    }
+                }
                 return returnList;
             }
-
             for (int j = 0; j < 8; j++)
             {
                 for (int n = minSplit; n <= q - minSplit; n++)
                 {
                     int[] L = (int[])previous.Clone();
                     L[j] += n;
-                    returnList.AddRange(_getEnumerationRecursive(L, q - n, minSplit));
+                    returnList.AddRange(_getEnumerationRecursive(L, q - n, minSplit, maxSplitGroups));
                 }
             }
             return returnList;
