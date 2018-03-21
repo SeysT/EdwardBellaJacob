@@ -1,4 +1,5 @@
-﻿using System;
+﻿using IA.Rules;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -172,7 +173,7 @@ namespace IA.Rules
             var sequenceList = new List<List<List<Move>>>();
             
             List<Pawn> pawns = race == Race.US ? this.OurPawns() : this.EnnemyPawns();
-            int minSplitValue = System.Math.Max(this.GetMinGroupNumber(), 2);
+            int minSplitValue = 1; System.Math.Max(this.GetMinGroupNumber(), 2);
 
             foreach (Pawn pawn in pawns)
             {
@@ -182,8 +183,14 @@ namespace IA.Rules
 
             int n = sequenceArray.Count();
 
-            List<List<Move>> tempList = new List<List<Move>>();
+            List<List<List<Move>>> tempList = new List<List<List<Move>>>();//CartesianProduct(sequenceList);
+            
+            foreach (var array in sequenceList.Permutations(a => a))
+            {
+                tempList.Add(array.Aggregate(new List<List<Move>>(), (list, i) => { list.Add(i); return list; }));
+            }
 
+            /*
             var cart = sequenceArray.CartesianProduct();
 
             foreach (var element in cart)
@@ -197,6 +204,7 @@ namespace IA.Rules
                     toAdd.AddRange(tempList[i + j]);
                 outList.Add(toAdd);
             }
+            */
             return outList;
         }
 
@@ -207,7 +215,7 @@ namespace IA.Rules
             foreach(int[] configuration in SplitEnumeration.GetEnumeration(pawn.Quantity, minSplit, maxSplitGroups))
             {
                 List<Move> allMoves = new List<Move>();
-                for(int i =0; i<8; i++)
+                for(int i =0; i < 8; i++) 
                 {
                     if (possibleDirections.Contains((Direction)i) && configuration[i] > 0)
                     {
@@ -349,14 +357,75 @@ namespace IA.Rules
 
 public static class Extensions
 {
-    public static IEnumerable<IEnumerable<T>> CartesianProduct<T>(this IEnumerable<IEnumerable<T>> sequences)
+    public static List<List<List<Move>>> CartesianProduct(List<List<List<Move>>> sequences)
     {
-        IEnumerable<IEnumerable<T>> emptyProduct = new[] { Enumerable.Empty<T>() };
-        return sequences.Aggregate(
-            emptyProduct,
-            (accumulator, sequence) =>
-            from acc in accumulator
-            from item in sequence
-            select acc.Concat(new List<T>() { item }));
+
+        if(sequences.Count <= 1)
+            return sequences;
+        
+        List<List<Move>> first = sequences.First();
+        List<List<List<Move>>> restOfTheList = sequences.GetRange(1, sequences.Count - 1);
+        List<List<List<Move>>> result = new List<List<List<Move>>>();
+        foreach(List<Move> possibleMoveForAPawn in first)
+        {
+            //result.Add(new List<List<Move>>(element));
+            List<List<Move>> concatList = new List<List<Move>>();
+            concatList.Add(possibleMoveForAPawn);
+            //concatList.Add();
+
+            result.Add(concatList);
+        }
+        return result;
     }
 }
+
+
+public static class EnumerableExtensions
+{
+    public static IEnumerable<TValue[]> Permutations<TKey, TValue>(this IEnumerable<TKey> keys, Func<TKey, IEnumerable<TValue>> selector)
+    {
+        var keyArray = keys.ToArray();
+        if (keyArray.Length < 1)
+            yield break;
+        TValue[] values = new TValue[keyArray.Length];
+        foreach (var array in Permutations(keyArray, 0, selector, values))
+            yield return array;
+    }
+
+    static IEnumerable<TValue[]> Permutations<TKey, TValue>(TKey[] keys, int index, Func<TKey, IEnumerable<TValue>> selector, TValue[] values)
+    {
+        //Debug.Assert(keys.Length == values.Length);
+
+        var key = keys[index];
+        foreach (var value in selector(key))
+        {
+            values[index] = value;
+            if (index < keys.Length - 1)
+            {
+                foreach (var array in Permutations(keys, index + 1, selector, values))
+                    yield return array;
+            }
+            else
+            {
+                yield return values.ToArray(); // Clone the array;
+            }
+        }
+    }
+
+    public static void TestPermutations()
+    {
+        int[][] seqence = new int[][]
+        {
+            new int [] {1, 2, 3},
+            new int [] {101},
+            new int [] {201},
+            new int [] {301, 302, 303},
+        };
+
+        foreach (var array in seqence.Permutations(a => a))
+        {
+            System.Console.WriteLine(array.Aggregate(new System.Text.StringBuilder(), (sb, i) => { if (sb.Length > 0) sb.Append(","); sb.Append(i); return sb; }));
+        }
+    }
+}
+
