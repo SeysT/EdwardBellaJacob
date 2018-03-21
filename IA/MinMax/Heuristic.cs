@@ -165,7 +165,7 @@ namespace IA
                     totalDistance += minDistance == int.MaxValue ? 0 : minDistance;
                 }
 
-                return (float) -totalDistance;
+                return (float) totalDistance;
             }
         }
 
@@ -183,7 +183,7 @@ namespace IA
                 ennemyNumber * this.EnnemyStrengthHeuristic + 
                 biggestGroup * this.BiggestGroupHeuristic +
                 density * this.DensityHeuristic + 
-                dispersion * this.DispersionHeuristic +
+                dispersion * this.DispersionHeuristic -
                 ourHumanDistance * this.OurHumanDistance
             );
         }
