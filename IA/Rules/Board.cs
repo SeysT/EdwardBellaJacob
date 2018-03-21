@@ -130,11 +130,23 @@ namespace IA.Rules
         {
             List<Move> list = new List<Move>();
             int minSplitValue = this.GetMinGroupNumber();
-            int maxSplitGroups = 1;
+            int maxSplitGroups = 2;
             foreach(Pawn pawn in this.OurPawns())
             {
                 foreach (List<Move> listMove in GetAllConfigurationForOnePawn(pawn, minSplitValue, maxSplitGroups))
                     list.AddRange(listMove);
+            }
+            return list;
+        }
+
+        public List<List<Move>> GetPossibleMovesBis()
+        {
+            List<List<Move>> list = new List<List<Move>>();
+            int minSplitValue = this.GetMinGroupNumber();
+            int maxSplitGroups = 1;
+            foreach (Pawn pawn in this.OurPawns())
+            {
+                list.AddRange(GetAllConfigurationForOnePawn(pawn, minSplitValue, maxSplitGroups));
             }
             return list;
         }
