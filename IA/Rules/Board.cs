@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace IA.Rules
 {
@@ -141,14 +142,35 @@ namespace IA.Rules
 
         public List<List<Move>> GetPossibleMovesBis()
         {
-            List<List<Move>> list = new List<List<Move>>();
+            List<List<Move>> outList = new List<List<Move>>();
+            var sequenceList = new List<List<List<Move>>>();
+            
             int minSplitValue = this.GetMinGroupNumber();
             int maxSplitGroups = 1;
             foreach (Pawn pawn in this.OurPawns())
             {
-                list.AddRange(GetAllConfigurationForOnePawn(pawn, minSplitValue, maxSplitGroups));
+                sequenceList.Add(GetAllConfigurationForOnePawn(pawn, minSplitValue, maxSplitGroups));
             }
-            return list;
+            var sequenceArray = sequenceList.ToArray();
+
+            int n = sequenceArray.Count();
+
+            List<List<Move>> tempList = new List<List<Move>>();
+
+            var cart = sequenceArray.CartesianProduct();
+
+            foreach (var element in cart)
+                tempList.AddRange(element);
+
+
+            for (int i = 0; i <= tempList.Count() - n; i += n)
+            {
+                List<Move> toAdd = new List<Move>();
+                for (int j = 0; j < n; j++)
+                    toAdd.Add(tempList[i + j][0]);
+                outList.Add(toAdd);
+            }
+            return outList;
         }
 
         public List<List<Move>> GetAllConfigurationForOnePawn(Pawn pawn, int minSplit, int maxSplitGroups)
@@ -171,7 +193,7 @@ namespace IA.Rules
             return allConfs;
         }
 
-        public List<Move> GetRecursiveMoves(Coord coord, List<Direction> possibleDirections, int quantity, int minSplitValue)
+            public List<Move> GetRecursiveMoves(Coord coord, List<Direction> possibleDirections, int quantity, int minSplitValue)
         {
             List<Move> list = new List<Move>();
             if (quantity - minSplitValue < minSplitValue) //Pas de split possible : on bouge tous les effectifs dans une direction
@@ -331,5 +353,19 @@ namespace IA.Rules
             }
             return number;
         }
+    }
+}
+
+public static class Extensions
+{
+    public static IEnumerable<IEnumerable<T>> CartesianProduct<T>(this IEnumerable<IEnumerable<T>> sequences)
+    {
+        IEnumerable<IEnumerable<T>> emptyProduct = new[] { Enumerable.Empty<T>() };
+        return sequences.Aggregate(
+            emptyProduct,
+            (accumulator, sequence) =>
+            from acc in accumulator
+            from item in sequence
+            select acc.Concat(new List<T>() { item }));
     }
 }
