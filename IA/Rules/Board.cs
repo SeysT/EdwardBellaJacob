@@ -127,47 +127,8 @@ namespace IA.Rules
             return Math.Max(min, (int)(ourNumber / 3));
         }
 
-        public List<List<Move>> GetPossibleMoves(Race race)
-        {
-            List<Pawn> pawns = race == Race.US ? this.OurPawns() : this.EnnemyPawns();
 
-            List<List<List<Move>>> allOnePawnList = new List<List<List<Move>>>();
-            foreach (Pawn pawn in pawns)
-            {
-                List<List<Move>> listForOnePawn = new List<List<Move>>();
-                List<Direction> possibleDirections = this.GetPossibleDirections(pawn.Coordinates);
-                foreach (Direction direction in possibleDirections)
-                {
-                    listForOnePawn.Add(new List<Move> { new Move(pawn.Coordinates, direction, pawn.Quantity) });
-                }
-                allOnePawnList.Add(listForOnePawn);
-            }
-
-            return this.CartesianProduct(allOnePawnList);
-        }
-
-        public List<List<Move>> CartesianProduct(List<List<List<Move>>> toCompute)
-        {
-            List<List<Move>> outList = new List<List<Move>>();
-            List<List<Move>> tempList = new List<List<Move>>();
-            foreach (var element in toCompute.CartesianProduct())
-            {
-                tempList.AddRange(element);
-            }
-
-            for (int i = 0; i < tempList.Count; i += toCompute.Count)
-            {
-                List<Move> toAdd = new List<Move>();
-                for (int j = 0; j < toCompute.Count; j++)
-                {
-                    toAdd.AddRange(tempList[i + j]);
-                }
-                outList.Add(toAdd);
-            }
-            return outList;
-        }
-
-        public List<List<Move>> GetPossibleMovesBis(Race race, int maxSplitGroups)
+        public List<List<Move>> GetPossibleMoves(Race race, int maxSplitGroups)
         {
             List<List<Move>> outList = new List<List<Move>>();
             // List<Move> represents one possible move combination that can be played during a turn
@@ -181,36 +142,18 @@ namespace IA.Rules
             // third List layer is for different pawns
 
             List<Pawn> pawns = race == Race.US ? this.OurPawns() : this.EnnemyPawns();
-            int minSplitValue = 1; System.Math.Max(this.GetMinGroupNumber(), 2);
+            int minSplitValue = this.OurNumber();//this.GetMinGroupNumber();
 
             foreach (Pawn pawn in pawns)
             {
                 sequenceList.Add(GetAllConfigurationForOnePawn(pawn, minSplitValue, maxSplitGroups));
             }
             var sequenceArray = sequenceList.ToArray();
-
-            int n = sequenceArray.Count();
             
             foreach (var array in sequenceList.Permutations(a => a))
             {
                 outList.Add(array.Aggregate(new List<Move>(), (list, i) => { list.AddRange(i); return list; }));
             }
-
-            /*
-            var cart = sequenceArray.CartesianProduct();
-
-            foreach (var element in cart)
-                tempList.AddRange(element);
-
-
-            for (int i = 0; i <= tempList.Count() - n; i += n)
-            {
-                List<Move> toAdd = new List<Move>();
-                for (int j = 0; j < n; j++)
-                    toAdd.AddRange(tempList[i + j]);
-                outList.Add(toAdd);
-            }
-            */
             return outList;
         }
 
@@ -361,30 +304,6 @@ namespace IA.Rules
     }
 }
 
-public static class Extensions
-{
-    public static List<List<List<Move>>> CartesianProduct(List<List<List<Move>>> sequences)
-    {
-
-        if(sequences.Count <= 1)
-            return sequences;
-        
-        List<List<Move>> first = sequences.First();
-        List<List<List<Move>>> restOfTheList = sequences.GetRange(1, sequences.Count - 1);
-        List<List<List<Move>>> result = new List<List<List<Move>>>();
-        foreach(List<Move> possibleMoveForAPawn in first)
-        {
-            //result.Add(new List<List<Move>>(element));
-            List<List<Move>> concatList = new List<List<Move>>();
-            concatList.Add(possibleMoveForAPawn);
-            //concatList.Add();
-
-            result.Add(concatList);
-        }
-        return result;
-    }
-}
-
 
 public static class EnumerableExtensions
 {
@@ -415,22 +334,6 @@ public static class EnumerableExtensions
             {
                 yield return values.ToArray(); // Clone the array;
             }
-        }
-    }
-
-    public static void TestPermutations()
-    {
-        int[][] seqence = new int[][]
-        {
-            new int [] {1, 2, 3},
-            new int [] {101},
-            new int [] {201},
-            new int [] {301, 302, 303},
-        };
-
-        foreach (var array in seqence.Permutations(a => a))
-        {
-            Console.WriteLine(array.Aggregate(new System.Text.StringBuilder(), (sb, i) => { if (sb.Length > 0) sb.Append(","); sb.Append(i); return sb; }));
         }
     }
 }
