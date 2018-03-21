@@ -44,7 +44,7 @@ namespace IA.Rules
 
             if (isMyTurn)
             {
-                List<Move> movesCandidate = board.GetPossibleMoves(Race.US);
+                List<List<Move>> movesCandidate = board.GetPossibleMovesBis(Race.US, 2);
                 float val = alpha;
                 //à checker
                 if (movesCandidate.Count.Equals(0))
@@ -60,10 +60,10 @@ namespace IA.Rules
                     alpha = Math.Max(alpha, val);
                     
                 }
-                foreach (Move currentMove in movesCandidate)
+                foreach (List<Move> currentMove in movesCandidate)
                 {
                     // Compute new board after move
-                    Board newBoard = board.MakeMove(new List<Move>() { currentMove });
+                    Board newBoard = board.MakeMove(new List<Move>(currentMove));
                         
                     // The new Leaf is the child we're going to explore next
                     Node Child = new Node();
@@ -74,7 +74,7 @@ namespace IA.Rules
                     // Compute Node.Weight
 
                     Child.Data.HeuristicScore = this._getHeuristicScore(newBoard);
-                    Child.Data.Moves = new List<Move>() { currentMove };
+                    Child.Data.Moves =  new List<Move>(currentMove) ;
 
                     //Alpha beta stuff
                     val = Math.Max(val, this._getAlphaBeta(Child, depth - 1, alpha, beta, !isMyTurn, newBoard));
@@ -92,12 +92,12 @@ namespace IA.Rules
             else
             {
                 float val = beta;
-                List<Move> movesCandidate = board.GetPossibleMoves(Race.THEM);
+                List<List<Move>> movesCandidate = board.GetPossibleMovesBis(Race.THEM,2);
                 //if movescandidate.count.equals(0)
-                foreach (Move currentMove in movesCandidate)
+                foreach (List<Move> currentMove in movesCandidate)
                 {
                     // Compute new board after move
-                    Board newBoard = board.MakeMove(new List<Move>() { currentMove });
+                    Board newBoard = board.MakeMove(new List<Move>(currentMove));
 
                     // The new Leaf is the child we're going to explore next
                     Node Child = new Node();
@@ -107,7 +107,7 @@ namespace IA.Rules
                     Child.Data.MinMaxScore = beta;
                     // Compute Node.Weight
                     Child.Data.HeuristicScore = this._getHeuristicScore(newBoard);
-                    Child.Data.Moves = new List<Move>() { currentMove };
+                    Child.Data.Moves = new List<Move>( currentMove );
 
                     //Alpha beta stuff
                     //val = Child.Data.HeuristicScore;
