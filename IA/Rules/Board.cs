@@ -130,12 +130,33 @@ namespace IA.Rules
         {
             List<Move> list = new List<Move>();
             int minSplitValue = this.GetMinGroupNumber();
+            int maxSplitGroups = 1;
             foreach(Pawn pawn in this.OurPawns())
             {
-                List<Direction> possibleDirections = this.GetPossibleCoordDirections(pawn.Coordinates);
-                list.AddRange(GetRecursiveMoves(pawn.Coordinates, possibleDirections, pawn.Quantity, minSplitValue));
+                foreach (List<Move> listMove in GetAllConfigurationForOnePawn(pawn, minSplitValue, maxSplitGroups))
+                    list.AddRange(listMove);
             }
             return list;
+        }
+
+        public List<List<Move>> GetAllConfigurationForOnePawn(Pawn pawn, int minSplit, int maxSplitGroups)
+        {
+            List<List<Move>> allConfs = new List<List<Move>>();
+            List<Direction> possibleDirections = this.GetPossibleCoordDirections(pawn.Coordinates);
+            foreach(int[] configuration in SplitEnumeration.GetEnumeration(pawn.Quantity, minSplit, maxSplitGroups))
+            {
+                List<Move> allMoves = new List<Move>();
+                for(int i =0; i<8; i++)
+                {
+                    if (possibleDirections.Contains((Direction)i) && configuration[i] > 0)
+                    {
+                        allMoves.Add(new Move(pawn.Coordinates, (Direction)i, configuration[i]));
+                    }
+                }
+
+                allConfs.Add(allMoves);
+            }
+            return allConfs;
         }
 
         public List<Move> GetRecursiveMoves(Coord coord, List<Direction> possibleDirections, int quantity, int minSplitValue)
@@ -166,6 +187,7 @@ namespace IA.Rules
             }
             return list;
         }
+
 
         /// <summary>
         /// Get all possible coord and direction where we can move

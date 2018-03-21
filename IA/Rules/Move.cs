@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace IA.Rules
 {
-    public enum Direction { UL, U, UR, L, R, DL, D, DR }
+    public enum Direction { UL = 0, U = 1, UR = 2, L = 3, R = 4, DL = 5, D = 6, DR = 7 }
 
     public class Move
     {
