@@ -22,6 +22,7 @@ namespace IA.Rules
         // TODO implement Board.getMoves(Race r)
         // TODO implement Board.getHeuristicScore(Race)
         private int _depth;
+
         private float _maxAlpha;
         private float _minBeta;
 
@@ -156,7 +157,7 @@ namespace IA.Rules
 
         private float _getHeuristicScore(Board board)
         {
-            return new Heuristic(board).GetScore();
+            return Heuristic.Instance.GetScore(board);
         }
 
         override public int[,] ChooseNextMove(Board board)

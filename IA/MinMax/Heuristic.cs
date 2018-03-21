@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,180 +15,196 @@ namespace IA
 
     public class Heuristic
     {
-        private Board _board;
+        private static Heuristic _instance;
+        private static readonly object _lock = new object();
 
-        public Heuristic(Board board)
+        private float ourNumber;
+        private float ennemyNumber;
+        private float biggestGroup;
+        private float density;
+        private float dispersion;
+        private float ourHumanDistance;
+
+        public Heuristic()
         {
-            this._board = board;
+            NumberStyles style = NumberStyles.AllowDecimalPoint;
+            CultureInfo culture = CultureInfo.InvariantCulture;
+
+            float.TryParse(ConfigurationManager.AppSettings["ourNumber"], style, culture, out ourNumber);
+            Trace.TraceInformation($"OurNumber coefficient : {ourNumber}");
+            float.TryParse(ConfigurationManager.AppSettings["ennemyNumber"], style, culture, out ennemyNumber);
+            Trace.TraceInformation($"EnnemyNumber coefficient : {ennemyNumber}");
+            float.TryParse(ConfigurationManager.AppSettings["biggestGroup"], style, culture, out biggestGroup);
+            Trace.TraceInformation($"BiggestGroup coefficient : {biggestGroup}");
+            float.TryParse(ConfigurationManager.AppSettings["density"], style, culture, out density);
+            Trace.TraceInformation($"Density coefficient : {density}");
+            float.TryParse(ConfigurationManager.AppSettings["dispersion"], style, culture, out dispersion);
+            Trace.TraceInformation($"Dispersion coefficient : {dispersion}");
+            float.TryParse(ConfigurationManager.AppSettings["ourHumanDistance"], style, culture, out ourHumanDistance);
+            Trace.TraceInformation($"OurHumanDistance coefficient : {ourHumanDistance}");
         }
 
-        float OurStrengthHeuristic {
-            get
-            {
-                return _board.OurNumber();
-            }
-        }
-
-        float EnnemyStrengthHeuristic {
-            get {
-                return _board.EnnemyNumber();
-            }
-        }
-
-        float BiggestGroupHeuristic
-        {
-            get {
-                List<int> OurPositions = new List<int>();
-                foreach (KeyValuePair<Coord, int> keyPair in _board.OurPositions())
-                {
-                    OurPositions.Add((keyPair.Value));
-                }
-
-                List<int> EnnemyPositions = new List<int>();
-                foreach (KeyValuePair<Coord, int> keyPair in _board.EnnemyPositions())
-                {
-                    EnnemyPositions.Add((keyPair.Value));
-                }
-                if (OurPositions.Count.Equals(0))
-                {
-                    return 0;
-                }
-                else if (EnnemyPositions.Count.Equals(0))
-                {
-                    return 1;
-                }
-                return OurPositions.Max() - EnnemyPositions.Max();
-            }
-        }
-
-        float DensityHeuristic
+        public static Heuristic Instance
         {
             get
             {
-                //TODO: améliorer
-                if (_board.OurPositions().Count.Equals(0))
+                if (_instance == null) // Les locks prennent du temps, il est préférable de vérifier d'abord la nullité de l'instance.
                 {
-                    return 0;
-                }
-                else if (_board.EnnemyPositions().Count.Equals(0))
-                {
-                    return 1;
-                }
-                return _board.OurNumber() / _board.OurPositions().Count - _board.EnnemyNumber() / _board.EnnemyPositions().Count;
-            }
-        }
-
-        float DispersionHeuristic
-        {
-            get
-            {
-                float[] OurBarycentre = new float[2];
-                float[] EnnemyBarycentre = new float[2];
-
-                int numerateurX = 0;
-                int numerateurY = 0;
-                int denominateur = _board.OurNumber();
-
-                if (denominateur.Equals(0))
-                {
-                    return 0;
-                }
-
-                foreach (KeyValuePair<Coord, int> kvp in _board.OurPositions())
-                {
-                    numerateurX += kvp.Key.X * kvp.Value;
-                    numerateurY += kvp.Key.Y * kvp.Value;
-                }
-                OurBarycentre[0] = numerateurX / denominateur;
-                OurBarycentre[1] = numerateurY / denominateur;
-
-                int enNumerateurX = 0;
-                int enNumerateurY = 0;
-                int enDenominateur = _board.EnnemyNumber();
-
-                if (enDenominateur.Equals(0))
-                {
-                    return 1;
-                }
-
-                foreach (KeyValuePair<Coord, int> kvp in _board.EnnemyPositions())
-                {
-                    enNumerateurX += kvp.Key.X * kvp.Value;
-                    enNumerateurY += kvp.Key.Y * kvp.Value;
-                }
-                EnnemyBarycentre[0] = enNumerateurX / enDenominateur;
-                EnnemyBarycentre[1] = enNumerateurY / enDenominateur;
-
-                float OurDistance = 0;
-                float EnnemyDistance = 0;
-                foreach (KeyValuePair<Coord, int> keyPair in _board.OurPositions())
-                {
-                    OurDistance += Math.Max(keyPair.Key.X - OurBarycentre[0], keyPair.Key.Y - OurBarycentre[1]);
-                }
-                foreach (KeyValuePair<Coord, int> keyPair in _board.EnnemyPositions())
-                {
-                    EnnemyDistance += Math.Max(keyPair.Key.X - EnnemyBarycentre[0], keyPair.Key.Y - EnnemyBarycentre[1]);
-                }
-                OurDistance = OurDistance / _board.OurPositions().Count;
-                EnnemyDistance = EnnemyDistance / _board.EnnemyPositions().Count;
-
-                return OurDistance - EnnemyDistance;
-            }
-        }
-
-        float OurHumanDistance
-        {
-            get
-            {
-                Dictionary<Coord, int> humanPositions = this._board.HumanPositions();
-                Dictionary<Coord, int> ourPositions = this._board.OurPositions();
-
-                int totalDistance = 0;
-
-                foreach(KeyValuePair<Coord, int> ourPos in ourPositions)
-                {
-                    int minDistance = int.MaxValue;
-                    foreach(KeyValuePair<Coord, int> humPos in humanPositions)
+                    lock (_lock)
                     {
-                        // Si les humains sont plus nombreux on ne les prends pas en compte
-                        if (humPos.Value > ourPos.Value)
-                        {
-                            continue;
-                        }
+                        if (_instance == null) // on vérifie encore, au cas où l'instance aurait été créée entretemps.
+                            _instance = new Heuristic();
+                    }
+                }
+                return _instance;
+            }
+        }
 
-                        // Sinon on regarde la distance
-                        int distance = Math.Min(Math.Abs(humPos.Key.X - ourPos.Key.X), Math.Abs(humPos.Key.Y - ourPos.Key.Y));
-                        if (distance < minDistance)
-                        {
-                            minDistance = distance;
-                        }
+        public float GetOurStrengthHeuristic(Board board)
+        {
+            return board.OurNumber();
+        }
+
+        public float GetEnnemyStrengthHeuristic(Board board)
+        {
+            return board.EnnemyNumber();
+        }
+
+        public float GetBiggestGroupHeuristic(Board board)
+        { 
+            List<int> OurPositions = new List<int>();
+            foreach (KeyValuePair<Coord, int> keyPair in board.OurPositions())
+            {
+                OurPositions.Add((keyPair.Value));
+            }
+
+            List<int> EnnemyPositions = new List<int>();
+            foreach (KeyValuePair<Coord, int> keyPair in board.EnnemyPositions())
+            {
+                EnnemyPositions.Add((keyPair.Value));
+            }
+            if (OurPositions.Count.Equals(0))
+            {
+                return 0;
+            }
+            else if (EnnemyPositions.Count.Equals(0))
+            {
+                return 1;
+            }
+            return OurPositions.Max() - EnnemyPositions.Max();
+        }
+
+        public float GetDensityHeuristic(Board board)
+        {
+            //TODO: améliorer
+            if (board.OurPositions().Count.Equals(0))
+            {
+                return 0;
+            }
+            else if (board.EnnemyPositions().Count.Equals(0))
+            {
+                return 1;
+            }
+            return board.OurNumber() / board.OurPositions().Count - board.EnnemyNumber() / board.EnnemyPositions().Count;
+        }
+
+        public float GetDispersionHeuristic(Board board)
+        {
+            float[] OurBarycentre = new float[2];
+            float[] EnnemyBarycentre = new float[2];
+
+            int numerateurX = 0;
+            int numerateurY = 0;
+            int denominateur = board.OurNumber();
+
+            if (denominateur.Equals(0))
+            {
+                return 0;
+            }
+
+            foreach (KeyValuePair<Coord, int> kvp in board.OurPositions())
+            {
+                numerateurX += kvp.Key.X * kvp.Value;
+                numerateurY += kvp.Key.Y * kvp.Value;
+            }
+            OurBarycentre[0] = numerateurX / denominateur;
+            OurBarycentre[1] = numerateurY / denominateur;
+
+            int enNumerateurX = 0;
+            int enNumerateurY = 0;
+            int enDenominateur = board.EnnemyNumber();
+
+            if (enDenominateur.Equals(0))
+            {
+                return 1;
+            }
+
+            foreach (KeyValuePair<Coord, int> kvp in board.EnnemyPositions())
+            {
+                enNumerateurX += kvp.Key.X * kvp.Value;
+                enNumerateurY += kvp.Key.Y * kvp.Value;
+            }
+            EnnemyBarycentre[0] = enNumerateurX / enDenominateur;
+            EnnemyBarycentre[1] = enNumerateurY / enDenominateur;
+
+            float OurDistance = 0;
+            float EnnemyDistance = 0;
+            foreach (KeyValuePair<Coord, int> keyPair in board.OurPositions())
+            {
+                OurDistance += Math.Max(keyPair.Key.X - OurBarycentre[0], keyPair.Key.Y - OurBarycentre[1]);
+            }
+            foreach (KeyValuePair<Coord, int> keyPair in board.EnnemyPositions())
+            {
+                EnnemyDistance += Math.Max(keyPair.Key.X - EnnemyBarycentre[0], keyPair.Key.Y - EnnemyBarycentre[1]);
+            }
+            OurDistance = OurDistance / board.OurPositions().Count;
+            EnnemyDistance = EnnemyDistance / board.EnnemyPositions().Count;
+
+            return OurDistance - EnnemyDistance;
+        }
+
+        public float GetOurHumanDistance(Board board)
+        {
+            Dictionary<Coord, int> humanPositions = board.HumanPositions();
+            Dictionary<Coord, int> ourPositions = board.OurPositions();
+
+            int totalDistance = 0;
+
+            foreach(KeyValuePair<Coord, int> ourPos in ourPositions)
+            {
+                int minDistance = int.MaxValue;
+                foreach(KeyValuePair<Coord, int> humPos in humanPositions)
+                {
+                    // Si les humains sont plus nombreux on ne les prends pas en compte
+                    if (humPos.Value > ourPos.Value)
+                    {
+                        continue;
                     }
 
-                    totalDistance += minDistance == int.MaxValue ? 0 : minDistance;
+                    // Sinon on regarde la distance
+                    int distance = Math.Min(Math.Abs(humPos.Key.X - ourPos.Key.X), Math.Abs(humPos.Key.Y - ourPos.Key.Y));
+                    if (distance < minDistance)
+                    {
+                        minDistance = distance;
+                    }
                 }
 
-                return (float) totalDistance;
+                totalDistance += minDistance == int.MaxValue ? 0 : minDistance;
             }
+
+            return (float) totalDistance;
         }
 
-        public float GetScore()
+        public float GetScore(Board board)
         {
-            float.TryParse(ConfigurationManager.AppSettings["ourNumber"], out float ourNumber);
-            float.TryParse(ConfigurationManager.AppSettings["ennemyNumber"], out float ennemyNumber);
-            float.TryParse(ConfigurationManager.AppSettings["biggestGroup"], out float biggestGroup);
-            float.TryParse(ConfigurationManager.AppSettings["density"], out float density);
-            float.TryParse(ConfigurationManager.AppSettings["dispersion"], out float dispersion);
-            float.TryParse(ConfigurationManager.AppSettings["ourHumanDistance"], out float ourHumanDistance);
-
             return (
-                ourNumber * this.OurStrengthHeuristic -
-                ennemyNumber * this.EnnemyStrengthHeuristic + 
-                biggestGroup * this.BiggestGroupHeuristic +
-                density * this.DensityHeuristic + 
-                dispersion * this.DispersionHeuristic -
-                ourHumanDistance * this.OurHumanDistance
+                ourNumber * this.GetOurStrengthHeuristic(board) -
+                ennemyNumber * this.GetEnnemyStrengthHeuristic(board) + 
+                biggestGroup * this.GetBiggestGroupHeuristic(board) +
+                density * this.GetDensityHeuristic(board) + 
+                dispersion * this.GetDispersionHeuristic(board) -
+                ourHumanDistance * this.GetOurHumanDistance(board)
             );
         }
-
     }
 }
