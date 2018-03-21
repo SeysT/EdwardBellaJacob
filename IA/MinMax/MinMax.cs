@@ -44,7 +44,7 @@ namespace IA.Rules
 
             if (isMyTurn)
             {
-                List<List<Move>> movesCandidate = board.GetPossibleMovesBis(Race.US, 2);
+                List<List<Move>> movesCandidate = board.GetPossibleMoves(Race.US,2);
                 float val = alpha;
                 //à checker
                 if (movesCandidate.Count.Equals(0))
@@ -90,7 +90,7 @@ namespace IA.Rules
             else
             {
                 float val = beta;
-                List<List<Move>> movesCandidate = board.GetPossibleMovesBis(Race.THEM,2);
+                List<List<Move>> movesCandidate = board.GetPossibleMoves(Race.THEM,1);
                 //if movescandidate.count.equals(0)
                 foreach (List<Move> currentMove in movesCandidate)
                 {

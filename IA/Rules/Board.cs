@@ -1,4 +1,5 @@
-﻿using System;
+﻿using IA.Rules;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -126,52 +127,32 @@ namespace IA.Rules
             return Math.Max(min, (int)(ourNumber / 3));
         }
 
-        public List<Move> GetPossibleMoves(Race race)
-        {
-            List<Move> list = new List<Move>();
-            List<Pawn> pawns = race == Race.US ? this.OurPawns() : this.EnnemyPawns();
 
-            int minSplitValue = this.GetMinGroupNumber();
-            int maxSplitGroups = 2;
-
-            foreach(Pawn pawn in pawns)
-            {
-                foreach (List<Move> listMove in GetAllConfigurationForOnePawn(pawn, minSplitValue, maxSplitGroups))
-                    list.AddRange(listMove);
-            }
-            return list;
-        }
-
-        public List<List<Move>> GetPossibleMovesBis(Race race, int maxSplitGroups)
+        public List<List<Move>> GetPossibleMoves(Race race, int maxSplitGroups)
         {
             List<List<Move>> outList = new List<List<Move>>();
+            // List<Move> represents one possible move combination that can be played during a turn
+            // List<List<Move>> represents all possible move combinations.
+
             var sequenceList = new List<List<List<Move>>>();
-            
+            // in sequenceList :
+            // List<Move> = one move for one Pawn.
+            // It's a List because if there's a split, it needs to be a list.
+            // List<List<Move>> = represents all possible moves for a pawn
+            // third List layer is for different pawns
+
             List<Pawn> pawns = race == Race.US ? this.OurPawns() : this.EnnemyPawns();
-            int minSplitValue = System.Math.Max(this.GetMinGroupNumber(), 2);
+            int minSplitValue = this.OurNumber();//this.GetMinGroupNumber();
 
             foreach (Pawn pawn in pawns)
             {
                 sequenceList.Add(GetAllConfigurationForOnePawn(pawn, minSplitValue, maxSplitGroups));
             }
             var sequenceArray = sequenceList.ToArray();
-
-            int n = sequenceArray.Count();
-
-            List<List<Move>> tempList = new List<List<Move>>();
-
-            var cart = sequenceArray.CartesianProduct();
-
-            foreach (var element in cart)
-                tempList.AddRange(element);
-
-
-            for (int i = 0; i <= tempList.Count() - n; i += n)
+            
+            foreach (var array in sequenceList.Permutations(a => a))
             {
-                List<Move> toAdd = new List<Move>();
-                for (int j = 0; j < n; j++)
-                    toAdd.AddRange(tempList[i + j]);
-                outList.Add(toAdd);
+                outList.Add(array.Aggregate(new List<Move>(), (list, i) => { list.AddRange(i); return list; }));
             }
             return outList;
         }
@@ -179,11 +160,11 @@ namespace IA.Rules
         public List<List<Move>> GetAllConfigurationForOnePawn(Pawn pawn, int minSplit, int maxSplitGroups)
         {
             List<List<Move>> allConfs = new List<List<Move>>();
-            List<Direction> possibleDirections = this.GetPossibleCoordDirections(pawn.Coordinates);
+            List<Direction> possibleDirections = this.GetPossibleDirections(pawn.Coordinates);
             foreach(int[] configuration in SplitEnumeration.GetEnumeration(pawn.Quantity, minSplit, maxSplitGroups))
             {
                 List<Move> allMoves = new List<Move>();
-                for(int i =0; i<8; i++)
+                for(int i =0; i < 8; i++) 
                 {
                     if (possibleDirections.Contains((Direction)i) && configuration[i] > 0)
                     {
@@ -203,7 +184,7 @@ namespace IA.Rules
         /// </summary>
         /// <param name="coordToCheck">Coord from which we want to calculate possible move in all directions</param>
         /// <returns>use keys to get possible coords and values to get possible directions</returns>
-        public List<Direction> GetPossibleCoordDirections(Coord coordToCheck)
+        public List<Direction> GetPossibleDirections(Coord coordToCheck)
         {
             Dictionary<Coord, Direction> possibleCoordDirections = Coord.PossibleCoordsFromDirectionMoves(coordToCheck);
             List<Direction> coordDirections = new List<Direction>();
@@ -323,16 +304,37 @@ namespace IA.Rules
     }
 }
 
-public static class Extensions
+
+public static class EnumerableExtensions
 {
-    public static IEnumerable<IEnumerable<T>> CartesianProduct<T>(this IEnumerable<IEnumerable<T>> sequences)
+    public static IEnumerable<TValue[]> Permutations<TKey, TValue>(this IEnumerable<TKey> keys, Func<TKey, IEnumerable<TValue>> selector)
     {
-        IEnumerable<IEnumerable<T>> emptyProduct = new[] { Enumerable.Empty<T>() };
-        return sequences.Aggregate(
-            emptyProduct,
-            (accumulator, sequence) =>
-            from acc in accumulator
-            from item in sequence
-            select acc.Concat(new List<T>() { item }));
+        var keyArray = keys.ToArray();
+        if (keyArray.Length < 1)
+            yield break;
+        TValue[] values = new TValue[keyArray.Length];
+        foreach (var array in Permutations(keyArray, 0, selector, values))
+            yield return array;
+    }
+
+    static IEnumerable<TValue[]> Permutations<TKey, TValue>(TKey[] keys, int index, Func<TKey, IEnumerable<TValue>> selector, TValue[] values)
+    {
+        //Debug.Assert(keys.Length == values.Length);
+
+        var key = keys[index];
+        foreach (var value in selector(key))
+        {
+            values[index] = value;
+            if (index < keys.Length - 1)
+            {
+                foreach (var array in Permutations(keys, index + 1, selector, values))
+                    yield return array;
+            }
+            else
+            {
+                yield return values.ToArray(); // Clone the array;
+            }
+        }
     }
 }
+

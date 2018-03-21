@@ -11,40 +11,50 @@ namespace IA.Rules
 
         public static List<int[]> GetEnumeration(int q, int minSplit, int maxSplitGroups)
         {
-            return _removeTooManySplitGroups(_removeDoubles(_getEnumerationRecursive(new int[] { 0, 0, 0, 0, 0, 0, 0, 0 }, q, minSplit)), maxSplitGroups);
+            return _removeDoubles(_getEnumerationRecursive(new int[] { 0, 0, 0, 0, 0, 0, 0, 0 }, q, minSplit, maxSplitGroups));
         }
 
-        private static List<int[]> _getEnumerationRecursive(int[] previous, int q, int minSplit)
+        private static List<int[]> _getEnumerationRecursive(int[] previous, int q, int minSplit, int maxSplitGroups)
         {
             List<int[]> returnList = new List<int[]>();
-            if (q > 0)
+            if(previous.Count(i => i != 0) >= maxSplitGroups ) //on ne peut plus spliter
             {
+                returnList.Add(previous);
+                for (int j = 0; j < 8; j++)
+                {
+                    if(previous[j] !=0)
+                    {
+                        int[] L = (int[])previous.Clone();
+                        L[j] += q; // on met toute la quantité restante sur une case déjà occupée
+                        returnList.Add(L);
+                    }
+                }
+                return returnList;
+            }
+            if(q < 2 * minSplit)
+            {
+                returnList.Add(previous);
                 for (int j = 0; j < 8; j++)
                 {
                     int[] L = (int[])previous.Clone();
-                    L[j] = q;
+                    L[j] = q; // on met toute la quantité restante sur une case déjà occupée
                     returnList.Add(L);
                 }
-            }
-            if (q < 2 * minSplit)
-            {
-                returnList.Add(previous);
                 return returnList;
             }
-
             for (int j = 0; j < 8; j++)
             {
                 for (int n = minSplit; n <= q - minSplit; n++)
                 {
                     int[] L = (int[])previous.Clone();
                     L[j] += n;
-                    returnList.AddRange(_getEnumerationRecursive(L, q - n, minSplit));
+                    returnList.AddRange(_getEnumerationRecursive(L, q - n, minSplit, maxSplitGroups));
                 }
             }
             return returnList;
         }
 
-        private static List<int[]> _removeTooManySplitGroups(List<int[]> list, int maxSplitGroups)
+        /*private static List<int[]> _removeTooManySplitGroups(List<int[]> list, int maxSplitGroups)
         {
             List<int[]> cloneList = new List<int[]>();
             if (list.Count == 0)
@@ -59,7 +69,7 @@ namespace IA.Rules
                     cloneList.Add(array);
             }
             return cloneList;
-        }
+        }*/
 
         private static List<int[]> _removeDoubles(List<int[]> list)
         {
