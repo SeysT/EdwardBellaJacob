@@ -22,6 +22,7 @@ namespace IA.Rules
         // TODO implement Board.getMoves(Race r)
         // TODO implement Board.getHeuristicScore(Race)
         private int _depth;
+
         private float _maxAlpha;
         private float _minBeta;
 
@@ -56,10 +57,8 @@ namespace IA.Rules
                     {
                         return val ;
                     }
-                    else
-                    {
-                        alpha = Math.Max(alpha, val);
-                    }
+                    alpha = Math.Max(alpha, val);
+                    
                 }
                 foreach (Move currentMove in movesCandidate)
                 {
@@ -83,12 +82,11 @@ namespace IA.Rules
                     {
                         break;
                     }
-                    else
-                    {
-                        alpha = Math.Max(alpha, val);
-                    }
+                    
+                    alpha = Math.Max(alpha, val);
+                    
                 }
-                current.Data.MinMaxScore =Math.Min(current.Data.MinMaxScore, val);
+                current.Data.MinMaxScore = val; //Math.Min(current.Data.MinMaxScore, val);
                 return val;
             }
             else
@@ -128,7 +126,7 @@ namespace IA.Rules
                 {
                     System.Console.WriteLine("Problem");
                 }
-                current.Data.MinMaxScore = Math.Max(current.Data.MinMaxScore, val);
+                current.Data.MinMaxScore = val;//Math.Max(current.Data.MinMaxScore, val);
                 return val;
             }
         }
@@ -159,7 +157,7 @@ namespace IA.Rules
 
         private float _getHeuristicScore(Board board)
         {
-            return new Heuristic(board).GetScore();
+            return Heuristic.Instance.GetScore(board);
         }
 
         override public int[,] ChooseNextMove(Board board)

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System;
 using IA.IA;
 using System.Configuration;
+using System.Globalization;
 
 namespace IA
 {
@@ -36,6 +37,9 @@ namespace IA
             this._ia = new MinMax(depth);
 
             this._indexes = new Dictionary<Race, int>() { {Race.HUM, 2}, {Race.THEM, 0}, {Race.US, 0} };
+            
+            Trace.Listeners.Add(new TextWriterTraceListener($"Trace_{System.DateTime.Now.ToString("D")}.txt"));
+            Trace.TraceInformation("Initialisation du client");
         }
 
         private void _initGame() {
