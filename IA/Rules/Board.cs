@@ -146,8 +146,16 @@ namespace IA.Rules
         public List<List<Move>> GetPossibleMovesBis(Race race, int maxSplitGroups)
         {
             List<List<Move>> outList = new List<List<Move>>();
+            // List<Move> represents one possible move combination that can be played during a turn
+            // List<List<Move>> represents all possible move combinations.
+
             var sequenceList = new List<List<List<Move>>>();
-            
+            // in sequenceList :
+            // List<Move> = one move for one Pawn.
+            // It's a List because if there's a split, it needs to be a list.
+            // List<List<Move>> = represents all possible moves for a pawn
+            // third List layer is for different pawns
+
             List<Pawn> pawns = race == Race.US ? this.OurPawns() : this.EnnemyPawns();
             int minSplitValue = 1; System.Math.Max(this.GetMinGroupNumber(), 2);
 
@@ -158,12 +166,10 @@ namespace IA.Rules
             var sequenceArray = sequenceList.ToArray();
 
             int n = sequenceArray.Count();
-
-            List<List<List<Move>>> tempList = new List<List<List<Move>>>();//CartesianProduct(sequenceList);
             
             foreach (var array in sequenceList.Permutations(a => a))
             {
-                tempList.Add(array.Aggregate(new List<List<Move>>(), (list, i) => { list.Add(i); return list; }));
+                outList.Add(array.Aggregate(new List<Move>(), (list, i) => { list.AddRange(i); return list; }));
             }
 
             /*
@@ -400,7 +406,7 @@ public static class EnumerableExtensions
 
         foreach (var array in seqence.Permutations(a => a))
         {
-            System.Console.WriteLine(array.Aggregate(new System.Text.StringBuilder(), (sb, i) => { if (sb.Length > 0) sb.Append(","); sb.Append(i); return sb; }));
+            Console.WriteLine(array.Aggregate(new System.Text.StringBuilder(), (sb, i) => { if (sb.Length > 0) sb.Append(","); sb.Append(i); return sb; }));
         }
     }
 }
