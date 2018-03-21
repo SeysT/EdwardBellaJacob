@@ -127,20 +127,44 @@ namespace IA.Rules
             return Math.Max(min, (int)(ourNumber / 3));
         }
 
-        public List<Move> GetPossibleMoves(Race race)
+        public List<List<Move>> GetPossibleMoves(Race race)
         {
-            List<Move> list = new List<Move>();
             List<Pawn> pawns = race == Race.US ? this.OurPawns() : this.EnnemyPawns();
 
-            int minSplitValue = this.GetMinGroupNumber();
-            int maxSplitGroups = 2;
-
-            foreach(Pawn pawn in pawns)
+            List<List<List<Move>>> allOnePawnList = new List<List<List<Move>>>();
+            foreach (Pawn pawn in pawns)
             {
-                foreach (List<Move> listMove in GetAllConfigurationForOnePawn(pawn, minSplitValue, maxSplitGroups))
-                    list.AddRange(listMove);
+                List<List<Move>> listForOnePawn = new List<List<Move>>();
+                List<Direction> possibleDirections = this.GetPossibleDirections(pawn.Coordinates);
+                foreach (Direction direction in possibleDirections)
+                {
+                    listForOnePawn.Add(new List<Move> { new Move(pawn.Coordinates, direction, pawn.Quantity) });
+                }
+                allOnePawnList.Add(listForOnePawn);
             }
-            return list;
+
+            return this.CartesianProduct(allOnePawnList);
+        }
+
+        public List<List<Move>> CartesianProduct(List<List<List<Move>>> toCompute)
+        {
+            List<List<Move>> outList = new List<List<Move>>();
+            List<List<Move>> tempList = new List<List<Move>>();
+            foreach (var element in toCompute.CartesianProduct())
+            {
+                tempList.AddRange(element);
+            }
+
+            for (int i = 0; i < tempList.Count; i += toCompute.Count)
+            {
+                List<Move> toAdd = new List<Move>();
+                for (int j = 0; j < toCompute.Count; j++)
+                {
+                    toAdd.AddRange(tempList[i + j]);
+                }
+                outList.Add(toAdd);
+            }
+            return outList;
         }
 
         public List<List<Move>> GetPossibleMovesBis(Race race, int maxSplitGroups)
@@ -193,7 +217,7 @@ namespace IA.Rules
         public List<List<Move>> GetAllConfigurationForOnePawn(Pawn pawn, int minSplit, int maxSplitGroups)
         {
             List<List<Move>> allConfs = new List<List<Move>>();
-            List<Direction> possibleDirections = this.GetPossibleCoordDirections(pawn.Coordinates);
+            List<Direction> possibleDirections = this.GetPossibleDirections(pawn.Coordinates);
             foreach(int[] configuration in SplitEnumeration.GetEnumeration(pawn.Quantity, minSplit, maxSplitGroups))
             {
                 List<Move> allMoves = new List<Move>();
@@ -217,7 +241,7 @@ namespace IA.Rules
         /// </summary>
         /// <param name="coordToCheck">Coord from which we want to calculate possible move in all directions</param>
         /// <returns>use keys to get possible coords and values to get possible directions</returns>
-        public List<Direction> GetPossibleCoordDirections(Coord coordToCheck)
+        public List<Direction> GetPossibleDirections(Coord coordToCheck)
         {
             Dictionary<Coord, Direction> possibleCoordDirections = Coord.PossibleCoordsFromDirectionMoves(coordToCheck);
             List<Direction> coordDirections = new List<Direction>();
