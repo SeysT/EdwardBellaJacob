@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+
 
 namespace IA.Rules
 {
@@ -112,7 +114,8 @@ namespace IA.Rules
         /// </summary>
         public int GetMinGroupNumber()
         {
-            int min = this.OurNumber();
+            int ourNumber = this.OurNumber();
+            int min = ourNumber;
             foreach (Pawn pawn in this.Grid.GetPawns())
             {
                 if (pawn.Quantity < min)
@@ -120,7 +123,7 @@ namespace IA.Rules
                     min = pawn.Quantity;
                 }
             }
-            return min;
+            return Math.Max(min, (int)(ourNumber / 3));
         }
 
         public List<Move> GetPossibleMoves(Race race)
