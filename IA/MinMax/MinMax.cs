@@ -82,9 +82,7 @@ namespace IA.Rules
                     {
                         break;
                     }
-                    
                     alpha = Math.Max(alpha, val);
-                    
                 }
                 current.Data.MinMaxScore = val; //Math.Min(current.Data.MinMaxScore, val);
                 return val;
@@ -117,14 +115,7 @@ namespace IA.Rules
                     {
                         break;
                     }
-                    else
-                    {
-                        beta = Math.Min(beta, val);
-                    }
-                }
-                if(val <= _maxAlpha)
-                {
-                    System.Console.WriteLine("Problem");
+                    beta = Math.Min(beta, val);
                 }
                 current.Data.MinMaxScore = val;//Math.Max(current.Data.MinMaxScore, val);
                 return val;
