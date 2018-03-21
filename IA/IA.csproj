@@ -52,6 +52,7 @@
     <Compile Include="Rules\Pawn.cs" />
     <Compile Include="MinMax\MinMax.cs" />
     <Compile Include="MinMax\Node.cs" />
+    <Compile Include="Rules\SplitEnumeration.cs" />
     <Compile Include="Trame\PlayerServer\BasePlayerServerTrame.cs" />
     <Compile Include="Trame\PlayerServer\MOVTrame.cs" />
     <Compile Include="Trame\PlayerServer\NMETrame.cs" />
