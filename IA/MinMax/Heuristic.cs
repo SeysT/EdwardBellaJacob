@@ -139,7 +139,7 @@ namespace IA
 
             float EnnemyDistance = 0;
 
-            if (enDenominateur.Equals(0))
+            if (!enDenominateur.Equals(0))
             {
                 foreach (KeyValuePair<Coord, int> kvp in board.EnnemyPositions())
                 {
