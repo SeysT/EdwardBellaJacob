@@ -32,7 +32,10 @@ namespace IA.Rules
 
         public void Add(Pawn p)
         {
-            this._pawns.Add(p.Coordinates, p);
+            if (!_pawns.ContainsKey(p.Coordinates))
+                this._pawns.Add(p.Coordinates, p);
+            else
+                this._pawns[p.Coordinates] = p;
         }
 
         /// <summary>
