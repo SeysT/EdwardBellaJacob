@@ -130,7 +130,7 @@ namespace IA.Rules
                     if (maxHeuristic < SubTree.Data.HeuristicScore)
                     {
                         maxHeuristic = SubTree.Data.HeuristicScore;
-                        score = maxAlphaBeta;
+                        score = alphaBeta;
                         moves = SubTree.Data.Moves;
                     }
                 }
