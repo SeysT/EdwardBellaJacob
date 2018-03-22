@@ -17,13 +17,18 @@ namespace IA
 
         private Socket _socket;
 
-        private BaseIA _ia;
+        private BaseIA _iaNoSplit;
+        private BaseIA _iaSplit;
 
         private string _playerName = "EdwardBellaJacob";
         private ServerPlayerTrame _trame;
 
         private Board _board;
         private Dictionary<Race, int> _indexes;
+
+        private int[,] _next;
+        private int[,] _nextSplit;
+        private int[,] _nextNoSplit;
 
         public Client(string host, int port)
         {
@@ -33,8 +38,10 @@ namespace IA
             this._socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
             this._trame = new ServerPlayerTrame(this._socket);
 
-            int.TryParse(ConfigurationManager.AppSettings["MinMaxDepth"], out int depth);
-            this._ia = new MinMax(depth);
+            int.TryParse(ConfigurationManager.AppSettings["MinMaxDepthSplit"], out int depthSplit);
+            int.TryParse(ConfigurationManager.AppSettings["MinMaxDepthNoSplit"], out int depthNoSplit);
+            this._iaNoSplit = new MinMax(depthNoSplit, false);
+            this._iaSplit = new MinMax(depthSplit, true);
 
             this._indexes = new Dictionary<Race, int>() { {Race.HUM, 2}, {Race.THEM, 0}, {Race.US, 0} };
             
@@ -85,11 +92,6 @@ namespace IA
             this._board = new Board(grid, boardSize[1, 0], boardSize[0, 0]);
         }
 
-        private int[, ] _chooseMove()
-        {
-            return this._ia.ChooseNextMove(this._board);
-        }
-
         private void _updateGame()
         {
             int[,] updates = this._trame.TramePayload;
@@ -103,6 +105,36 @@ namespace IA
                 // if quantity == 0, we will only remove the pawn that moved
                 this._board.Grid.SetQuantityInCoord(coord, updates[i, this._indexes[race]], race);
             }
+        }
+
+        private int[,] _chooseMoveSplit()
+        {
+            return this._iaSplit.ChooseNextMove();
+        }
+
+        private int[,] _chooseMoveNoSplit()
+        {
+            return this._iaNoSplit.ChooseNextMove();
+        }
+
+        private void _setNextMoveSplit()
+        {
+            this._nextSplit = _chooseMoveSplit();
+        }
+
+        private void _setNextMoveNoSplit()
+        {
+            this._nextNoSplit = _chooseMoveNoSplit();
+        }
+
+        private void _computeMoveSplit()
+        {
+            this._iaSplit.ComputeNextMove(this._board);
+        }
+
+        private void _computeMoveNoSplit()
+        {
+            this._iaNoSplit.ComputeNextMove(this._board);
         }
 
         public void Start()
@@ -123,9 +155,32 @@ namespace IA
                 {
                     case "UPD":
                         this._updateGame();
-                        Thread.Sleep(500);
-                        int[,] next = this._chooseMove();
-                        new MOVTrame(next).Send(this._socket);
+                        Thread threadSplit = new Thread(_computeMoveSplit);
+                        Thread threadNoSplit = new Thread(_computeMoveNoSplit);
+                        // previously the line below was here
+                        // int[,] next = this._chooseMove();
+                        // now it's split into two methods :
+                        // _computeMove()
+                        // _setNextMove()
+                        threadSplit.Start();
+                        threadNoSplit.Start();
+                        threadSplit.Join(1700);
+                        threadNoSplit.Join(1700);
+                        _setNextMoveSplit();
+                        _setNextMoveNoSplit();
+                        if (_iaSplit.AlphaBetaFinished && _iaNoSplit.AlphaBetaFinished)
+                        {
+                            _next = _iaSplit.score > _iaNoSplit.score ? _nextSplit : _nextNoSplit;
+                        }
+                        else if (_iaSplit.AlphaBetaFinished)
+                        {
+                            _next = _nextSplit;
+                        }
+                        else if (_iaNoSplit.AlphaBetaFinished)
+                        {
+                            _next = _nextNoSplit;
+                        }
+                        new MOVTrame(_next).Send(this._socket);
                         break;
 
                     case "END":

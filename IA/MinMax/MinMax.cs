@@ -18,16 +18,19 @@ namespace IA.Rules
 
         private float _maxAlpha;
         private float _minBeta;
+        private bool _doesSplit;
 
-        public MinMax(int depth) : base()
+        public MinMax(int depth, bool doesSplit) : base()
         {
             this._depth = depth;
             this._maxAlpha = float.MinValue;
             this._minBeta = float.MaxValue;
+            this._doesSplit = doesSplit;
         }
 
-        private float _getAlphaBeta(Node current, int depth, float alpha, float beta, bool isMyTurn, Board board, int maxSplitGroups , Boolean split)
+        private float _getAlphaBeta(Node current, int depth, float alpha, float beta, bool isMyTurn, Board board, Boolean split)
         {
+            int maxSplitGroups = split ? 2 : 1;
 
             if (depth == 0)
             {
@@ -70,7 +73,7 @@ namespace IA.Rules
                     Child.Data.Moves = new List<Move>(currentMove);
 
                     //Alpha beta stuff
-                    val = Math.Max(val, this._getAlphaBeta(Child, depth - 1, alpha, beta, !isMyTurn, newBoard, maxSplitGroups, split));
+                    val = Math.Max(val, this._getAlphaBeta(Child, depth - 1, alpha, beta, !isMyTurn, newBoard, split));
                     if (val >= beta)
                     {
                         break;
@@ -101,7 +104,7 @@ namespace IA.Rules
                     Child.Data.Moves = new List<Move>(currentMove);
 
                     //Alpha beta stuff
-                    val = Math.Min(val, this._getAlphaBeta(Child, depth - 1, alpha, beta, !isMyTurn, newBoard, maxSplitGroups, split));
+                    val = Math.Min(val, this._getAlphaBeta(Child, depth - 1, alpha, beta, !isMyTurn, newBoard, split));
 
                     if (val <= alpha)
                     {
@@ -127,6 +130,32 @@ namespace IA.Rules
                     if (maxHeuristic < SubTree.Data.HeuristicScore)
                     {
                         maxHeuristic = SubTree.Data.HeuristicScore;
+                        score = maxAlphaBeta;
+                        moves = SubTree.Data.Moves;
+                    }
+                }
+            }
+            if (!moves.Count.Equals(0))
+            {
+                return moves;
+            }
+            throw new Exception("[MinMax] GetNextMove couldn't return Moves");
+        }
+
+        private List<Move> _getNextMove(Node GameTree)
+        {
+            List<Move> moves = new List<Move>();
+            float maxHeuristic = float.NegativeInfinity;
+            float maxAlphaBeta = float.NegativeInfinity;
+            foreach (Node SubTree in GameTree.Children)
+            {
+                if (SubTree.Data.MinMaxScore < maxAlphaBeta)
+                {
+                    //return SubTree.Data.Moves;
+                    if (maxHeuristic < SubTree.Data.HeuristicScore)
+                    {
+                        maxHeuristic = SubTree.Data.HeuristicScore;
+                        score = maxAlphaBeta;
                         moves = SubTree.Data.Moves;
                     }
                 }
@@ -143,11 +172,28 @@ namespace IA.Rules
             return Heuristic.Instance.GetScore(board);
         }
 
-        override public int[,] ChooseNextMove(Board board)
+        private Node _root = new Node();
+        private float _alphaBeta = float.NegativeInfinity;
+        public bool AlphaBetaFinished = false;
+        public float score;
+
+        override public void ComputeNextMove(Board board)
         {
-            Node root = new Node();
-            float alphaBeta = this._getAlphaBeta(root, this._depth, this._maxAlpha, this._minBeta, true, board, 2 , true);
-            return MOVTrame.GetPayloadFromMoves(this._getNextMove(root, alphaBeta));
+            _alphaBeta = this._getAlphaBeta(_root, this._depth, this._maxAlpha, this._minBeta, true, board, _doesSplit);
+            AlphaBetaFinished = true;
+        }
+
+        override public int[,] ChooseNextMove()
+        {
+            if (AlphaBetaFinished)
+            {
+                AlphaBetaFinished = false;
+                return MOVTrame.GetPayloadFromMoves(this._getNextMove(_root, _alphaBeta));
+            }
+            else
+            {
+                return MOVTrame.GetPayloadFromMoves(this._getNextMove(_root));
+            }
         }
     }
 }

@@ -17,6 +17,9 @@ namespace IA.IA
             this._sw = new Stopwatch();
         }
 
-        public abstract int[,] ChooseNextMove(Board board);
+        public float score;
+        public bool AlphaBetaFinished;
+        public abstract void ComputeNextMove(Board board);
+        public abstract int[,] ChooseNextMove();
     }
 }
