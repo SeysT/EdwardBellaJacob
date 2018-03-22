@@ -27,6 +27,16 @@ namespace IA.Rules
             this._yMax = yMax;
         }
 
+        public override string ToString()
+        {
+            string sb = "";
+            foreach(Pawn p in Grid.GetPawns())
+            {
+                sb += $"[{p.Race} = {p.Quantity} : {p.Coordinates.X} , {p.Coordinates.Y} ] ";
+            }
+            return sb;
+        }
+
         public Board MakeMove(List<Move> moves)
         {
             Board newBoard = new Board(this);

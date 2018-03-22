@@ -129,11 +129,13 @@ namespace IA
 
         private void _computeMoveSplit()
         {
+            //this._iaSplit = new MinMax(depthSplit, true);
             this._iaSplit.ComputeNextMove(this._board);
         }
 
         private void _computeMoveNoSplit()
         {
+            //this._iaNoSplit = new MinMax(depthNoSplit, false);
             this._iaNoSplit.ComputeNextMove(this._board);
         }
 
@@ -155,44 +157,38 @@ namespace IA
                 {
                     case "UPD":
                         this._updateGame();
+                        Trace.TraceInformation("Board State : "+ this._board.ToString());
                         Thread threadSplit = new Thread(_computeMoveSplit);
                         Thread threadNoSplit = new Thread(_computeMoveNoSplit);
-                        // previously the line below was here
-                        // int[,] next = this._chooseMove();
-                        // now it's split into two methods :
-                        // _computeMove()
-                        // _setNextMove()
-                        
-                        //threadSplit.Start();
-                        threadNoSplit.Start();
-                        //threadSplit.Join(700);
-                        //threadNoSplit.Join();
 
-                        Thread.Sleep(500);
+                        threadSplit.Start();
+                        threadNoSplit.Start();
+                        threadSplit.Join(700);
+                        threadNoSplit.Join(700);
 
                         if (_iaSplit.AlphaBetaFinished && _iaNoSplit.AlphaBetaFinished)
                         {
                             _setNextMoveSplit();
                             _setNextMoveNoSplit();
-                            Console.WriteLine("Split&NoSplit finished");
+                            Trace.TraceInformation("Split&NoSplit finished");
                             _next = _iaSplit.score > _iaNoSplit.score ? _nextSplit : _nextNoSplit;
                         }
                         else if (_iaSplit.AlphaBetaFinished)
                         {
                             _setNextMoveSplit();
-                            
-                            Console.WriteLine("Split finished");
+
+                            Trace.TraceInformation("Split finished");
                             _next = _nextSplit;
                         }
                         else if (_iaNoSplit.AlphaBetaFinished)
                         {
                             _setNextMoveNoSplit();
-                            Console.WriteLine("NoSplit finished");
+                            Trace.TraceInformation("NoSplit finished");
                             _next = _nextNoSplit;
                         }
                         else
                         {
-                            Console.WriteLine("None finished");
+                            Trace.TraceInformation("None finished");
                         }
                         new MOVTrame(_next).Send(this._socket);
                         break;

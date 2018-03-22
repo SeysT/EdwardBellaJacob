@@ -177,8 +177,10 @@ namespace IA.Rules
 
         override public void ComputeNextMove(Board board)
         {
+            _root = new Node();
             _alphaBeta = this._getAlphaBeta(_root, this._depth, this._maxAlpha, this._minBeta, true, board, _doesSplit);
             AlphaBetaFinished = true;
+            System.Diagnostics.Trace.TraceInformation("MinMax : " + board.ToString());
         }
 
         override public int[,] ChooseNextMove()
