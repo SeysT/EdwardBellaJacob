@@ -170,15 +170,22 @@ namespace IA
                         _setNextMoveNoSplit();
                         if (_iaSplit.AlphaBetaFinished && _iaNoSplit.AlphaBetaFinished)
                         {
+                            Console.WriteLine("Split&NoSplit finished");
                             _next = _iaSplit.score > _iaNoSplit.score ? _nextSplit : _nextNoSplit;
                         }
                         else if (_iaSplit.AlphaBetaFinished)
                         {
+                            Console.WriteLine("Split finished");
                             _next = _nextSplit;
                         }
                         else if (_iaNoSplit.AlphaBetaFinished)
                         {
+                            Console.WriteLine("NoSplit finished");
                             _next = _nextNoSplit;
+                        }
+                        else
+                        {
+                            Console.WriteLine("None finished");
                         }
                         new MOVTrame(_next).Send(this._socket);
                         break;
