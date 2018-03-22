@@ -74,38 +74,35 @@ namespace IA
         { 
             List<int> OurPositions = new List<int>();
             foreach (KeyValuePair<Coord, int> keyPair in board.OurPositions())
-            {
                 OurPositions.Add((keyPair.Value));
-            }
 
             List<int> EnnemyPositions = new List<int>();
             foreach (KeyValuePair<Coord, int> keyPair in board.EnnemyPositions())
-            {
                 EnnemyPositions.Add((keyPair.Value));
-            }
-            if (OurPositions.Count.Equals(0))
-            {
-                return 0;
-            }
-            else if (EnnemyPositions.Count.Equals(0))
-            {
-                return 1;
-            }
+
+            if (OurPositions.Count.Equals(0) || EnnemyPositions.Count.Equals(0))
+                if (OurPositions.Count.Equals(0) && EnnemyPositions.Count.Equals(0))
+                    return 0;
+                else if (OurPositions.Count.Equals(0))
+                    return - EnnemyPositions.Max();
+                else
+                    return OurPositions.Max();
             return OurPositions.Max() - EnnemyPositions.Max();
         }
 
         public float GetDensityHeuristic(Board board)
         {
-            //TODO: améliorer
-            if (board.OurPositions().Count.Equals(0))
-            {
-                return 0;
-            }
-            else if (board.EnnemyPositions().Count.Equals(0))
-            {
-                return 1;
-            }
-            return board.OurNumber() / board.OurPositions().Count - board.EnnemyNumber() / board.EnnemyPositions().Count;
+            int ourNumber = board.OurNumber();
+            int ennemyNumber = board.EnnemyNumber();
+
+            if (ourNumber == 0 || ennemyNumber == 0)
+                if (ourNumber == 0 && ennemyNumber == 0)
+                    return 0;
+                else if (ourNumber == 0)
+                    return -ennemyNumber / board.EnnemyPositions().Count;
+                else
+                    return ourNumber / board.OurPositions().Count;
+            return ourNumber / board.OurPositions().Count - ennemyNumber / board.EnnemyPositions().Count;
         }
 
         public float GetDispersionHeuristic(Board board)
@@ -117,49 +114,48 @@ namespace IA
             int numerateurY = 0;
             int denominateur = board.OurNumber();
 
-            if (denominateur.Equals(0))
-            {
-                return 0;
-            }
+            float OurDistance = 0;
 
-            foreach (KeyValuePair<Coord, int> kvp in board.OurPositions())
+            if (!denominateur.Equals(0))
             {
-                numerateurX += kvp.Key.X * kvp.Value;
-                numerateurY += kvp.Key.Y * kvp.Value;
+                foreach (KeyValuePair<Coord, int> kvp in board.OurPositions())
+                {
+                    numerateurX += kvp.Key.X * kvp.Value;
+                    numerateurY += kvp.Key.Y * kvp.Value;
+                }
+                OurBarycentre[0] = numerateurX / denominateur;
+                OurBarycentre[1] = numerateurY / denominateur;
+
+                foreach (KeyValuePair<Coord, int> keyPair in board.OurPositions())
+                {
+                    OurDistance += Math.Max(keyPair.Key.X - OurBarycentre[0], keyPair.Key.Y - OurBarycentre[1]);
+                }
+                OurDistance = OurDistance / board.OurPositions().Count;
             }
-            OurBarycentre[0] = numerateurX / denominateur;
-            OurBarycentre[1] = numerateurY / denominateur;
 
             int enNumerateurX = 0;
             int enNumerateurY = 0;
             int enDenominateur = board.EnnemyNumber();
 
+            float EnnemyDistance = 0;
+
             if (enDenominateur.Equals(0))
             {
-                return 1;
-            }
+                foreach (KeyValuePair<Coord, int> kvp in board.EnnemyPositions())
+                {
+                    enNumerateurX += kvp.Key.X * kvp.Value;
+                    enNumerateurY += kvp.Key.Y * kvp.Value;
+                }
+                EnnemyBarycentre[0] = enNumerateurX / enDenominateur;
+                EnnemyBarycentre[1] = enNumerateurY / enDenominateur;
 
-            foreach (KeyValuePair<Coord, int> kvp in board.EnnemyPositions())
-            {
-                enNumerateurX += kvp.Key.X * kvp.Value;
-                enNumerateurY += kvp.Key.Y * kvp.Value;
+                foreach (KeyValuePair<Coord, int> keyPair in board.EnnemyPositions())
+                {
+                    EnnemyDistance += Math.Max(keyPair.Key.X - EnnemyBarycentre[0], keyPair.Key.Y - EnnemyBarycentre[1]);
+                }
+            
+                EnnemyDistance = EnnemyDistance / board.EnnemyPositions().Count;
             }
-            EnnemyBarycentre[0] = enNumerateurX / enDenominateur;
-            EnnemyBarycentre[1] = enNumerateurY / enDenominateur;
-
-            float OurDistance = 0;
-            float EnnemyDistance = 0;
-            foreach (KeyValuePair<Coord, int> keyPair in board.OurPositions())
-            {
-                OurDistance += Math.Max(keyPair.Key.X - OurBarycentre[0], keyPair.Key.Y - OurBarycentre[1]);
-            }
-            foreach (KeyValuePair<Coord, int> keyPair in board.EnnemyPositions())
-            {
-                EnnemyDistance += Math.Max(keyPair.Key.X - EnnemyBarycentre[0], keyPair.Key.Y - EnnemyBarycentre[1]);
-            }
-            OurDistance = OurDistance / board.OurPositions().Count;
-            EnnemyDistance = EnnemyDistance / board.EnnemyPositions().Count;
-
             return OurDistance - EnnemyDistance;
         }
 

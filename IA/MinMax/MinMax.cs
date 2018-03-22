@@ -8,26 +8,27 @@ using System.Threading.Tasks;
 
 namespace IA.Rules
 {
-    public class MinMax: BaseIA
+    public class MinMax : BaseIA
     {
         // Alpha Beta is a branch and bound variation of min max algorithm
         // It allowed us to jump from a 2-depth to a 5-depth and thus to make AI stronger
+
         
         private int _depth;
 
         private float _maxAlpha;
         private float _minBeta;
 
-        public MinMax(int depth): base()
+        public MinMax(int depth) : base()
         {
             this._depth = depth;
             this._maxAlpha = float.MinValue;
             this._minBeta = float.MaxValue;
         }
 
-        private float _getAlphaBeta(Node current, int depth, float alpha, float beta, bool isMyTurn, Board board, int maxSplitGroups, Boolean split)
+        private float _getAlphaBeta(Node current, int depth, float alpha, float beta, bool isMyTurn, Board board, int maxSplitGroups , Boolean split)
         {
-            
+
             if (depth == 0)
             {
                 current.Data.MinMaxScore = current.Data.HeuristicScore;
@@ -36,9 +37,9 @@ namespace IA.Rules
 
             if (isMyTurn)
             {
-                List<List<Move>> movesCandidate = board.GetPossibleMoves(Race.US, maxSplitGroups, split);
+                List<List<Move>> movesCandidate = board.GetPossibleMoves(Race.US, maxSplitGroups , split);
                 float val = alpha;
-                //à checker
+                
                 if (movesCandidate.Count.Equals(0))
                 {
                     current.Data.HeuristicScore = this._getHeuristicScore(board);
@@ -47,16 +48,16 @@ namespace IA.Rules
                     val = current.Data.HeuristicScore;
                     if (val >= beta)
                     {
-                        return val ;
+                        return val;
                     }
                     alpha = Math.Max(alpha, val);
-                    
+
                 }
                 foreach (List<Move> currentMove in movesCandidate)
                 {
                     // Compute new board after move
                     Board newBoard = board.MakeMove(new List<Move>(currentMove));
-                        
+
                     // The new Leaf is the child we're going to explore next
                     Node Child = new Node();
 
@@ -66,7 +67,7 @@ namespace IA.Rules
                     // Compute Node.Weight
 
                     Child.Data.HeuristicScore = this._getHeuristicScore(newBoard);
-                    Child.Data.Moves =  new List<Move>(currentMove) ;
+                    Child.Data.Moves = new List<Move>(currentMove);
 
                     //Alpha beta stuff
                     val = Math.Max(val, this._getAlphaBeta(Child, depth - 1, alpha, beta, !isMyTurn, newBoard, maxSplitGroups, split));
@@ -76,14 +77,14 @@ namespace IA.Rules
                     }
                     alpha = Math.Max(alpha, val);
                 }
-                current.Data.MinMaxScore = val; 
+                current.Data.MinMaxScore = val;
                 return val;
             }
             else
             {
                 float val = beta;
                 List<List<Move>> movesCandidate = board.GetPossibleMoves(Race.THEM, maxSplitGroups, split);
-                
+                //if movescandidate.count.equals(0)
                 foreach (List<Move> currentMove in movesCandidate)
                 {
                     // Compute new board after move
@@ -97,19 +98,18 @@ namespace IA.Rules
                     Child.Data.MinMaxScore = beta;
                     // Compute Node.Weight
                     Child.Data.HeuristicScore = this._getHeuristicScore(newBoard);
-                    Child.Data.Moves = new List<Move>( currentMove );
+                    Child.Data.Moves = new List<Move>(currentMove);
 
                     //Alpha beta stuff
-                    //val = Child.Data.HeuristicScore;
                     val = Math.Min(val, this._getAlphaBeta(Child, depth - 1, alpha, beta, !isMyTurn, newBoard, maxSplitGroups, split));
-                    
+
                     if (val <= alpha)
                     {
                         break;
                     }
                     beta = Math.Min(beta, val);
                 }
-                current.Data.MinMaxScore = val;//Math.Max(current.Data.MinMaxScore, val);
+                current.Data.MinMaxScore = val;
                 return val;
             }
         }
@@ -146,7 +146,7 @@ namespace IA.Rules
         override public int[,] ChooseNextMove(Board board)
         {
             Node root = new Node();
-            float alphaBeta = this._getAlphaBeta(root, this._depth, this._maxAlpha, this._minBeta, true, board,1,false);
+            float alphaBeta = this._getAlphaBeta(root, this._depth, this._maxAlpha, this._minBeta, true, board, 2 , true);
             return MOVTrame.GetPayloadFromMoves(this._getNextMove(root, alphaBeta));
         }
     }

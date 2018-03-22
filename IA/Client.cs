@@ -124,8 +124,6 @@ namespace IA
                     case "UPD":
                         this._updateGame();
                         int[,] next = this._chooseMove();
-
-                        Thread.Sleep(500);
                         new MOVTrame(next).Send(this._socket);
                         break;
 
