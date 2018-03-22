@@ -30,6 +30,9 @@ namespace IA
         private int[,] _nextSplit;
         private int[,] _nextNoSplit;
 
+        private int _depthSplit;
+        private int _depthNoSplit;
+
         public Client(string host, int port)
         {
             this._host = host;
@@ -38,15 +41,10 @@ namespace IA
             this._socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
             this._trame = new ServerPlayerTrame(this._socket);
 
-            int.TryParse(ConfigurationManager.AppSettings["MinMaxDepthSplit"], out int depthSplit);
-            int.TryParse(ConfigurationManager.AppSettings["MinMaxDepthNoSplit"], out int depthNoSplit);
-            this._iaNoSplit = new MinMax(depthNoSplit, false);
-            this._iaSplit = new MinMax(depthSplit, true);
+            int.TryParse(ConfigurationManager.AppSettings["MinMaxDepthSplit"], out this._depthSplit);
+            int.TryParse(ConfigurationManager.AppSettings["MinMaxDepthNoSplit"], out this._depthNoSplit);
 
             this._indexes = new Dictionary<Race, int>() { {Race.HUM, 2}, {Race.THEM, 0}, {Race.US, 0} };
-            
-            Trace.Listeners.Add(new TextWriterTraceListener($"Trace_{System.DateTime.Now.ToString("D")}.txt"));
-            Trace.TraceInformation("Initialisation du client");
         }
 
         private void _initGame() {
@@ -129,13 +127,13 @@ namespace IA
 
         private void _computeMoveSplit()
         {
-            //this._iaSplit = new MinMax(depthSplit, true);
+            this._iaSplit = new MinMax(this._depthSplit, true);
             this._iaSplit.ComputeNextMove(this._board);
         }
 
         private void _computeMoveNoSplit()
         {
-            //this._iaNoSplit = new MinMax(depthNoSplit, false);
+            this._iaNoSplit = new MinMax(this._depthNoSplit, false);
             this._iaNoSplit.ComputeNextMove(this._board);
         }
 
@@ -157,14 +155,13 @@ namespace IA
                 {
                     case "UPD":
                         this._updateGame();
-                        Trace.TraceInformation("Board State : "+ this._board.ToString());
+                        Trace.TraceInformation("Board State : " + this._board.ToString());
                         Thread threadSplit = new Thread(_computeMoveSplit);
                         Thread threadNoSplit = new Thread(_computeMoveNoSplit);
 
                         threadSplit.Start();
                         threadNoSplit.Start();
-                        threadSplit.Join(700);
-                        threadNoSplit.Join(700);
+                        Thread.Sleep(2000);
 
                         if (_iaSplit.AlphaBetaFinished && _iaNoSplit.AlphaBetaFinished)
                         {
@@ -176,18 +173,22 @@ namespace IA
                         else if (_iaSplit.AlphaBetaFinished)
                         {
                             _setNextMoveSplit();
-
                             Trace.TraceInformation("Split finished");
                             _next = _nextSplit;
+                            threadNoSplit.Interrupt();
                         }
                         else if (_iaNoSplit.AlphaBetaFinished)
                         {
                             _setNextMoveNoSplit();
                             Trace.TraceInformation("NoSplit finished");
                             _next = _nextNoSplit;
+                            threadSplit.Interrupt();
                         }
                         else
                         {
+                            threadNoSplit.Interrupt();
+                            threadSplit.Interrupt();
+                            // TODO: Attention au cas où on ne finit pas la trame next est la précédente
                             Trace.TraceInformation("None finished");
                         }
                         new MOVTrame(_next).Send(this._socket);

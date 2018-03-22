@@ -2,6 +2,7 @@
 using IA.Rules;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,7 +13,6 @@ namespace IA.Rules
     {
         // Alpha Beta is a branch and bound variation of min max algorithm
         // It allowed us to jump from a 2-depth to a 5-depth and thus to make AI stronger
-
         
         private int _depth;
 
@@ -20,12 +20,18 @@ namespace IA.Rules
         private float _minBeta;
         private bool _doesSplit;
 
+        private Node _root;
+        private float _alphaBeta;
+
         public MinMax(int depth, bool doesSplit) : base()
         {
             this._depth = depth;
             this._maxAlpha = float.MinValue;
             this._minBeta = float.MaxValue;
             this._doesSplit = doesSplit;
+
+            this._root = new Node();
+            this._alphaBeta = float.MinValue;
         }
 
         private float _getAlphaBeta(Node current, int depth, float alpha, float beta, bool isMyTurn, Board board, Boolean split)
@@ -172,22 +178,17 @@ namespace IA.Rules
             return Heuristic.Instance.GetScore(board);
         }
 
-        private Node _root = new Node();
-        private float _alphaBeta = float.NegativeInfinity;
-
         override public void ComputeNextMove(Board board)
         {
-            _root = new Node();
             _alphaBeta = this._getAlphaBeta(_root, this._depth, this._maxAlpha, this._minBeta, true, board, _doesSplit);
             AlphaBetaFinished = true;
-            System.Diagnostics.Trace.TraceInformation("MinMax : " + board.ToString());
+            Trace.TraceInformation("MinMax : " + board.ToString());
         }
 
         override public int[,] ChooseNextMove()
         {
             if (AlphaBetaFinished)
             {
-                //AlphaBetaFinished = false;
                 return MOVTrame.GetPayloadFromMoves(this._getNextMove(_root, _alphaBeta));
             }
             else

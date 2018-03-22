@@ -10,17 +10,15 @@ namespace IA.IA
 {
     public abstract class BaseIA
     {
-        private Stopwatch _sw;
+        public float score;
+        public bool AlphaBetaFinished;
 
         public BaseIA()
         {
-            this._sw = new Stopwatch();
+            this.AlphaBetaFinished = false;
         }
 
-        public float score;
-        public bool AlphaBetaFinished = false;
         public abstract void ComputeNextMove(Board board);
         public abstract int[,] ChooseNextMove();
-
     }
 }
