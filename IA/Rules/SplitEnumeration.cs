@@ -8,7 +8,6 @@ namespace IA.Rules
 {
     static class SplitEnumeration
     {
-
         public static List<int[]> GetEnumeration(int q, int minSplit, int maxSplitGroups)
         {
             return _removeDoubles(_getEnumerationRecursive(new int[] { 0, 0, 0, 0, 0, 0, 0, 0 }, q, minSplit, maxSplitGroups));
@@ -53,23 +52,6 @@ namespace IA.Rules
             }
             return returnList;
         }
-
-        /*private static List<int[]> _removeTooManySplitGroups(List<int[]> list, int maxSplitGroups)
-        {
-            List<int[]> cloneList = new List<int[]>();
-            if (list.Count == 0)
-                return list;
-           foreach(int[] array in list)
-            {
-                int splitGroup = 0;
-                for (int j = 0; j < 8; j++)
-                    if (array[j] > 0)
-                        splitGroup++;
-                if (splitGroup <= maxSplitGroups)
-                    cloneList.Add(array);
-            }
-            return cloneList;
-        }*/
 
         private static List<int[]> _removeDoubles(List<int[]> list)
         {

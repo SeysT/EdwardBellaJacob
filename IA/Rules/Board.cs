@@ -128,7 +128,7 @@ namespace IA.Rules
         }
 
 
-        public List<List<Move>> GetPossibleMoves(Race race, int maxSplitGroups)
+        public List<List<Move>> GetPossibleMoves(Race race, int maxSplitGroups, Boolean split)
         {
             List<List<Move>> outList = new List<List<Move>>();
             // List<Move> represents one possible move combination that can be played during a turn
@@ -142,7 +142,7 @@ namespace IA.Rules
             // third List layer is for different pawns
 
             List<Pawn> pawns = race == Race.US ? this.OurPawns() : this.EnnemyPawns();
-            int minSplitValue = this.OurNumber();//this.GetMinGroupNumber();
+            int minSplitValue = split ? this.GetMinGroupNumber() : this.OurNumber();
 
             foreach (Pawn pawn in pawns)
             {
@@ -319,8 +319,6 @@ public static class EnumerableExtensions
 
     static IEnumerable<TValue[]> Permutations<TKey, TValue>(TKey[] keys, int index, Func<TKey, IEnumerable<TValue>> selector, TValue[] values)
     {
-        //Debug.Assert(keys.Length == values.Length);
-
         var key = keys[index];
         foreach (var value in selector(key))
         {
