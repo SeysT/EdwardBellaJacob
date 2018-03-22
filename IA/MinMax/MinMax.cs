@@ -174,8 +174,6 @@ namespace IA.Rules
 
         private Node _root = new Node();
         private float _alphaBeta = float.NegativeInfinity;
-        public bool AlphaBetaFinished = false;
-        public float score;
 
         override public void ComputeNextMove(Board board)
         {
@@ -187,7 +185,7 @@ namespace IA.Rules
         {
             if (AlphaBetaFinished)
             {
-                AlphaBetaFinished = false;
+                //AlphaBetaFinished = false;
                 return MOVTrame.GetPayloadFromMoves(this._getNextMove(_root, _alphaBeta));
             }
             else

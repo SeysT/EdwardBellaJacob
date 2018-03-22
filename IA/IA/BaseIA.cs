@@ -18,8 +18,9 @@ namespace IA.IA
         }
 
         public float score;
-        public bool AlphaBetaFinished;
+        public bool AlphaBetaFinished = false;
         public abstract void ComputeNextMove(Board board);
         public abstract int[,] ChooseNextMove();
+
     }
 }

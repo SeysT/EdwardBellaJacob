@@ -162,24 +162,31 @@ namespace IA
                         // now it's split into two methods :
                         // _computeMove()
                         // _setNextMove()
-                        threadSplit.Start();
+                        
+                        //threadSplit.Start();
                         threadNoSplit.Start();
-                        threadSplit.Join(1700);
-                        threadNoSplit.Join(1700);
-                        _setNextMoveSplit();
-                        _setNextMoveNoSplit();
+                        //threadSplit.Join(700);
+                        //threadNoSplit.Join();
+
+                        Thread.Sleep(500);
+
                         if (_iaSplit.AlphaBetaFinished && _iaNoSplit.AlphaBetaFinished)
                         {
+                            _setNextMoveSplit();
+                            _setNextMoveNoSplit();
                             Console.WriteLine("Split&NoSplit finished");
                             _next = _iaSplit.score > _iaNoSplit.score ? _nextSplit : _nextNoSplit;
                         }
                         else if (_iaSplit.AlphaBetaFinished)
                         {
+                            _setNextMoveSplit();
+                            
                             Console.WriteLine("Split finished");
                             _next = _nextSplit;
                         }
                         else if (_iaNoSplit.AlphaBetaFinished)
                         {
+                            _setNextMoveNoSplit();
                             Console.WriteLine("NoSplit finished");
                             _next = _nextNoSplit;
                         }
