@@ -157,21 +157,20 @@ namespace IA
                 switch (this._trame.TrameHeader)
                 {
                     case "UPD":
+                        Stopwatch sw = new Stopwatch();
+                        sw.Start();
+
                         this._updateGame();
                         Trace.TraceInformation("Board State : " + this._board.ToString());
 
-                        Stopwatch sw = new Stopwatch();
-                        sw.Start();
                         Thread threadSplit = new Thread(_computeMoveSplit);
                         threadSplit.Start();
 
                         Thread threadNoSplit = new Thread(_computeMoveNoSplit);
                         threadNoSplit.Start();
 
-                        threadNoSplit.Join(2000);
-                        threadSplit.Join(2000);
-                        sw.Stop();
-                        Trace.TraceInformation($"Durée de choix du coup : {sw.Elapsed}");
+                        Thread.Sleep(2000);
+                        Trace.TraceInformation($"Temps de choix : {sw.Elapsed}");
 
                         if (_iaSplit.AlphaBetaFinished && _iaNoSplit.AlphaBetaFinished)
                         {
