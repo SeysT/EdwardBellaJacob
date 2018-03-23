@@ -137,7 +137,6 @@ namespace IA.Rules
             return Math.Max(min, (int)(ourNumber / 3));
         }
 
-
         public List<List<Move>> GetPossibleMoves(Race race, int maxSplitGroups, Boolean split)
         {
             List<List<Move>> outList = new List<List<Move>>();

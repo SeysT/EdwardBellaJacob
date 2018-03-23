@@ -38,7 +38,7 @@ namespace IA.Rules
         {
             int maxSplitGroups = split ? 2 : 1;
 
-            if (depth == 0)
+            if (depth == 0 || board.OurNumber() == 0 || board.EnnemyNumber() == 0)
             {
                 current.Data.MinMaxScore = current.Data.HeuristicScore;
                 return current.Data.HeuristicScore;
