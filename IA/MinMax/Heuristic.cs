@@ -178,7 +178,7 @@ namespace IA
                     }
 
                     // Sinon on regarde la distance
-                    int distance = Math.Min(Math.Abs(humPos.Key.X - ourPos.Key.X), Math.Abs(humPos.Key.Y - ourPos.Key.Y));
+                    int distance = Math.Max(Math.Abs(humPos.Key.X - ourPos.Key.X), Math.Abs(humPos.Key.Y - ourPos.Key.Y));
                     if (distance < minDistance)
                     {
                         minDistance = distance;
@@ -197,7 +197,7 @@ namespace IA
                 ourNumber * this.GetOurStrengthHeuristic(board) -
                 ennemyNumber * this.GetEnnemyStrengthHeuristic(board) + 
                 biggestGroup * this.GetBiggestGroupHeuristic(board) +
-                density * this.GetDensityHeuristic(board) + 
+                density * this.GetDensityHeuristic(board) - 
                 dispersion * this.GetDispersionHeuristic(board) -
                 ourHumanDistance * this.GetOurHumanDistance(board)
             );

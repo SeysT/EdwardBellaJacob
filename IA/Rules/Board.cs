@@ -27,6 +27,16 @@ namespace IA.Rules
             this._yMax = yMax;
         }
 
+        public override string ToString()
+        {
+            string sb = "";
+            foreach(Pawn p in Grid.GetPawns())
+            {
+                sb += $"[{p.Race} = {p.Quantity} : {p.Coordinates.X} , {p.Coordinates.Y} ] ";
+            }
+            return sb;
+        }
+
         public Board MakeMove(List<Move> moves)
         {
             Board newBoard = new Board(this);
@@ -78,7 +88,7 @@ namespace IA.Rules
                         else if(1.5 * inNewCoord.Quantity <= move.Quantity)
                         {
                             Grid.Remove(inNewCoord.Coordinates);
-                            Grid.Add(new Pawn(pawn.Race, move.Quantity + inNewCoord.Quantity, newCoord));
+                            Grid.Add(new Pawn(pawn.Race, move.Quantity, newCoord));
                         }
                         else
                         {
@@ -126,7 +136,6 @@ namespace IA.Rules
             }
             return Math.Max(min, (int)(ourNumber / 3));
         }
-
 
         public List<List<Move>> GetPossibleMoves(Race race, int maxSplitGroups, Boolean split)
         {
