@@ -160,6 +160,8 @@ namespace IA
                         this._updateGame();
                         Trace.TraceInformation("Board State : " + this._board.ToString());
 
+                        Stopwatch sw = new Stopwatch();
+                        sw.Start();
                         Thread threadSplit = new Thread(_computeMoveSplit);
                         threadSplit.Start();
 
@@ -168,6 +170,8 @@ namespace IA
 
                         threadNoSplit.Join(2000);
                         threadSplit.Join(2000);
+                        sw.Stop();
+                        Trace.TraceInformation($"Durée de choix du coup : {sw.Elapsed}");
 
                         if (_iaSplit.AlphaBetaFinished && _iaNoSplit.AlphaBetaFinished)
                         {
@@ -178,12 +182,14 @@ namespace IA
                         }
                         else if (_iaSplit.AlphaBetaFinished)
                         {
+                            threadNoSplit.Abort();
                             _setNextMoveSplit();
                             Trace.TraceInformation("Split finished");
                             _next = _nextSplit;
                         }
                         else if (_iaNoSplit.AlphaBetaFinished)
                         {
+                            threadSplit.Abort();
                             _setNextMoveNoSplit();
                             Trace.TraceInformation("NoSplit finished");
                             _next = _nextNoSplit;
@@ -192,6 +198,9 @@ namespace IA
                         {
                             // TODO: Attention au cas où on ne finit pas la trame next est la précédente
                             Trace.TraceInformation("None finished");
+                            threadSplit.Abort();
+                            threadNoSplit.Abort();
+                            break;
                         }
                         new MOVTrame(_next).Send(this._socket);
                         break;
