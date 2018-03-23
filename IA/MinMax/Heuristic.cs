@@ -197,7 +197,7 @@ namespace IA
                 ourNumber * this.GetOurStrengthHeuristic(board) -
                 ennemyNumber * this.GetEnnemyStrengthHeuristic(board) + 
                 biggestGroup * this.GetBiggestGroupHeuristic(board) +
-                density * this.GetDensityHeuristic(board) + 
+                density * this.GetDensityHeuristic(board) - 
                 dispersion * this.GetDispersionHeuristic(board) -
                 ourHumanDistance * this.GetOurHumanDistance(board)
             );
