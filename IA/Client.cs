@@ -44,6 +44,9 @@ namespace IA
             int.TryParse(ConfigurationManager.AppSettings["MinMaxDepthSplit"], out this._depthSplit);
             int.TryParse(ConfigurationManager.AppSettings["MinMaxDepthNoSplit"], out this._depthNoSplit);
 
+            this._iaNoSplit = new MinMax(this._depthNoSplit, false);
+            this._iaSplit = new MinMax(this._depthSplit, true);
+
             this._indexes = new Dictionary<Race, int>() { {Race.HUM, 2}, {Race.THEM, 0}, {Race.US, 0} };
         }
 
@@ -156,12 +159,15 @@ namespace IA
                     case "UPD":
                         this._updateGame();
                         Trace.TraceInformation("Board State : " + this._board.ToString());
-                        Thread threadSplit = new Thread(_computeMoveSplit);
-                        Thread threadNoSplit = new Thread(_computeMoveNoSplit);
 
+                        Thread threadSplit = new Thread(_computeMoveSplit);
                         threadSplit.Start();
+
+                        Thread threadNoSplit = new Thread(_computeMoveNoSplit);
                         threadNoSplit.Start();
-                        Thread.Sleep(2000);
+
+                        threadNoSplit.Join(2000);
+                        threadSplit.Join(2000);
 
                         if (_iaSplit.AlphaBetaFinished && _iaNoSplit.AlphaBetaFinished)
                         {
@@ -175,19 +181,15 @@ namespace IA
                             _setNextMoveSplit();
                             Trace.TraceInformation("Split finished");
                             _next = _nextSplit;
-                            threadNoSplit.Interrupt();
                         }
                         else if (_iaNoSplit.AlphaBetaFinished)
                         {
                             _setNextMoveNoSplit();
                             Trace.TraceInformation("NoSplit finished");
                             _next = _nextNoSplit;
-                            threadSplit.Interrupt();
                         }
                         else
                         {
-                            threadNoSplit.Interrupt();
-                            threadSplit.Interrupt();
                             // TODO: Attention au cas où on ne finit pas la trame next est la précédente
                             Trace.TraceInformation("None finished");
                         }
