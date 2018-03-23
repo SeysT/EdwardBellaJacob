@@ -126,6 +126,7 @@ namespace IA.Rules
         // This function alows to convert the score returned by AlphaBeta to the coordinates of the next currentMove
         private List<Move> _getNextMove(Node GameTree, float alphaBeta)
         {
+            Trace.TraceInformation($"Alpha beta : {alphaBeta}");
             List<Move> moves = new List<Move>();
             float maxHeuristic = _maxAlpha;
             foreach (Node SubTree in GameTree.Children)

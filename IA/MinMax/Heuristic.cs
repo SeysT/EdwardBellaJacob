@@ -178,7 +178,7 @@ namespace IA
                     }
 
                     // Sinon on regarde la distance
-                    int distance = Math.Min(Math.Abs(humPos.Key.X - ourPos.Key.X), Math.Abs(humPos.Key.Y - ourPos.Key.Y));
+                    int distance = Math.Max(Math.Abs(humPos.Key.X - ourPos.Key.X), Math.Abs(humPos.Key.Y - ourPos.Key.Y));
                     if (distance < minDistance)
                     {
                         minDistance = distance;
